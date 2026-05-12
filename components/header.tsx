@@ -10,6 +10,10 @@ export default function Header() {
   const { user, logout } = useAuth();
   const t = useTranslations("header");
 
+  const handleHomePage = () => {
+    router.push(`/`);
+  };
+
   const handleLogout = () => {
     logout();
     router.push(`/login`);
@@ -27,7 +31,13 @@ export default function Header() {
     <header className="flex max-h-min border-b">
       <div className="Wrapper Padding justify-between overflow-visible">
         <div className="Center">
-          <h4>{user ? `Logged in as ${user.username}` : t("welcome")}</h4>
+          <button
+            onClick={() => {
+              handleHomePage();
+            }}
+          >
+            <h4>{user ? `Logged in as ${user.username}` : t("welcome")}</h4>
+          </button>
         </div>
         <div className="flex Padding gap-3">
           {user ? (
