@@ -2,6 +2,9 @@
   "general": {
     "error": "Er is een foutmelding, probeer later opnieuw."
   },
+  "home": {
+    "welcome": "Welkom bij CrossWave"
+  },
   "header": {
     "welcome": "Welkom!",
     "nav": {

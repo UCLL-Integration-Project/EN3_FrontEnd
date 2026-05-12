@@ -2,6 +2,9 @@
   "general": {
     "error": "An error has occurred. Please try again later."
   },
+  "home": {
+    "welcome": "Welcome to CrossWave"
+  },
   "header": {
     "welcome": "Welcome!",
     "nav": {
@@ -12,7 +15,7 @@
     }
   },
   "UserLoginForm": {
-    "button": "login",
+    "button": "Login",
     "label": {
       "email": "Email",
       "password": "Password"
