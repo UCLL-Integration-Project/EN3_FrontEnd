@@ -4,6 +4,15 @@ export type AuthContextType = {
   logout: () => void;
 };
 
+export type UserInput = {
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: number;
+};
+
 export type User = {
   firstName?: string;
   lastName?: string;
@@ -14,12 +23,20 @@ export type User = {
   age?: number;
   role?: string;
   token?: string;
-  height?: number;
-  weight?: number;
+};
+
+export type UserResponse = {
+  id: number;
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: number;
 };
 
 export type AuthenticationRequest = {
-  username: string;
+  email: string;
   password: string;
 };
 
@@ -40,19 +57,4 @@ export type AuthenticationResponse = {
 export type StatusMessage = {
   message: string;
   type: "error" | "success";
-};
-
-export type ExerciseTemplate = {
-  id?: string;
-  name: string;
-  description: string;
-  expectedReps: number;
-  expectedSets: number;
-  expectedWeight: number;
-};
-
-export type ExerciseInstance = {
-  reps: number;
-  sets: number;
-  weight: number;
 };
