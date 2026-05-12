@@ -7,13 +7,14 @@
     "nav": {
       "home": "Thuis",
       "login": "Inloggen",
-      "logout": "Uitloggen"
+      "logout": "Uitloggen",
+      "register": "Registreren"
     }
   },
   "UserLoginForm": {
     "button": "Inloggen",
     "label": {
-      "username": "Gebruikersnaam",
+      "email": "Email",
       "password": "Wachtwoord"
     },
     "validate": {
@@ -26,5 +27,26 @@
       "NETWORK_ERROR": "Kan geen verbinding maken met de server."
     },
     "success": "Inloggen gelukt. Doorsturen..."
+  },
+  "UserSignupForm": {
+    "button": "Sign Up",
+    "label": {
+      "username": "Gebruikersnaam",
+      "password": "Wachtwoord",
+      "firstName": "Voornaam",
+      "lastName": "Naam",
+      "email": "Email",
+      "age": "Leeftijd"
+    },
+    "validate": {
+      "error": " - Ontbrekent of onjuist"
+    },
+    "error": {
+      "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",
+      "EMAIL_TAKEN": "Deze email is al in gebruik.",
+      "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
+      "NETWORK_ERROR": "Kan geen verbinding maken met de server."
+    },
+    "success": "Registreren gelukt. Doorsturen..."
   }
 }
