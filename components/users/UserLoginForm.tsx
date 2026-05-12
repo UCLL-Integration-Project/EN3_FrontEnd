@@ -7,23 +7,22 @@ import useAuth from "@hooks/useAuth";
 import { useLocale, useTranslations } from "use-intl";
 
 export default function UserLoginForm() {
-  const [form, setForm] = useState({ name: "", password: "" });
-  const [errors, setErrors] = useState<{ name?: string; password?: string }>({});
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
   const router = useRouter();
   const locale = useLocale();
   const { login } = useAuth();
   const t = useTranslations("UserLoginForm");
-  const fields = ["name", "password"] as const;
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (field: "name" | "password", value: string) => {
+  const handleChange = (field: "email" | "password", value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const validate = () => {
     const newErrors: typeof errors = {};
-    if (!form.name.trim()) newErrors.name = t("validate.error");
+    if (!form.email.trim()) newErrors.email = t("validate.error");
     if (!form.password.trim()) newErrors.password = t("validate.error");
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -38,10 +37,12 @@ export default function UserLoginForm() {
     event.preventDefault();
     clearMessages();
     if (!validate()) return;
+
     const authRequest: AuthenticationRequest = {
-      username: form.name,
+      email: form.email,
       password: form.password,
     };
+
     try {
       const loggedInUser = await loginRequest(authRequest);
       setStatusMessages([{ message: t("success"), type: "success" }]);
@@ -59,15 +60,15 @@ export default function UserLoginForm() {
     <form onSubmit={handleSubmit} className="flex Padding Border Gap flex-col">
       <div className="Wrapper flex-col">
         <div className="flex gap-1">
-          <label htmlFor="nameInput">{t("label.username")}</label>
-          <div className="min-h-6 text-red-500-500">{errors.name || ""}</div>
+          <label htmlFor="emailInput">{t("label.email")}</label>
+          <div className="min-h-6 text-red-500-500">{errors.email || ""}</div>
         </div>
         <div className="input-wrapper">
           <input
-            id="nameInput"
-            type="text"
-            value={form.name}
-            onChange={(e) => handleChange("name", e.target.value)}
+            id="emailInput"
+            type="email"
+            value={form.email}
+            onChange={(e) => handleChange("email", e.target.value)}
             className="input"
           />
         </div>
