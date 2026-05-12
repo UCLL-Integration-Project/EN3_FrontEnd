@@ -49,7 +49,7 @@ export function toGrantedAuthority(role: Role): string {
 export type AuthenticationResponse = {
   message: string;
   token: string;
-  username: string;
+  email: string;
   fullname: string;
   role: Role;
 };
