@@ -47,7 +47,7 @@ export default function UserLoginForm() {
       const loggedInUser = await loginRequest(authRequest);
       setStatusMessages([{ message: t("success"), type: "success" }]);
       login(loggedInUser);
-      setTimeout(() => router.push(`/dashboard`), 500);
+      setTimeout(() => router.push(`/`), 500);
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["INVALID_CREDENTIALS", "USERNAME_TAKEN", "NETWORK_ERROR"];

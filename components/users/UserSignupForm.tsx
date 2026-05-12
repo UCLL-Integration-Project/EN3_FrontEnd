@@ -73,7 +73,7 @@ export default function UserSignupForm() {
       const newUser = await signupRequest(userInput);
       setStatusMessages([{ message: t("success"), type: "success" }]);
       login(newUser);
-      setTimeout(() => router.push(`/dashboard`), 500);
+      setTimeout(() => router.push(`/`), 500);
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["USERNAME_TAKEN", "EMAIL_TAKEN", "NETWORK_ERROR"];
