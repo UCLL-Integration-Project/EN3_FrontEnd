@@ -26,5 +26,28 @@
       "NETWORK_ERROR": "Kan geen verbinding maken met de server."
     },
     "success": "Inloggen gelukt. Doorsturen..."
+  },
+  "UserSignupForm": {
+    "button": "Registreren",
+    "label": {
+      "username": "Gebruikersnaam",
+      "password": "Wachtwoord",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "age": "Leeftijd"
+    },
+    "validate": {
+      "error": " - Ontbreekt of ongeldig",
+      "weakPassword": " - Te kort (min. 8 tekens)"
+    },
+    "error": {
+      "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",
+      "EMAIL_TAKEN": "Dit e-mailadres is al in gebruik.",
+      "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
+      "NETWORK_ERROR": "Kan geen verbinding maken met de server."
+    },
+    "loginLink": "Heb je al een account? Inloggen",
+    "success": "Registratie gelukt. Doorsturen..."
   }
 }
