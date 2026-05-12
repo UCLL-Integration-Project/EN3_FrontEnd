@@ -14,7 +14,7 @@
   "UserLoginForm": {
     "button": "login",
     "label": {
-      "username": "Username",
+      "email": "Email",
       "password": "Password"
     },
     "validate": {

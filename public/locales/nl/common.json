@@ -7,13 +7,14 @@
     "nav": {
       "home": "Thuis",
       "login": "Inloggen",
-      "logout": "Uitloggen"
+      "logout": "Uitloggen",
+      "register": "Registreren"
     }
   },
   "UserLoginForm": {
     "button": "Inloggen",
     "label": {
-      "username": "Gebruikersnaam",
+      "email": "Email",
       "password": "Wachtwoord"
     },
     "validate": {
