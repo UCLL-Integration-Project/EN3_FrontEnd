@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1 {
+  @apply font-extrabold text-3xl my-3;
+}
+h2 {
+  @apply font-bold text-3xl my-3;
+}
+h3 {
+  @apply font-bold text-2xl my-2;
+}
+h4 {
+  @apply font-semibold text-2xl my-2;
+}
+h5 {
+  @apply font-bold text-xl my-1;
+}
+h6 {
+  @apply font-semibold text-xl my-1;
+}
+p {
+  @apply text-black;
+}
+a {
+  @apply text-black;
+}
+label {
+  @apply text-black;
+}
+
+a:hover {
+  @apply text-blue-500;
+}
+a:hover h1,
+a:hover h2,
+a:hover h3,
+a:hover h4,
+a:hover h5,
+a:hover h6,
+a:hover p {
+  @apply text-blue-500;
+}
+
+@layer utilities {
+  .Center {
+    @apply flex items-center justify-center;
+  }
+  .Wrapper {
+    @apply flex flex-1 min-h-0;
+  }
+  .Gap {
+    @apply gap-3;
+  }
+  .Padding {
+    @apply gap-3 px-6 py-3;
+  }
+  .Border {
+    @apply border-2 rounded-md;
+  }
+  .Raised {
+    @apply Border;
+  }
+  .Row {
+    @apply flex flex-row Gap;
+  }
+  .Col {
+    @apply flex flex-col Gap;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply Center Gap Padding Border cursor-pointer;
+  }
+  .btn:hover {
+    @apply border-cyan-100;
+  }
+
+  .btn-secondary {
+    @apply Center Gap Padding Border cursor-pointer;
+  }
+  .btn-secondary:hover {
+    @apply bg-teal-100;
+  }
+
+  .input {
+    @apply flex-1 Padding bg-transparent border-none outline-none focus:outline-none;
+    cursor: inherit;
+  }
+
+  .input-wrapper {
+    @apply Wrapper Border cursor-text;
+  }
+  .input-wrapper:hover {
+    @apply bg-teal-100;
+  }
+
+  .field {
+    @apply Wrapper Col;
+  }
+  .field-header {
+    @apply flex Row gap-1;
+  }
+  .field-error {
+    @apply min-h-6 text-red-500;
+  }
+
+  .form {
+    @apply Raised Padding Col;
+  }
+}

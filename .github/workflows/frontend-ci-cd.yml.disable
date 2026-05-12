@@ -1,0 +1,72 @@
+name: cne-frontend-ci-cd
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci --no-cache
+
+      - name: Run tests
+        run: |
+          cd frontend
+          npm test --if-present
+
+      - name: Build Next.js app
+        run: |
+          cd frontend
+          npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+      - name: Show build output (debug)
+        run: |
+          ls -R frontend/.next
+
+      - name: Prepare deployment package
+        run: |
+          mkdir -p artifact
+          cp -r frontend/.next/standalone/. artifact/
+          cp -r frontend/.next/static artifact/.next/static
+          cp -r frontend/public artifact/public
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: artifact
+          include-hidden-files: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: .
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "uwa-front-end"
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_FRONTEND }}
+          package: .
