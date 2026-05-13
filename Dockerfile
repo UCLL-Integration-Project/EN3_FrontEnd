@@ -2,7 +2,7 @@
 # Stage 1 — builder
 # Install ALL deps and build the Next.js standalone bundle
 # ============================================================
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -25,7 +25,7 @@ RUN npm run build
 # Uses the self-contained standalone output — no node_modules
 # needed in the final image, no npm, just node + server.js
 # ============================================================
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 
 # Security: run as non-root
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
