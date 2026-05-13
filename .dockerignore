@@ -30,7 +30,3 @@ coverage
 
 # GitHub Actions (not needed in image)
 .github
-
-# Docker
-Dockerfile
-.dockerignore
