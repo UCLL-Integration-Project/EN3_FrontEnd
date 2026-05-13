@@ -11,7 +11,8 @@
       "home": "Home",
       "login": "Login",
       "logout": "Logout",
-      "register": "Register"
+      "register": "Register",
+      "settings": "Settings"
     }
   },
   "UserLoginForm": {
@@ -30,6 +31,38 @@
       "NETWORK_ERROR": "Unable to connect to the server."
     },
     "success": "Login successful. Redirecting..."
+  },
+  "UserSettingsForm": {
+    "title": "Settings",
+    "profileTitle": "Profile",
+    "passwordTitle": "Change Password",
+    "accountTitle": "Account",
+    "saveButton": "Save",
+    "logoutButton": "Log out",
+    "logoutConfirm": "Are you sure you want to log out?",
+    "logoutConfirmButton": "Confirm",
+    "cancelButton": "Cancel",
+    "profileSuccess": "Profile updated successfully.",
+    "passwordSuccess": "Password changed successfully.",
+    "label": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password"
+    },
+    "validate": {
+      "error": " - Missing or Invalid",
+      "weakPassword": " - Too short (min. 8 characters)",
+      "passwordMismatch": " - Passwords do not match"
+    },
+    "error": {
+      "EMAIL_TAKEN": "This email is already in use.",
+      "INVALID_CREDENTIALS": "Current password is incorrect.",
+      "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
+      "NETWORK_ERROR": "Unable to connect to the server."
+    }
   },
   "UserSignupForm": {
     "button": "Sign Up",
