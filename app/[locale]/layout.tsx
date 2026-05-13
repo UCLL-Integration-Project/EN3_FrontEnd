@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from "next";
 import Header from "@components/header";
 import { AuthProvider } from "@context/AuthContext";
 import "@styles/globals.css";
@@ -11,16 +12,40 @@ type RootLayoutProps = {
   }>;
 };
 
+export const metadata: Metadata = {
+  title: "CrossWave",
+  description: "CrossWave — your mobile companion app.",
+  applicationName: "CrossWave",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "CrossWave",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#ffffff",
+};
+
 export default async function RootLayout({ children, params }: RootLayoutProps) {
   const { locale } = await params;
   const messages = await getMessages({ locale });
   return (
     <html lang={locale}>
-      <body className="flex flex-1 flex-col h-screen w-screen">
+      <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
-            <Header />
-            <main className="flex flex-1 flex-col items-center justify-center">{children}</main>
+            <div className="app-frame">
+              <Header />
+              <main className="app-main no-scrollbar">{children}</main>
+            </div>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>
