@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signupRequest } from "@services/UserService";
@@ -31,7 +32,11 @@ export default function UserSignupForm() {
   const validate = () => {
     const newErrors: Partial<typeof form> = {};
     if (!form.username.trim()) newErrors.username = t("validate.error");
-    if (!form.password.trim()) newErrors.password = t("validate.error");
+    if (!form.password.trim()) {
+      newErrors.password = t("validate.error");
+    } else if (form.password.length < 8) {
+      newErrors.password = t("validate.weakPassword");
+    }
     if (!form.firstName.trim()) newErrors.firstName = t("validate.error");
     if (!form.lastName.trim()) newErrors.lastName = t("validate.error");
     if (!form.email.trim() || !/^\S+@\S+\.\S+$/.test(form.email)) newErrors.email = t("validate.error");
@@ -68,7 +73,7 @@ export default function UserSignupForm() {
       const newUser = await signupRequest(userInput);
       setStatusMessages([{ message: t("success"), type: "success" }]);
       login(newUser);
-      setTimeout(() => router.push(`/dashboard`), 500);
+      setTimeout(() => router.push(`/`), 500);
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["USERNAME_TAKEN", "EMAIL_TAKEN", "NETWORK_ERROR"];
@@ -82,7 +87,7 @@ export default function UserSignupForm() {
       <div className="Wrapper flex-col">
         <div className="flex gap-1">
           <label htmlFor="usernameInput">{t("label.username")}</label>
-          <div className="min-h-6 text-red-500-500">{errors.username || ""}</div>
+          <div className="min-h-6 text-red-500">{errors.username || ""}</div>
         </div>
         <div className="input-wrapper">
           <input
@@ -193,6 +198,10 @@ export default function UserSignupForm() {
           ))}
         </ul>
       </div>
+
+      <Link href={`/${locale}/login`} className="text-blue-500 hover:underline self-start">
+        {t("loginLink")}
+      </Link>
     </form>
   );
 }
