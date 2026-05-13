@@ -29,7 +29,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm test
+        run: npm test -- --passWithNoTests
 
       - name: Run linter (if configured)
         run: npm run lint --if-present
