@@ -12,7 +12,7 @@ export default function Language() {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const currentLocale = params?.locale ? (Array.isArray(params.locale) ? params.locale[0] : params.locale) : "en";
 
@@ -35,7 +35,7 @@ export default function Language() {
         <div className="Wrapper Border flex-col">
           {languages.map((lang) => (
             <MenuItem key={lang.value}>
-              {({ active }) => (
+              {() => (
                 <button
                   className={`flex Padding`}
                   onClick={() => {

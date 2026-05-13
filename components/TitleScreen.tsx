@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import LoginButton from "./users/LoginButton";
 
 export default function TitleScreen() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const t = useTranslations("home");
 
   return (

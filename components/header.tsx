@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import useAuth from "@hooks/useAuth";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "use-intl";
 import Language from "./language";
 import LoginButton from "./users/LoginButton";
 import LogoutButton from "./users/LogoutButton";

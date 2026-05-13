@@ -4,14 +4,13 @@ import { useState } from "react";
 import { loginRequest } from "@services/UserService";
 import { AuthenticationRequest, StatusMessage } from "@types";
 import useAuth from "@hooks/useAuth";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "use-intl";
 
 export default function UserLoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
   const router = useRouter();
-  const locale = useLocale();
   const { login } = useAuth();
   const t = useTranslations("UserLoginForm");
   const [showPassword, setShowPassword] = useState(false);

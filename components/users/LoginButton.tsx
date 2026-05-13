@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
-export default function () {
+export default function LoginButton() {
   const router = useRouter();
   const t = useTranslations("header");
 

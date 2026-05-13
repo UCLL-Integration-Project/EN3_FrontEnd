@@ -1,16 +1,9 @@
-import useAuth from "@hooks/useAuth";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
-export default function () {
+export default function RegisterButton() {
   const router = useRouter();
-  const { logout } = useAuth();
   const t = useTranslations("header");
-
-  const handleLogout = () => {
-    logout();
-    router.push(`/login`);
-  };
 
   const handleRegister = () => {
     router.push(`/signup`);
