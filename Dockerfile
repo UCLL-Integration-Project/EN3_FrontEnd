@@ -1,19 +1,6 @@
 # ============================================================
-# Stage 1 — deps
-# Install production dependencies only (cached layer)
-# ============================================================
-FROM node:18-alpine AS deps
-
-WORKDIR /usr/src/app
-
-# Copy manifest files first for better layer caching
-COPY package*.json ./
-
-RUN npm ci --omit=dev
-
-# ============================================================
-# Stage 2 — builder
-# Install ALL deps (incl. devDeps) and build the app
+# Stage 1 — builder
+# Install ALL deps and build the Next.js standalone bundle
 # ============================================================
 FROM node:18-alpine AS builder
 
@@ -25,15 +12,18 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# NEXT_PUBLIC_* vars must be available at BUILD time
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 # Build the Next.js production bundle
+# Requires: output: 'standalone' in next.config.js
 RUN npm run build
 
 # ============================================================
-# Stage 3 — runner  (final, smallest image)
-# Only the built output + prod deps, no source or devDeps
+# Stage 2 — runner  (final, smallest image)
+# Uses the self-contained standalone output — no node_modules
+# needed in the final image, no npm, just node + server.js
 # ============================================================
 FROM node:18-alpine AS runner
 
@@ -44,25 +34,24 @@ WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-# Copy production dependencies from deps stage
-COPY --from=deps /usr/src/app/node_modules ./node_modules
+# .next/standalone contains server.js + its own minimal node_modules
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/standalone ./
 
-# Copy built output from builder stage
-COPY --from=builder /usr/src/app/.next ./.next
-COPY --from=builder /usr/src/app/public ./public
-COPY --from=builder /usr/src/app/package.json ./package.json
+# Static assets must be copied separately on top of standalone
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/static ./.next/static
 
-# Set ownership to non-root user
-RUN chown -R appuser:appgroup /usr/src/app
+# Public folder (images, fonts, etc.)
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/public ./public
 
 USER appuser
 
 EXPOSE 3000
 
-# Health check — OKD/Kubernetes will use this to determine readiness
+# Health check — OKD/Kubernetes uses this for readiness/liveness
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD wget -qO- http://localhost:3000/ || exit 1
 
-# Start the production Next.js server
-CMD ["npm", "run", "start"]
+# Run the standalone server directly — no npm needed
+CMD ["node", "server.js"]
