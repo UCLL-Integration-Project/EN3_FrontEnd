@@ -1,0 +1,57 @@
+{
+  "general": {
+    "error": "An error has occurred. Please try again later."
+  },
+  "home": {
+    "welcome": "Welcome to CrossWave"
+  },
+  "header": {
+    "welcome": "Welcome!",
+    "nav": {
+      "home": "Home",
+      "login": "Login",
+      "logout": "Logout",
+      "register": "Register"
+    }
+  },
+  "UserLoginForm": {
+    "button": "Login",
+    "label": {
+      "email": "Email",
+      "password": "Password"
+    },
+    "validate": {
+      "error": " - Missing"
+    },
+    "error": {
+      "INVALID_CREDENTIALS": "Invalid username or password.",
+      "USERNAME_TAKEN": "This username is already taken.",
+      "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
+      "NETWORK_ERROR": "Unable to connect to the server."
+    },
+    "success": "Login successful. Redirecting..."
+  },
+  "UserSignupForm": {
+    "button": "Sign Up",
+    "label": {
+      "username": "Username",
+      "password": "Password",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "age": "Age"
+    },
+    "validate": {
+      "error": " - Missing or Invalid",
+      "weakPassword": " - Too short (min. 8 characters)"
+    },
+    "error": {
+      "USERNAME_TAKEN": "This username is already taken.",
+      "EMAIL_TAKEN": "This email is already in use.",
+      "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
+      "NETWORK_ERROR": "Unable to connect to the server."
+    },
+    "loginLink": "Already have an account? Log in",
+    "success": "Signup successful. Redirecting..."
+  }
+}
