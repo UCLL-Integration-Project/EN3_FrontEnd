@@ -10,7 +10,7 @@ import { useLocale, useTranslations } from "use-intl";
 export default function UserSettingsForm() {
   const router = useRouter();
   const locale = useLocale();
-  const { user, logout, updateUser } = useAuth();
+  const { user, isLoading, logout, updateUser } = useAuth();
   const t = useTranslations("UserSettingsForm");
 
   const [profile, setProfile] = useState<UpdateProfileInput>({ firstName: "", lastName: "", email: "" });
@@ -24,6 +24,7 @@ export default function UserSettingsForm() {
   const [logoutConfirm, setLogoutConfirm] = useState(false);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) {
       router.push(`/${locale}/login`);
       return;
@@ -37,7 +38,7 @@ export default function UserSettingsForm() {
         });
       })
       .catch(() => {});
-  }, []);
+  }, [isLoading]);
 
   const validateProfile = () => {
     const errs: Partial<UpdateProfileInput> = {};
