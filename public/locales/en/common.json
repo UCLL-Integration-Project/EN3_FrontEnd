@@ -3,7 +3,14 @@
     "error": "An error has occurred. Please try again later."
   },
   "home": {
-    "welcome": "Welcome to CrossWave"
+    "welcome": "Welcome to CrossWave",
+    "subtitle": "Stay connected with your class — anywhere, on the go.",
+    "loggedInAs": "Signed in as @{name}",
+    "signOut": "Sign out",
+    "cta": {
+      "getStarted": "Get started",
+      "haveAccount": "I already have an account"
+    }
   },
   "header": {
     "welcome": "Welcome!",
@@ -14,14 +21,22 @@
       "register": "Register"
     }
   },
+  "language": {
+    "chooseLanguage": "Choose language"
+  },
+  "common": {
+    "back": "Back"
+  },
   "UserLoginForm": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to continue.",
     "button": "Login",
     "label": {
       "email": "Email",
       "password": "Password"
     },
     "validate": {
-      "error": " - Missing"
+      "error": "Required"
     },
     "error": {
       "INVALID_CREDENTIALS": "Invalid username or password.",
@@ -29,21 +44,24 @@
       "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
       "NETWORK_ERROR": "Unable to connect to the server."
     },
-    "success": "Login successful. Redirecting..."
+    "success": "Login successful. Redirecting...",
+    "signupLink": "New here? Create an account"
   },
   "UserSignupForm": {
+    "title": "Create your account",
+    "subtitle": "Just a few quick details.",
     "button": "Sign Up",
     "label": {
       "username": "Username",
       "password": "Password",
-      "firstName": "First Name",
-      "lastName": "Last Name",
+      "firstName": "First name",
+      "lastName": "Last name",
       "email": "Email",
       "age": "Age"
     },
     "validate": {
-      "error": " - Missing or Invalid",
-      "weakPassword": " - Too short (min. 8 characters)"
+      "error": "Required or invalid",
+      "weakPassword": "Too short (min. 8 characters)"
     },
     "error": {
       "USERNAME_TAKEN": "This username is already taken.",
