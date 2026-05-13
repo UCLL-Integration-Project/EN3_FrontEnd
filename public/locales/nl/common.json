@@ -11,7 +11,8 @@
       "home": "Thuis",
       "login": "Inloggen",
       "logout": "Uitloggen",
-      "register": "Registreren"
+      "register": "Registreren",
+      "settings": "Instellingen"
     }
   },
   "UserLoginForm": {
@@ -30,6 +31,38 @@
       "NETWORK_ERROR": "Kan geen verbinding maken met de server."
     },
     "success": "Inloggen gelukt. Doorsturen..."
+  },
+  "UserSettingsForm": {
+    "title": "Instellingen",
+    "profileTitle": "Profiel",
+    "passwordTitle": "Wachtwoord wijzigen",
+    "accountTitle": "Account",
+    "saveButton": "Opslaan",
+    "logoutButton": "Uitloggen",
+    "logoutConfirm": "Weet je zeker dat je wilt uitloggen?",
+    "logoutConfirmButton": "Bevestigen",
+    "cancelButton": "Annuleren",
+    "profileSuccess": "Profiel succesvol bijgewerkt.",
+    "passwordSuccess": "Wachtwoord succesvol gewijzigd.",
+    "label": {
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "currentPassword": "Huidig wachtwoord",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmPassword": "Bevestig nieuw wachtwoord"
+    },
+    "validate": {
+      "error": " - Ontbreekt of ongeldig",
+      "weakPassword": " - Te kort (min. 8 tekens)",
+      "passwordMismatch": " - Wachtwoorden komen niet overeen"
+    },
+    "error": {
+      "EMAIL_TAKEN": "Dit e-mailadres is al in gebruik.",
+      "INVALID_CREDENTIALS": "Huidig wachtwoord is onjuist.",
+      "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
+      "NETWORK_ERROR": "Kan geen verbinding maken met de server."
+    }
   },
   "UserSignupForm": {
     "button": "Registreren",

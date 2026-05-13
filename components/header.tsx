@@ -4,8 +4,8 @@ import useAuth from "@hooks/useAuth";
 import { useLocale, useTranslations } from "use-intl";
 import Language from "./language";
 import LoginButton from "./users/LoginButton";
-import LogoutButton from "./users/LogoutButton";
 import RegisterButton from "./users/RegisterButton";
+import SettingsButton from "./users/SettingsButton";
 
 export default function Header() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function Header() {
         </div>
         <div className="flex Padding gap-3">
           {user ? (
-            <LogoutButton />
+            <SettingsButton />
           ) : (
             <>
               <LoginButton />
