@@ -50,5 +50,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
           push: false
           tags: en3-frontend:ci-${{ github.sha }}
