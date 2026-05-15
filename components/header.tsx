@@ -2,6 +2,13 @@
 import Link from "next/link";
 import { Waves } from "lucide-react";
 import { useLocale } from "use-intl";
+import { useRouter } from "next/navigation";
+import useAuth from "@hooks/useAuth";
+import { useLocale, useTranslations } from "use-intl";
+import Language from "./language";
+import LoginButton from "./users/LoginButton";
+import RegisterButton from "./users/RegisterButton";
+import SettingsButton from "./users/SettingsButton";
 
 export default function Header() {
   const locale = useLocale();
@@ -20,6 +27,29 @@ export default function Header() {
           CrossWave
         </span>
       </Link>
+    <header className="flex max-h-min border-b">
+      <div className="Wrapper Padding justify-between overflow-visible">
+        <div className="Center">
+          <button
+            onClick={() => {
+              handleHomePage();
+            }}
+          >
+            <h4>{user ? `Logged in as ${user.username}` : t("welcome")}</h4>
+          </button>
+        </div>
+        <div className="flex Padding gap-3">
+          {user ? (
+            <SettingsButton />
+          ) : (
+            <>
+              <LoginButton />
+              <RegisterButton />
+            </>
+          )}
+          <Language />
+        </div>
+      </div>
     </header>
   );
 }
