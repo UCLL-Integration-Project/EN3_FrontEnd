@@ -7,8 +7,14 @@ const handleResponse = async (response: Response): Promise<void> => {
   if (!response.ok) {
     try {
       const body = await response.json();
-      const code = body?.errors?.[0]?.code ?? "UNKNOWN_ERROR";
-      throw new Error(code);
+      
+      if (body?.errors && Array.isArray(body.errors)) {
+        const specificError = body.errors.find((e: any) => e.code === "EMAIL_TAKEN");
+        const code = specificError ? specificError.code : (body.errors[0]?.code ?? "UNKNOWN_ERROR");
+        throw new Error(code);
+      }
+      
+      throw new Error("UNKNOWN_ERROR");
     } catch (err) {
       if (err instanceof Error && err.message !== "UNKNOWN_ERROR") throw err;
       throw new Error("UNKNOWN_ERROR");
