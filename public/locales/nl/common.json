@@ -80,6 +80,22 @@
       "NETWORK_ERROR": "Kan geen verbinding maken met de server."
     }
   },
+  "ConnectionsPage": {
+    "title": "Connecties",
+    "addTitle": "Connectie toevoegen",
+    "addPlaceholder": "Gebruikersnaam",
+    "addButton": "Toevoegen",
+    "listTitle": "Mijn connecties",
+    "empty": "Je hebt nog geen connecties.",
+    "removeAriaLabel": "Verwijder connectie met {name}",
+    "error": {
+      "USER_NOT_FOUND": "Geen gebruiker gevonden met die gebruikersnaam.",
+      "ALREADY_CONNECTED": "Je bent al verbonden met deze gebruiker.",
+      "SELF_CONNECTION": "Je kunt jezelf niet als connectie toevoegen.",
+      "NETWORK_ERROR": "Kan geen verbinding maken met de server.",
+      "UNKNOWN_ERROR": "Er is iets misgegaan. Probeer het opnieuw."
+    }
+  },
   "UserSignupForm": {
     "title": "Maak je account",
     "subtitle": "Nog een paar snelle gegevens.",
