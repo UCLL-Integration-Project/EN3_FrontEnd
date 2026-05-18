@@ -3,7 +3,14 @@
     "error": "Er is een foutmelding, probeer later opnieuw."
   },
   "home": {
-    "welcome": "Welkom bij CrossWave"
+    "welcome": "Welkom bij CrossWave",
+    "subtitle": "Blijf in contact met je klas — overal, onderweg.",
+    "loggedInAs": "Aangemeld als @{name}",
+    "signOut": "Uitloggen",
+    "cta": {
+      "getStarted": "Aan de slag",
+      "haveAccount": "Ik heb al een account"
+    }
   },
   "header": {
     "welcome": "Welkom!",
@@ -11,17 +18,26 @@
       "home": "Thuis",
       "login": "Inloggen",
       "logout": "Uitloggen",
-      "register": "Registreren"
+      "register": "Registreren",
+      "settings": "Instellingen"
     }
   },
+  "language": {
+    "chooseLanguage": "Kies taal"
+  },
+  "common": {
+    "back": "Terug"
+  },
   "UserLoginForm": {
+    "title": "Welkom terug",
+    "subtitle": "Log in om verder te gaan.",
     "button": "Inloggen",
     "label": {
       "email": "Email",
       "password": "Wachtwoord"
     },
     "validate": {
-      "error": " - Ontbreekt"
+      "error": "Verplicht"
     },
     "error": {
       "INVALID_CREDENTIALS": "Ongeldige gebruikersnaam of wachtwoord.",
@@ -29,9 +45,44 @@
       "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
       "NETWORK_ERROR": "Kan geen verbinding maken met de server."
     },
-    "success": "Inloggen gelukt. Doorsturen..."
+    "success": "Inloggen gelukt. Doorsturen...",
+    "signupLink": "Nieuw hier? Maak een account"
+  },
+  "UserSettingsForm": {
+    "title": "Instellingen",
+    "profileTitle": "Profiel",
+    "passwordTitle": "Wachtwoord wijzigen",
+    "accountTitle": "Account",
+    "saveButton": "Opslaan",
+    "logoutButton": "Uitloggen",
+    "logoutConfirm": "Weet je zeker dat je wilt uitloggen?",
+    "logoutConfirmButton": "Bevestigen",
+    "cancelButton": "Annuleren",
+    "profileSuccess": "Profiel succesvol bijgewerkt.",
+    "passwordSuccess": "Wachtwoord succesvol gewijzigd.",
+    "label": {
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "currentPassword": "Huidig wachtwoord",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmPassword": "Bevestig nieuw wachtwoord"
+    },
+    "validate": {
+      "error": " - Ontbreekt of ongeldig",
+      "weakPassword": " - Te kort (min. 8 tekens)",
+      "passwordMismatch": " - Wachtwoorden komen niet overeen"
+    },
+    "error": {
+      "EMAIL_TAKEN": "Dit e-mailadres is al in gebruik.",
+      "INVALID_CREDENTIALS": "Huidig wachtwoord is onjuist.",
+      "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
+      "NETWORK_ERROR": "Kan geen verbinding maken met de server."
+    }
   },
   "UserSignupForm": {
+    "title": "Maak je account",
+    "subtitle": "Nog een paar snelle gegevens.",
     "button": "Registreren",
     "label": {
       "username": "Gebruikersnaam",
@@ -42,8 +93,8 @@
       "age": "Leeftijd"
     },
     "validate": {
-      "error": " - Ontbreekt of ongeldig",
-      "weakPassword": " - Te kort (min. 8 tekens)"
+      "error": "Verplicht of ongeldig",
+      "weakPassword": "Te kort (min. 8 tekens)"
     },
     "error": {
       "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",

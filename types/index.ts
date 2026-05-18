@@ -1,7 +1,9 @@
 export type AuthContextType = {
   user: User | null;
+  isLoading: boolean;
   login: (userData: User) => void;
   logout: () => void;
+  updateUser: (userData: Partial<User>) => void;
 };
 
 export type UserInput = {
@@ -57,4 +59,10 @@ export type AuthenticationResponse = {
 export type StatusMessage = {
   message: string;
   type: "error" | "success";
+};
+
+export type UpdateProfileInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
 };

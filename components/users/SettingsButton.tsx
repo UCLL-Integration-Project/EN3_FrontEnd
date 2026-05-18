@@ -1,30 +1,25 @@
-import useAuth from "@hooks/useAuth";
+"use client";
+
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
-export default function () {
+export default function SettingsButton() {
   const router = useRouter();
-  const { logout } = useAuth();
   const t = useTranslations("header");
-
-  const handleLogout = () => {
-    logout();
-    router.push(`/login`);
-  };
 
   return (
     <>
       <button
         onClick={() => {
-          handleLogout();
+          router.push(`/settings`);
         }}
-        aria-label="Log out"
+        aria-label="Settings"
         className="btn"
       >
         <span className="material-symbols-outlined" aria-hidden="true">
-          logout
+          settings
         </span>
-        <span>{t("nav.logout")}</span>
+        <span>{t("nav.settings")}</span>
       </button>
     </>
   );

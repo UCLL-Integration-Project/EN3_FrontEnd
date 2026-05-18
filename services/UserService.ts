@@ -1,4 +1,4 @@
-import { AuthenticationRequest, User } from "@types";
+import { AuthenticationRequest, UpdateProfileInput, User, UserResponse } from "@types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL is not defined");
@@ -101,6 +101,51 @@ export const changeWeightRequest = async (newValue: number): Promise<User> => {
     });
     await handleResponse(response);
     return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const getMyProfileRequest = async (): Promise<UserResponse> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me`, {
+      method: "GET",
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const updateProfileRequest = async (input: UpdateProfileInput): Promise<UserResponse> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const changePasswordRequest = async (currentPassword: string, newPassword: string): Promise<void> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/password`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ currentPassword, newPassword }),
+      credentials: "include",
+    });
+    await handleResponse(response);
   } catch (err) {
     if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
     throw err;
