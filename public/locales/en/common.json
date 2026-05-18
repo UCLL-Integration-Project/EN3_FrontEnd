@@ -80,6 +80,22 @@
       "NETWORK_ERROR": "Unable to connect to the server."
     }
   },
+  "ConnectionsPage": {
+    "title": "Connections",
+    "addTitle": "Add connection",
+    "addPlaceholder": "Username",
+    "addButton": "Add",
+    "listTitle": "My connections",
+    "empty": "You have no connections yet.",
+    "removeAriaLabel": "Remove connection with {name}",
+    "error": {
+      "USER_NOT_FOUND": "No user found with that username.",
+      "ALREADY_CONNECTED": "You are already connected with this user.",
+      "SELF_CONNECTION": "You cannot add yourself as a connection.",
+      "NETWORK_ERROR": "Unable to connect to the server.",
+      "UNKNOWN_ERROR": "Something went wrong. Please try again."
+    }
+  },
   "UserSignupForm": {
     "title": "Create your account",
     "subtitle": "Just a few quick details.",
