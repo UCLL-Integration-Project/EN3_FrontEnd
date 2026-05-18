@@ -2,6 +2,12 @@
   "general": {
     "error": "Er is een foutmelding, probeer later opnieuw."
   },
+  "notFound": {
+    "eyebrow": "Fout 404",
+    "title": "Signaal verloren",
+    "subtitle": "We konden die pagina niet vinden. Misschien is ze verplaatst of werkt de link niet meer.",
+    "home": "Terug naar start"
+  },
   "home": {
     "welcome": "Welkom bij CrossWave",
     "subtitle": "Blijf in contact met je klas — overal, onderweg.",
@@ -10,6 +16,24 @@
     "cta": {
       "getStarted": "Aan de slag",
       "haveAccount": "Ik heb al een account"
+    },
+    "dashboard": {
+      "greetingMorning": "Goedemorgen",
+      "greetingAfternoon": "Goedemiddag",
+      "greetingEvening": "Goedenavond",
+      "companionTitle": "Jouw metgezel",
+      "companionConnected": "Verbonden",
+      "companionManage": "Tik om te beheren",
+      "actionsTitle": "Snelle acties",
+      "actionSettings": "Instellingen",
+      "actionHelp": "Help & ondersteuning",
+      "activityTitle": "Recente activiteit",
+      "activitySynced": "Metgezel gesynchroniseerd",
+      "activityGoal": "Dagelijkse stapdoel bereikt",
+      "activityFirmware": "Firmware bijgewerkt naar 2.4.0",
+      "timeNow": "Zojuist",
+      "timeMinutes": "{count}m geleden",
+      "timeHours": "{count}u geleden"
     }
   },
   "header": {

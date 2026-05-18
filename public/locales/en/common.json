@@ -2,6 +2,12 @@
   "general": {
     "error": "An error has occurred. Please try again later."
   },
+  "notFound": {
+    "eyebrow": "Error 404",
+    "title": "Lost the signal",
+    "subtitle": "We couldn't find that page. It may have moved, or the link is broken.",
+    "home": "Back to home"
+  },
   "home": {
     "welcome": "Welcome to CrossWave",
     "subtitle": "Stay connected with your class — anywhere, on the go.",
@@ -10,6 +16,24 @@
     "cta": {
       "getStarted": "Get started",
       "haveAccount": "I already have an account"
+    },
+    "dashboard": {
+      "greetingMorning": "Good morning",
+      "greetingAfternoon": "Good afternoon",
+      "greetingEvening": "Good evening",
+      "companionTitle": "Your companion",
+      "companionConnected": "Connected",
+      "companionManage": "Tap to manage",
+      "actionsTitle": "Quick actions",
+      "actionSettings": "Settings",
+      "actionHelp": "Help & support",
+      "activityTitle": "Recent activity",
+      "activitySynced": "Companion synced",
+      "activityGoal": "Daily step goal reached",
+      "activityFirmware": "Firmware updated to 2.4.0",
+      "timeNow": "Just now",
+      "timeMinutes": "{count}m ago",
+      "timeHours": "{count}h ago"
     }
   },
   "header": {
