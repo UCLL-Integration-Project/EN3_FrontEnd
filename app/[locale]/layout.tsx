@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Header from "@components/header";
 import { AuthProvider } from "@context/AuthContext";
 import "@styles/globals.css";
 import { NextIntlClientProvider } from "next-intl";
@@ -43,7 +42,6 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <div className="app-frame">
-              <Header />
               <main className="app-main no-scrollbar">{children}</main>
             </div>
           </AuthProvider>
