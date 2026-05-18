@@ -14,7 +14,13 @@ export default function ProfilePage() {
   const locale = useLocale();
   const { user, isLoading } = useAuth();
 
-  const [profile, setProfile] = useState<UpdateProfileInput>({ firstName: "", lastName: "", email: "" });
+  const [profile, setProfile] = useState<UpdateProfileInput>({ 
+    firstName: "", 
+    lastName: "", 
+    email: "", 
+    username: "", 
+    age: 0 
+  });
 
   useEffect(() => {
     if (isLoading) return;
@@ -28,6 +34,8 @@ export default function ProfilePage() {
           firstName: data.firstName ?? "",
           lastName: data.lastName ?? "",
           email: data.email ?? "",
+          username: data.username ?? "",
+          age: data.age ?? 0,
         });
       })
       .catch(() => {});

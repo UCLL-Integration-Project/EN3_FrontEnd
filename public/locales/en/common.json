@@ -61,9 +61,11 @@
     "profileSuccess": "Profile updated successfully.",
     "passwordSuccess": "Password changed successfully.",
     "label": {
+      "username": "Username",
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
+      "age": "Age",
       "currentPassword": "Current Password",
       "newPassword": "New Password",
       "confirmPassword": "Confirm New Password"
@@ -74,6 +76,7 @@
       "passwordMismatch": " - Passwords do not match"
     },
     "error": {
+      "USERNAME_TAKEN": "This username is already taken.",
       "EMAIL_TAKEN": "This email is already in use.",
       "INVALID_CREDENTIALS": "Current password is incorrect.",
       "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
