@@ -5,6 +5,7 @@ import { updateProfileRequest } from "@services/UserService";
 import { StatusMessage, UpdateProfileInput } from "@types";
 import useAuth from "@hooks/useAuth";
 import { useTranslations } from "use-intl";
+import { User as UserIcon, IdCard, Mail, AlertCircle, CheckCircle2 } from "lucide-react";
 
 type Props = {
   initialProfile: UpdateProfileInput;
@@ -50,69 +51,90 @@ export default function ProfileForm({ initialProfile }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex Padding Border Gap flex-col">
+    <form onSubmit={handleSubmit} className="card flex flex-col gap-4" noValidate>
       <h5>{t("profileTitle")}</h5>
 
-      <div className="Wrapper flex-col">
-        <div className="flex gap-1">
-          <label htmlFor="firstNameInput">{t("label.firstName")}</label>
-          <div className="min-h-6 text-red-500">{errors.firstName || ""}</div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="field">
+          <label htmlFor="firstNameInput" className="field-label">
+            {t("label.firstName")}
+          </label>
+          <div className="field-control">
+            <UserIcon size={18} className="text-ink-400" aria-hidden="true" />
+            <input
+              id="firstNameInput"
+              type="text"
+              autoComplete="given-name"
+              autoCapitalize="words"
+              autoCorrect="off"
+              value={profile.firstName}
+              onChange={(e) => setProfile((p) => ({ ...p, firstName: e.target.value }))}
+              className="field-input"
+            />
+          </div>
+          <div className="field-error">{errors.firstName || ""}</div>
         </div>
-        <div className="input-wrapper">
-          <input
-            id="firstNameInput"
-            type="text"
-            value={profile.firstName}
-            onChange={(e) => setProfile((p) => ({ ...p, firstName: e.target.value }))}
-            className="input"
-          />
+
+        <div className="field">
+          <label htmlFor="lastNameInput" className="field-label">
+            {t("label.lastName")}
+          </label>
+          <div className="field-control">
+            <IdCard size={18} className="text-ink-400" aria-hidden="true" />
+            <input
+              id="lastNameInput"
+              type="text"
+              autoComplete="family-name"
+              autoCapitalize="words"
+              autoCorrect="off"
+              value={profile.lastName}
+              onChange={(e) => setProfile((p) => ({ ...p, lastName: e.target.value }))}
+              className="field-input"
+            />
+          </div>
+          <div className="field-error">{errors.lastName || ""}</div>
         </div>
       </div>
 
-      <div className="Wrapper flex-col">
-        <div className="flex gap-1">
-          <label htmlFor="lastNameInput">{t("label.lastName")}</label>
-          <div className="min-h-6 text-red-500">{errors.lastName || ""}</div>
-        </div>
-        <div className="input-wrapper">
-          <input
-            id="lastNameInput"
-            type="text"
-            value={profile.lastName}
-            onChange={(e) => setProfile((p) => ({ ...p, lastName: e.target.value }))}
-            className="input"
-          />
-        </div>
-      </div>
-
-      <div className="Wrapper flex-col">
-        <div className="flex gap-1">
-          <label htmlFor="emailInput">{t("label.email")}</label>
-          <div className="min-h-6 text-red-500">{errors.email || ""}</div>
-        </div>
-        <div className="input-wrapper">
+      <div className="field">
+        <label htmlFor="emailInput" className="field-label">
+          {t("label.email")}
+        </label>
+        <div className="field-control">
+          <Mail size={18} className="text-ink-400" aria-hidden="true" />
           <input
             id="emailInput"
             type="email"
+            autoComplete="email"
+            inputMode="email"
+            autoCapitalize="none"
+            autoCorrect="off"
             value={profile.email}
             onChange={(e) => setProfile((p) => ({ ...p, email: e.target.value }))}
-            className="input"
+            className="field-input"
           />
         </div>
+        <div className="field-error">{errors.email || ""}</div>
       </div>
 
-      <div className="Wrapper Gap items-center">
-        <button className="btn" type="submit">
-          {t("saveButton")}
-        </button>
-        <ul>
+      {status.length > 0 && (
+        <ul className="flex flex-col gap-2">
           {status.map(({ message, type }, i) => (
-            <li key={i} className={type === "error" ? "text-red-500" : "text-green-500"}>
-              {message}
+            <li key={i} className={`status ${type === "error" ? "status-error" : "status-success"}`}>
+              {type === "error" ? (
+                <AlertCircle size={18} aria-hidden="true" />
+              ) : (
+                <CheckCircle2 size={18} aria-hidden="true" />
+              )}
+              <span>{message}</span>
             </li>
           ))}
         </ul>
-      </div>
+      )}
+
+      <button type="submit" className="btn-cta">
+        {t("saveButton")}
+      </button>
     </form>
   );
 }
