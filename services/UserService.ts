@@ -151,3 +151,43 @@ export const changePasswordRequest = async (currentPassword: string, newPassword
     throw err;
   }
 };
+
+export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/connections`, {
+      method: "GET",
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const addConnectionRequest = async (username: string): Promise<void> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/connections/${encodeURIComponent(username)}`, {
+      method: "POST",
+      credentials: "include",
+    });
+    await handleResponse(response);
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const removeConnectionRequest = async (username: string): Promise<void> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/connections/${encodeURIComponent(username)}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    await handleResponse(response);
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
