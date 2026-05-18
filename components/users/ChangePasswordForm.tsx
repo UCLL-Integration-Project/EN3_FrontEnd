@@ -4,6 +4,7 @@ import { useState } from "react";
 import { changePasswordRequest } from "@services/UserService";
 import { StatusMessage } from "@types";
 import { useTranslations } from "use-intl";
+import { Lock, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export default function ChangePasswordForm() {
   const t = useTranslations("UserSettingsForm");
@@ -11,6 +12,9 @@ export default function ChangePasswordForm() {
   const [passwords, setPasswords] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [errors, setErrors] = useState<Partial<typeof passwords>>({});
   const [status, setStatus] = useState<StatusMessage[]>([]);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const validate = () => {
     const errs: Partial<typeof passwords> = {};
@@ -48,69 +52,105 @@ export default function ChangePasswordForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex Padding Border Gap flex-col">
+    <form onSubmit={handleSubmit} className="card flex flex-col gap-4" noValidate>
       <h5>{t("passwordTitle")}</h5>
 
-      <div className="Wrapper flex-col">
-        <div className="flex gap-1">
-          <label htmlFor="currentPasswordInput">{t("label.currentPassword")}</label>
-          <div className="min-h-6 text-red-500">{errors.currentPassword || ""}</div>
-        </div>
-        <div className="input-wrapper">
+      <div className="field">
+        <label htmlFor="currentPasswordInput" className="field-label">
+          {t("label.currentPassword")}
+        </label>
+        <div className="field-control">
+          <Lock size={18} className="text-ink-400" aria-hidden="true" />
           <input
             id="currentPasswordInput"
-            type="password"
+            type={showCurrent ? "text" : "password"}
+            autoComplete="current-password"
             value={passwords.currentPassword}
             onChange={(e) => setPasswords((p) => ({ ...p, currentPassword: e.target.value }))}
-            className="input"
+            className="field-input"
           />
+          <button
+            type="button"
+            onClick={() => setShowCurrent((v) => !v)}
+            aria-label={showCurrent ? "Hide password" : "Show password"}
+            className="icon-btn h-9 w-9 -mr-2"
+          >
+            {showCurrent ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+          </button>
         </div>
+        <div className="field-error">{errors.currentPassword || ""}</div>
       </div>
 
-      <div className="Wrapper flex-col">
-        <div className="flex gap-1">
-          <label htmlFor="newPasswordInput">{t("label.newPassword")}</label>
-          <div className="min-h-6 text-red-500">{errors.newPassword || ""}</div>
-        </div>
-        <div className="input-wrapper">
+      <div className="field">
+        <label htmlFor="newPasswordInput" className="field-label">
+          {t("label.newPassword")}
+        </label>
+        <div className="field-control">
+          <Lock size={18} className="text-ink-400" aria-hidden="true" />
           <input
             id="newPasswordInput"
-            type="password"
+            type={showNew ? "text" : "password"}
+            autoComplete="new-password"
             value={passwords.newPassword}
             onChange={(e) => setPasswords((p) => ({ ...p, newPassword: e.target.value }))}
-            className="input"
+            className="field-input"
           />
+          <button
+            type="button"
+            onClick={() => setShowNew((v) => !v)}
+            aria-label={showNew ? "Hide password" : "Show password"}
+            className="icon-btn h-9 w-9 -mr-2"
+          >
+            {showNew ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+          </button>
         </div>
+        <div className="field-error">{errors.newPassword || ""}</div>
       </div>
 
-      <div className="Wrapper flex-col">
-        <div className="flex gap-1">
-          <label htmlFor="confirmPasswordInput">{t("label.confirmPassword")}</label>
-          <div className="min-h-6 text-red-500">{errors.confirmPassword || ""}</div>
-        </div>
-        <div className="input-wrapper">
+      <div className="field">
+        <label htmlFor="confirmPasswordInput" className="field-label">
+          {t("label.confirmPassword")}
+        </label>
+        <div className="field-control">
+          <Lock size={18} className="text-ink-400" aria-hidden="true" />
           <input
             id="confirmPasswordInput"
-            type="password"
+            type={showConfirm ? "text" : "password"}
+            autoComplete="new-password"
             value={passwords.confirmPassword}
             onChange={(e) => setPasswords((p) => ({ ...p, confirmPassword: e.target.value }))}
-            className="input"
+            className="field-input"
           />
+          <button
+            type="button"
+            onClick={() => setShowConfirm((v) => !v)}
+            aria-label={showConfirm ? "Hide password" : "Show password"}
+            className="icon-btn h-9 w-9 -mr-2"
+          >
+            {showConfirm ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+          </button>
         </div>
+        <div className="field-error">{errors.confirmPassword || ""}</div>
       </div>
 
-      <div className="Wrapper Gap items-center">
-        <button className="btn" type="submit">
-          {t("saveButton")}
-        </button>
-        <ul>
+      {status.length > 0 && (
+        <ul className="flex flex-col gap-2">
           {status.map(({ message, type }, i) => (
-            <li key={i} className={type === "error" ? "text-red-500" : "text-green-500"}>
-              {message}
+            <li key={i} className={`status ${type === "error" ? "status-error" : "status-success"}`}>
+              {type === "error" ? (
+                <AlertCircle size={18} aria-hidden="true" />
+              ) : (
+                <CheckCircle2 size={18} aria-hidden="true" />
+              )}
+              <span>{message}</span>
             </li>
           ))}
         </ul>
-      </div>
+      )}
+
+      <button type="submit" className="btn-cta">
+        {t("saveButton")}
+      </button>
     </form>
   );
 }
