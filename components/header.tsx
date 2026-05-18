@@ -41,7 +41,7 @@ export default function Header() {
           className="tap rounded-pill px-3 py-1 active:bg-ink-100"
         >
           <h4 className="truncate text-center">
-            {user ? `Logged in as ${user.username}` : t("welcome")}
+            {user ? t("loggedInAs", { name: user.firstName ?? "" }) : t("welcome")}
           </h4>
         </button>
       </div>
