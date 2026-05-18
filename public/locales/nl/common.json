@@ -99,6 +99,23 @@
       "UNKNOWN_ERROR": "Er is iets misgegaan. Probeer het opnieuw."
     }
   },
+  "social": {
+    "about": "Over",
+    "connections": "Connecties",
+    "activity": "Activiteit",
+    "noActivity": "Geen recente activiteit om weer te geven.",
+    "editProfile": "Profiel bewerken",
+    "editProfileDetails": "Profielgegevens bewerken",
+    "connect": "Connecteren",
+    "connected": "Geconnecteerd",
+    "noBio": "Nog geen bio.",
+    "noBioSelf": "Nog geen bio. Vertel de wereld wie je bent.",
+    "publicProfile": "Publiek profiel",
+    "accountDetails": "Accountgegevens",
+    "bioPlaceholder": "Vertel ons iets over jezelf...",
+    "avatarUrl": "Avatar URL",
+    "bannerUrl": "Banner URL"
+  },
   "UserSignupForm": {
     "title": "Maak je account",
     "subtitle": "Nog een paar snelle gegevens.",

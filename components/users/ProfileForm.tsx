@@ -5,15 +5,17 @@ import { updateProfileRequest } from "@services/UserService";
 import { StatusMessage, UpdateProfileInput } from "@types";
 import useAuth from "@hooks/useAuth";
 import { useTranslations } from "use-intl";
-import { User as UserIcon, IdCard, Mail, AlertCircle, CheckCircle2 } from "lucide-react";
 
 type Props = {
   initialProfile: UpdateProfileInput;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 };
 
-export default function ProfileForm({ initialProfile }: Props) {
+export default function ProfileForm({ initialProfile, onSuccess, onCancel }: Props) {
   const { updateUser } = useAuth();
   const t = useTranslations("UserSettingsForm");
+  const ts = useTranslations("social");
 
   const [profile, setProfile] = useState<UpdateProfileInput>(initialProfile);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -30,6 +32,7 @@ export default function ProfileForm({ initialProfile }: Props) {
     if (!profile.email.trim() || !/^\S+@\S+\.\S+$/.test(profile.email)) errs.email = t("validate.error");
     if (!profile.username.trim()) errs.username = t("validate.error");
     if (profile.age === undefined || profile.age <= 0) errs.age = t("validate.error");
+    if (profile.bio && profile.bio.length > 200) errs.bio = "Bio is too long (max 200 chars)";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -47,9 +50,15 @@ export default function ProfileForm({ initialProfile }: Props) {
         lastName: updated.lastName, 
         email: updated.email,
         username: updated.username,
-        age: updated.age
+        age: updated.age,
+        bio: updated.bio,
+        avatarUrl: updated.avatarUrl,
+        bannerUrl: updated.bannerUrl
       });
       setStatus([{ message: t("profileSuccess"), type: "success" }]);
+      if (onSuccess) {
+        setTimeout(onSuccess, 800);
+      }
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["EMAIL_TAKEN", "USERNAME_TAKEN", "NETWORK_ERROR"];
@@ -59,8 +68,56 @@ export default function ProfileForm({ initialProfile }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex min-h-full flex-col">
+    <form onSubmit={handleSubmit} className="flex flex-col pb-24">
       <div className="flex flex-col gap-4 mt-2">
+        <h5 className="px-1 text-ink-500">{ts("publicProfile")}</h5>
+        
+        <div className="field">
+          <label htmlFor="bioInput" className="field-label">{ts("about")}</label>
+          <div className="field-control h-auto py-3">
+            <textarea
+              id="bioInput"
+              rows={3}
+              value={profile.bio || ""}
+              onChange={(e) => setProfile((p) => ({ ...p, bio: e.target.value }))}
+              className="field-input resize-none"
+              placeholder={ts("bioPlaceholder")}
+            />
+          </div>
+          <div className="field-error">{errors.bio || ""}</div>
+        </div>
+
+        <div className="field">
+          <label htmlFor="avatarUrlInput" className="field-label">{ts("avatarUrl")}</label>
+          <div className="field-control">
+            <input
+              id="avatarUrlInput"
+              type="text"
+              value={profile.avatarUrl || ""}
+              onChange={(e) => setProfile((p) => ({ ...p, avatarUrl: e.target.value }))}
+              className="field-input"
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        <div className="field">
+          <label htmlFor="bannerUrlInput" className="field-label">{ts("bannerUrl")}</label>
+          <div className="field-control">
+            <input
+              id="bannerUrlInput"
+              type="text"
+              value={profile.bannerUrl || ""}
+              onChange={(e) => setProfile((p) => ({ ...p, bannerUrl: e.target.value }))}
+              className="field-input"
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        <hr className="my-2 border-ink-100" />
+        <h5 className="px-1 text-ink-500">{ts("accountDetails")}</h5>
+
         <div className="field">
           <label htmlFor="usernameInput" className="field-label">{t("label.username") || "Username"}</label>
           <div className="field-control">
@@ -137,14 +194,11 @@ export default function ProfileForm({ initialProfile }: Props) {
           </div>
           <div className="field-error">{errors.age || ""}</div>
         </div>
-        <div className="field-error">{errors.email || ""}</div>
       </div>
 
-      <div className="flex-1" />
-
-      <div className="action-dock">
+      <div className="action-dock gap-3 flex flex-col sm:flex-row">
         {status.length > 0 && (
-          <div className="mb-4 flex flex-col gap-2">
+          <div className="mb-2 flex flex-col gap-2">
             {status.map(({ message, type }, i) => (
               <div key={i} className={`status ${type === "error" ? "status-error" : "status-success"}`}>
                 {message}
@@ -152,9 +206,20 @@ export default function ProfileForm({ initialProfile }: Props) {
             ))}
           </div>
         )}
-        <button className="btn-cta" type="submit">
-          {t("saveButton")}
-        </button>
+        <div className="flex gap-3 w-full">
+          {onCancel && (
+            <button 
+              type="button" 
+              onClick={onCancel}
+              className="btn-ghost flex-1"
+            >
+              {t("cancelButton")}
+            </button>
+          )}
+          <button className="btn-cta flex-[2]" type="submit">
+            {t("saveButton")}
+          </button>
+        </div>
       </div>
     </form>
   );
