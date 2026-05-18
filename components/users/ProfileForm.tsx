@@ -5,6 +5,7 @@ import { updateProfileRequest } from "@services/UserService";
 import { StatusMessage, UpdateProfileInput } from "@types";
 import useAuth from "@hooks/useAuth";
 import { useTranslations } from "use-intl";
+import { User as UserIcon, IdCard, Mail, AlertCircle, CheckCircle2 } from "lucide-react";
 
 type Props = {
   initialProfile: UpdateProfileInput;
@@ -136,6 +137,7 @@ export default function ProfileForm({ initialProfile }: Props) {
           </div>
           <div className="field-error">{errors.age || ""}</div>
         </div>
+        <div className="field-error">{errors.email || ""}</div>
       </div>
 
       <div className="flex-1" />

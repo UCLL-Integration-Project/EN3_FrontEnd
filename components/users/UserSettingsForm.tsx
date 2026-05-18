@@ -9,6 +9,7 @@ import { useLocale, useTranslations } from "use-intl";
 import ProfileForm from "@components/users/ProfileForm";
 import ChangePasswordForm from "@components/users/ChangePasswordForm";
 import LogoutSection from "@components/users/LogoutSection";
+import BackButton from "@components/BackButton";
 
 export default function UserSettingsForm() {
   const router = useRouter();
@@ -36,11 +37,18 @@ export default function UserSettingsForm() {
   }, [isLoading]);
 
   return (
-    <div className="Wrapper Padding Col overflow-y-auto">
-      <h3>{t("title")}</h3>
-      <ProfileForm initialProfile={profile} />
-      <ChangePasswordForm />
-      <LogoutSection />
-    </div>
+    <section className="app-screen">
+      <div className="pb-2">
+        <BackButton />
+      </div>
+      <header className="flex flex-col gap-1 pt-2 pb-5">
+        <h1>{t("title")}</h1>
+      </header>
+      <div className="flex flex-col gap-4 pb-8">
+        <ProfileForm initialProfile={profile} />
+        <ChangePasswordForm />
+        <LogoutSection />
+      </div>
+    </section>
   );
 }
