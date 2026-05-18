@@ -8,6 +8,7 @@ import useAuth from "@hooks/useAuth";
 import { useLocale, useTranslations } from "use-intl";
 import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
 import BackButton from "@components/BackButton";
+import { sanitizeReturnPath } from "@components/auth/returnUrl";
 
 export default function UserLoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -52,7 +53,11 @@ export default function UserLoginForm() {
       const loggedInUser = await loginRequest(authRequest);
       setStatusMessages([{ message: t("success"), type: "success" }]);
       login(loggedInUser);
-      setTimeout(() => router.push(`/`), 500);
+      // Return to the page the user originally wanted, else home.
+      // replace() so the back button can't return to /login after signing in.
+      const next = new URLSearchParams(window.location.search).get("next");
+      const destination = sanitizeReturnPath(next, `/${locale}`);
+      setTimeout(() => router.replace(destination), 500);
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["INVALID_CREDENTIALS", "USERNAME_TAKEN", "NETWORK_ERROR"];

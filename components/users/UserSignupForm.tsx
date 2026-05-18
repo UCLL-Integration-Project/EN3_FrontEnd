@@ -20,6 +20,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 import BackButton from "@components/BackButton";
+import { sanitizeReturnPath } from "@components/auth/returnUrl";
 
 type FieldKey = "username" | "firstName" | "lastName" | "email" | "age" | "password";
 
@@ -101,7 +102,11 @@ export default function UserSignupForm() {
       const newUser = await signupRequest(userInput);
       setStatusMessages([{ message: t("success"), type: "success" }]);
       login(newUser);
-      setTimeout(() => router.push(`/`), 500);
+      // Return to the page the user originally wanted, else home.
+      // replace() so the back button can't return to /signup after joining.
+      const next = new URLSearchParams(window.location.search).get("next");
+      const destination = sanitizeReturnPath(next, `/${locale}`);
+      setTimeout(() => router.replace(destination), 500);
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["USERNAME_TAKEN", "EMAIL_TAKEN", "NETWORK_ERROR"];
