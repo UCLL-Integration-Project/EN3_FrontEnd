@@ -61,9 +61,11 @@
     "profileSuccess": "Profiel succesvol bijgewerkt.",
     "passwordSuccess": "Wachtwoord succesvol gewijzigd.",
     "label": {
+      "username": "Gebruikersnaam",
       "firstName": "Voornaam",
       "lastName": "Achternaam",
       "email": "E-mail",
+      "age": "Leeftijd",
       "currentPassword": "Huidig wachtwoord",
       "newPassword": "Nieuw wachtwoord",
       "confirmPassword": "Bevestig nieuw wachtwoord"
@@ -74,6 +76,7 @@
       "passwordMismatch": " - Wachtwoorden komen niet overeen"
     },
     "error": {
+      "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",
       "EMAIL_TAKEN": "Dit e-mailadres is al in gebruik.",
       "INVALID_CREDENTIALS": "Huidig wachtwoord is onjuist.",
       "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
