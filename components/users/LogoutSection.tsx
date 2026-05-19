@@ -14,9 +14,10 @@ export default function LogoutSection() {
 
   const [logoutConfirm, setLogoutConfirm] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    router.push(`/${locale}/login`);
+  const handleLogout = async () => {
+    await logout();
+    // replace() so the back button can't return into the app after logout.
+    router.replace(`/${locale}/login`);
   };
 
   return (

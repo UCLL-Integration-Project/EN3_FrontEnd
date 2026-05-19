@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@context/AuthContext";
+import { DeviceProvider } from "@context/DeviceContext";
 import "@styles/globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -66,9 +67,11 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
-            <div className="app-frame">
-              <main className="app-main no-scrollbar">{children}</main>
-            </div>
+            <DeviceProvider>
+              <div className="app-frame">
+                <main className="app-main no-scrollbar">{children}</main>
+              </div>
+            </DeviceProvider>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

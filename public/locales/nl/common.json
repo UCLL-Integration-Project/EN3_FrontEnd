@@ -2,6 +2,12 @@
   "general": {
     "error": "Er is een foutmelding, probeer later opnieuw."
   },
+  "notFound": {
+    "eyebrow": "Fout 404",
+    "title": "Signaal verloren",
+    "subtitle": "We konden die pagina niet vinden. Misschien is ze verplaatst of werkt de link niet meer.",
+    "home": "Terug naar start"
+  },
   "home": {
     "welcome": "Welkom bij CrossWave",
     "subtitle": "Blijf in contact met je klas — overal, onderweg.",
@@ -10,6 +16,25 @@
     "cta": {
       "getStarted": "Aan de slag",
       "haveAccount": "Ik heb al een account"
+    },
+    "dashboard": {
+      "greetingMorning": "Goedemorgen",
+      "greetingAfternoon": "Goedemiddag",
+      "greetingEvening": "Goedenavond",
+      "companionTitle": "Jouw metgezel",
+      "companionConnected": "Verbonden",
+      "companionManage": "Tik om te beheren",
+      "actionsTitle": "Snelle acties",
+      "actionSettings": "Instellingen",
+      "actionHelp": "Help & ondersteuning",
+      "activityTitle": "Recente activiteit",
+      "activitySynced": "Metgezel gesynchroniseerd",
+      "activityGoal": "Dagelijkse stapdoel bereikt",
+      "activityFirmware": "Firmware bijgewerkt naar 2.4.0",
+      "timeNow": "Zojuist",
+      "timeMinutes": "{count}m geleden",
+      "timeHours": "{count}u geleden",
+      "fallbackName": "daar"
     }
   },
   "header": {
@@ -124,5 +149,92 @@
     },
     "loginLink": "Heb je al een account? Inloggen",
     "success": "Registratie gelukt. Doorsturen..."
+  },
+  "device": {
+    "defaultName": "Mijn metgezel",
+    "common": {
+      "back": "Terug"
+    },
+    "setup": {
+      "eyebrow": "Apparaat instellen",
+      "stepScan": "Scannen",
+      "stepPair": "Koppelen",
+      "stepDone": "Klaar",
+      "introTitle": "Koppel je metgezel",
+      "introBody": "CrossWave werkt met één gekoppelde metgezel per account. Koppel die van jou via Bluetooth om de app te gebruiken.",
+      "prereqTitle": "Voor je begint",
+      "prereq1": "Je metgezel staat aan",
+      "prereq2": "Hij ligt binnen handbereik van deze telefoon",
+      "prereq3": "Bluetooth staat aan op deze telefoon",
+      "startScan": "Begin met scannen",
+      "scanningTitle": "In de buurt zoeken…",
+      "scanningBody": "Houd je metgezel dichtbij. Tik op een apparaat om te koppelen.",
+      "scanningMore": "Scannen…",
+      "rescanHint": "Zie je je apparaat niet? Breng het dichterbij en scan opnieuw.",
+      "rescan": "Opnieuw scannen",
+      "connectingTitle": "Verbinden…",
+      "connectingBody": "Koppelen met {name}",
+      "confirmTitle": "Bevestig de code",
+      "confirmBody": "Controleer of deze code overeenkomt met de code op <strong>{name}</strong>.",
+      "encrypted": "Versleutelde Bluetooth-koppeling",
+      "codesMatch": "Codes komen overeen — koppelen",
+      "codesDontMatch": "Codes komen niet overeen",
+      "doneTitle": "Je bent helemaal klaar",
+      "doneBody": "{name} is gekoppeld en klaar. Geef het een naam die je herkent.",
+      "nameLabel": "Apparaatnaam",
+      "goToDevice": "Naar apparaat"
+    },
+    "manage": {
+      "title": "Metgezel",
+      "connected": "Verbonden",
+      "noteNameUpdated": "Apparaatnaam bijgewerkt",
+      "noteSyncComplete": "Synchronisatie voltooid",
+      "noteBuzzed": "Je metgezel trilde",
+      "noteFirmwareUpdated": "Bijgewerkt naar firmware {version}",
+      "namePlaceholder": "Apparaatnaam",
+      "saveName": "Naam opslaan",
+      "bluetooth": "Bluetooth",
+      "signalStrong": "Sterk",
+      "lastSyncRecent": "2 min geleden",
+      "lastSyncJustNow": "zojuist",
+      "battery": "Batterij",
+      "charging": "Aan het opladen",
+      "batteryRemaining": "≈ 2 dagen resterend",
+      "syncNow": "Nu synchroniseren",
+      "syncing": "Synchroniseren…",
+      "identify": "Identificeren",
+      "identifying": "Trillen…",
+      "liveReadings": "Live metingen",
+      "readingHeartRate": "Hartslag",
+      "readingSteps": "Vandaag",
+      "readingSleep": "Laatste slaap",
+      "unitSteps": "stappen",
+      "firmware": "Firmware",
+      "firmwareUpToDate": "Up-to-date",
+      "firmwareVersion": "Firmware {version}",
+      "firmwareUpdateAvailable": "Update beschikbaar",
+      "firmwareInstalling": "Installeren… {progress}% — houd het apparaat dichtbij",
+      "firmwareInstall": "Update installeren",
+      "deviceInfo": "Apparaatinfo",
+      "infoModel": "Model",
+      "infoSerial": "Serienummer",
+      "infoMac": "MAC-adres",
+      "infoPaired": "Gekoppeld sinds",
+      "preferences": "Voorkeuren",
+      "prefs": {
+        "autoConnect": { "label": "Automatisch verbinden", "hint": "Opnieuw verbinden indien in bereik" },
+        "backgroundSync": { "label": "Synchroniseren op achtergrond", "hint": "Houd metingen actueel" },
+        "notifications": { "label": "Pushmeldingen", "hint": "Meldingen van je metgezel" },
+        "haptics": { "label": "Trilmeldingen", "hint": "Trillen op het apparaat" },
+        "doNotDisturb": { "label": "Niet storen", "hint": "Demp meldingen 's nachts" }
+      },
+      "forget": "Dit apparaat vergeten",
+      "dismiss": "Sluiten",
+      "close": "Sluiten",
+      "forgetTitle": "{name} vergeten?",
+      "forgetBody": "Elk account koppelt één metgezel. Als je {name} vergeet, wordt de koppeling verbroken — en omdat CrossWave een gekoppeld apparaat nodig heeft, ga je meteen naar het koppelen.",
+      "forgetConfirm": "Apparaat vergeten",
+      "forgetCancel": "Gekoppeld houden"
+    }
   }
 }
