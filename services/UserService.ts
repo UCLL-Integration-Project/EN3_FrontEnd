@@ -7,8 +7,14 @@ const handleResponse = async (response: Response): Promise<void> => {
   if (!response.ok) {
     try {
       const body = await response.json();
-      const code = body?.errors?.[0]?.code ?? "UNKNOWN_ERROR";
-      throw new Error(code);
+      
+      if (body?.errors && Array.isArray(body.errors)) {
+        const specificError = body.errors.find((e: any) => e.code === "EMAIL_TAKEN");
+        const code = specificError ? specificError.code : (body.errors[0]?.code ?? "UNKNOWN_ERROR");
+        throw new Error(code);
+      }
+      
+      throw new Error("UNKNOWN_ERROR");
     } catch (err) {
       if (err instanceof Error && err.message !== "UNKNOWN_ERROR") throw err;
       throw new Error("UNKNOWN_ERROR");
@@ -143,6 +149,46 @@ export const changePasswordRequest = async (currentPassword: string, newPassword
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ currentPassword, newPassword }),
+      credentials: "include",
+    });
+    await handleResponse(response);
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/connections`, {
+      method: "GET",
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const addConnectionRequest = async (username: string): Promise<void> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/connections/${encodeURIComponent(username)}`, {
+      method: "POST",
+      credentials: "include",
+    });
+    await handleResponse(response);
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const removeConnectionRequest = async (username: string): Promise<void> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/connections/${encodeURIComponent(username)}`, {
+      method: "DELETE",
       credentials: "include",
     });
     await handleResponse(response);

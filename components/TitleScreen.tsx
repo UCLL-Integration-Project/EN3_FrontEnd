@@ -20,7 +20,7 @@ export default function TitleScreen() {
             <Waves size={42} strokeWidth={2.25} />
           </span>
           <h1>{t("welcome")}</h1>
-          <p className="max-w-[300px]">{t("loggedInAs", { name: user.username ?? "" })}</p>
+          <p className="max-w-[300px]">{t("loggedInAs", { name: user.firstName ?? "" })}</p>
         </div>
 
         <div className="action-dock flex flex-col gap-3">
