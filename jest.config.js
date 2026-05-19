@@ -16,6 +16,7 @@ const customJestConfig = {
     '^@types': '<rootDir>/types/index.ts',
     '^@styles/(.*)$': '<rootDir>/styles/$1',
     '^@context/(.*)$': '<rootDir>/context/$1',
+    '^@hooks/(.*)$': '<rootDir>/hooks/$1',
   },
 };
 
