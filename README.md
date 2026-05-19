@@ -28,17 +28,26 @@ npm run dev
 
 Open <http://localhost:8080>. On desktop the app renders inside a **440px phone-shaped frame**; resize / DevTools-toggle to mobile to see it fill the device.
 
+### Full Start
+```Powershell
+npm run build
+Copy-Item public -Destination .next/standalone -Recurse
+Copy-Item .next/static -Destination .next/standalone/.next -Recurse
+cd .next/standalone
+npm run start
+```
+
 ### All scripts
 
-| Command | Does |
-| --- | --- |
-| `npm run dev` | Next.js dev server on port **8080** |
-| `npm run build` | Production build (standalone output) |
-| `npm start` | Run the production build (`node server.js`) |
-| `npm test` | Jest unit tests |
-| `npm run cypress:open` | Open Cypress runner |
-| `npm run cypress:run` | Headless Cypress |
-| `npm run lint` | ESLint |
+| Command                | Does                                        |
+| ---------------------- | ------------------------------------------- |
+| `npm run dev`          | Next.js dev server on port **8080**         |
+| `npm run build`        | Production build (standalone output)        |
+| `npm start`            | Run the production build (`node server.js`) |
+| `npm test`             | Jest unit tests                             |
+| `npm run cypress:open` | Open Cypress runner                         |
+| `npm run cypress:run`  | Headless Cypress                            |
+| `npm run lint`         | ESLint                                      |
 
 ## Environment
 
