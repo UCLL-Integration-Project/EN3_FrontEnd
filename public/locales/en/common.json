@@ -11,7 +11,7 @@
   "home": {
     "welcome": "Welcome to CrossWave",
     "subtitle": "Stay connected with your class — anywhere, on the go.",
-    "loggedInAs": "Signed in as @{name}",
+    "loggedInAs": "Signed in as {name}",
     "signOut": "Sign out",
     "cta": {
       "getStarted": "Get started",
@@ -39,6 +39,7 @@
   },
   "header": {
     "welcome": "Welcome!",
+    "loggedInAs": "Hi, {name}",
     "nav": {
       "home": "Home",
       "login": "Login",
@@ -65,7 +66,7 @@
       "error": "Required"
     },
     "error": {
-      "INVALID_CREDENTIALS": "Invalid username or password.",
+      "INVALID_CREDENTIALS": "Invalid email or password.",
       "USERNAME_TAKEN": "This username is already taken.",
       "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
       "NETWORK_ERROR": "Unable to connect to the server."
@@ -86,9 +87,11 @@
     "profileSuccess": "Profile updated successfully.",
     "passwordSuccess": "Password changed successfully.",
     "label": {
+      "username": "Username",
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
+      "age": "Age",
       "currentPassword": "Current Password",
       "newPassword": "New Password",
       "confirmPassword": "Confirm New Password"
@@ -99,10 +102,27 @@
       "passwordMismatch": " - Passwords do not match"
     },
     "error": {
+      "USERNAME_TAKEN": "This username is already taken.",
       "EMAIL_TAKEN": "This email is already in use.",
       "INVALID_CREDENTIALS": "Current password is incorrect.",
       "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
       "NETWORK_ERROR": "Unable to connect to the server."
+    }
+  },
+  "ConnectionsPage": {
+    "title": "Connections",
+    "addTitle": "Add connection",
+    "addPlaceholder": "Username",
+    "addButton": "Add",
+    "listTitle": "My connections",
+    "empty": "You have no connections yet.",
+    "removeAriaLabel": "Remove connection with {name}",
+    "error": {
+      "USER_NOT_FOUND": "No user found with that username.",
+      "ALREADY_CONNECTED": "You are already connected with this user.",
+      "SELF_CONNECTION": "You cannot add yourself as a connection.",
+      "NETWORK_ERROR": "Unable to connect to the server.",
+      "UNKNOWN_ERROR": "Something went wrong. Please try again."
     }
   },
   "UserSignupForm": {

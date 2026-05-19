@@ -65,4 +65,6 @@ export type UpdateProfileInput = {
   firstName: string;
   lastName: string;
   email: string;
+  username: string;
+  age: number;
 };

@@ -11,7 +11,7 @@
   "home": {
     "welcome": "Welkom bij CrossWave",
     "subtitle": "Blijf in contact met je klas — overal, onderweg.",
-    "loggedInAs": "Aangemeld als @{name}",
+    "loggedInAs": "Aangemeld als {name}",
     "signOut": "Uitloggen",
     "cta": {
       "getStarted": "Aan de slag",
@@ -39,6 +39,7 @@
   },
   "header": {
     "welcome": "Welkom!",
+    "loggedInAs": "Hoi, {name}",
     "nav": {
       "home": "Thuis",
       "login": "Inloggen",
@@ -65,7 +66,7 @@
       "error": "Verplicht"
     },
     "error": {
-      "INVALID_CREDENTIALS": "Ongeldige gebruikersnaam of wachtwoord.",
+      "INVALID_CREDENTIALS": "Ongeldig e-mailadres of wachtwoord.",
       "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",
       "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
       "NETWORK_ERROR": "Kan geen verbinding maken met de server."
@@ -86,9 +87,11 @@
     "profileSuccess": "Profiel succesvol bijgewerkt.",
     "passwordSuccess": "Wachtwoord succesvol gewijzigd.",
     "label": {
+      "username": "Gebruikersnaam",
       "firstName": "Voornaam",
       "lastName": "Achternaam",
       "email": "E-mail",
+      "age": "Leeftijd",
       "currentPassword": "Huidig wachtwoord",
       "newPassword": "Nieuw wachtwoord",
       "confirmPassword": "Bevestig nieuw wachtwoord"
@@ -99,10 +102,27 @@
       "passwordMismatch": " - Wachtwoorden komen niet overeen"
     },
     "error": {
+      "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",
       "EMAIL_TAKEN": "Dit e-mailadres is al in gebruik.",
       "INVALID_CREDENTIALS": "Huidig wachtwoord is onjuist.",
       "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
       "NETWORK_ERROR": "Kan geen verbinding maken met de server."
+    }
+  },
+  "ConnectionsPage": {
+    "title": "Connecties",
+    "addTitle": "Connectie toevoegen",
+    "addPlaceholder": "Gebruikersnaam",
+    "addButton": "Toevoegen",
+    "listTitle": "Mijn connecties",
+    "empty": "Je hebt nog geen connecties.",
+    "removeAriaLabel": "Verwijder connectie met {name}",
+    "error": {
+      "USER_NOT_FOUND": "Geen gebruiker gevonden met die gebruikersnaam.",
+      "ALREADY_CONNECTED": "Je bent al verbonden met deze gebruiker.",
+      "SELF_CONNECTION": "Je kunt jezelf niet als connectie toevoegen.",
+      "NETWORK_ERROR": "Kan geen verbinding maken met de server.",
+      "UNKNOWN_ERROR": "Er is iets misgegaan. Probeer het opnieuw."
     }
   },
   "UserSignupForm": {
