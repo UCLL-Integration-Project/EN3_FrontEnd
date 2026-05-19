@@ -56,5 +56,6 @@ export default defineConfig({
   },
   env: {
     locale: "en",
+    apiUrl,
   },
 });

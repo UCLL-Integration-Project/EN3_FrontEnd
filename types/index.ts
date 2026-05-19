@@ -1,7 +1,9 @@
 export type AuthContextType = {
   user: User | null;
+  isLoading: boolean;
   login: (userData: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
+  updateUser: (userData: Partial<User>) => void;
 };
 
 export type UserInput = {
@@ -23,6 +25,10 @@ export type User = {
   age?: number;
   role?: string;
   token?: string;
+  bio?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
+  connectionsCount?: number;
 };
 
 export type UserResponse = {
@@ -33,6 +39,10 @@ export type UserResponse = {
   lastName: string;
   email: string;
   age: number;
+  bio?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
+  connectionsCount?: number;
 };
 
 export type AuthenticationRequest = {
@@ -57,4 +67,22 @@ export type AuthenticationResponse = {
 export type StatusMessage = {
   message: string;
   type: "error" | "success";
+};
+
+export type Activity = {
+  id: number;
+  type: string;
+  description: string;
+  timestamp: string;
+};
+
+export type UpdateProfileInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  age: number;
+  bio?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
 };

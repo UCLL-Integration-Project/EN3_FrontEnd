@@ -2,19 +2,61 @@
   "general": {
     "error": "An error has occurred. Please try again later."
   },
+  "notFound": {
+    "eyebrow": "Error 404",
+    "title": "Lost the signal",
+    "subtitle": "We couldn't find that page. It may have moved, or the link is broken.",
+    "home": "Back to home"
+  },
   "home": {
-    "welcome": "Welcome to CrossWave"
+    "welcome": "Welcome to CrossWave",
+    "subtitle": "Stay connected with your class — anywhere, on the go.",
+    "loggedInAs": "Signed in as {name}",
+    "signOut": "Sign out",
+    "cta": {
+      "getStarted": "Get started",
+      "haveAccount": "I already have an account"
+    },
+    "dashboard": {
+      "greetingMorning": "Good morning",
+      "greetingAfternoon": "Good afternoon",
+      "greetingEvening": "Good evening",
+      "companionTitle": "Your companion",
+      "companionConnected": "Connected",
+      "companionManage": "Tap to manage",
+      "actionsTitle": "Quick actions",
+      "actionSettings": "Settings",
+      "actionHelp": "Help & support",
+      "activityTitle": "Recent activity",
+      "activitySynced": "Companion synced",
+      "activityGoal": "Daily step goal reached",
+      "activityFirmware": "Firmware updated to 2.4.0",
+      "timeNow": "Just now",
+      "timeMinutes": "{count}m ago",
+      "timeHours": "{count}h ago",
+      "fallbackName": "there"
+    }
   },
   "header": {
     "welcome": "Welcome!",
+    "loggedInAs": "Hi, {name}",
     "nav": {
       "home": "Home",
       "login": "Login",
       "logout": "Logout",
-      "register": "Register"
+      "register": "Register",
+      "settings": "Settings"
     }
   },
+  "language": {
+    "chooseLanguage": "Choose language"
+  },
+  "common": {
+    "back": "Back"
+  },
   "UserLoginForm": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to continue.",
     "button": "Login",
     "label": {
       "email": "Email",
@@ -22,10 +64,10 @@
       "mfa_code": "MFA Verification Code"
     },
     "validate": {
-      "error": " - Missing"
+      "error": "Required"
     },
     "error": {
-      "INVALID_CREDENTIALS": "Invalid username or password.",
+      "INVALID_CREDENTIALS": "Invalid email or password.",
       "USERNAME_TAKEN": "This username is already taken.",
       "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
       "NETWORK_ERROR": "Unable to connect to the server.",
@@ -35,21 +77,92 @@
     },
     "success": "Login successful. Redirecting...",
     "mfa_required": "MFA code sent to your email.",
-    "button_verify": "Verify Code"
+    "button_verify": "Verify Code",
+    "signupLink": "New here? Create an account"
+  },
+  "UserSettingsForm": {
+    "title": "Settings",
+    "profileTitle": "Profile",
+    "passwordTitle": "Change Password",
+    "accountTitle": "Account",
+    "saveButton": "Save",
+    "logoutButton": "Log out",
+    "logoutConfirm": "Are you sure you want to log out?",
+    "logoutConfirmButton": "Confirm",
+    "cancelButton": "Cancel",
+    "profileSuccess": "Profile updated successfully.",
+    "passwordSuccess": "Password changed successfully.",
+    "label": {
+      "username": "Username",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "age": "Age",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password"
+    },
+    "validate": {
+      "error": " - Missing or Invalid",
+      "weakPassword": " - Too short (min. 8 characters)",
+      "passwordMismatch": " - Passwords do not match"
+    },
+    "error": {
+      "USERNAME_TAKEN": "This username is already taken.",
+      "EMAIL_TAKEN": "This email is already in use.",
+      "INVALID_CREDENTIALS": "Current password is incorrect.",
+      "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
+      "NETWORK_ERROR": "Unable to connect to the server."
+    }
+  },
+  "ConnectionsPage": {
+    "title": "Connections",
+    "addTitle": "Add connection",
+    "addPlaceholder": "Username",
+    "addButton": "Add",
+    "listTitle": "My connections",
+    "empty": "You have no connections yet.",
+    "removeAriaLabel": "Remove connection with {name}",
+    "error": {
+      "USER_NOT_FOUND": "No user found with that username.",
+      "ALREADY_CONNECTED": "You are already connected with this user.",
+      "SELF_CONNECTION": "You cannot add yourself as a connection.",
+      "NETWORK_ERROR": "Unable to connect to the server.",
+      "UNKNOWN_ERROR": "Something went wrong. Please try again."
+    }
+  },
+  "social": {
+    "about": "About",
+    "connections": "Connections",
+    "activity": "Activity",
+    "noActivity": "No recent activity to show.",
+    "editProfile": "Edit Profile",
+    "editProfileDetails": "Edit Profile Details",
+    "connect": "Connect",
+    "connected": "Connected",
+    "noBio": "No bio yet.",
+    "noBioSelf": "No bio yet. Tell the world who you are.",
+    "publicProfile": "Public Profile",
+    "accountDetails": "Account Details",
+    "bioPlaceholder": "Tell us about yourself...",
+    "avatarUrl": "Avatar URL",
+    "bannerUrl": "Banner URL"
   },
   "UserSignupForm": {
+    "title": "Create your account",
+    "subtitle": "Just a few quick details.",
     "button": "Sign Up",
     "label": {
       "username": "Username",
       "password": "Password",
-      "firstName": "First Name",
-      "lastName": "Last Name",
+      "firstName": "First name",
+      "lastName": "Last name",
       "email": "Email",
       "age": "Age"
     },
     "validate": {
-      "error": " - Missing or Invalid",
-      "weakPassword": " - Too short (min. 8 characters)"
+      "error": "Required or invalid",
+      "weakPassword": "Too short (min. 8 characters)"
     },
     "error": {
       "USERNAME_TAKEN": "This username is already taken.",
@@ -59,5 +172,92 @@
     },
     "loginLink": "Already have an account? Log in",
     "success": "Signup successful. Redirecting..."
+  },
+  "device": {
+    "defaultName": "My Companion",
+    "common": {
+      "back": "Back"
+    },
+    "setup": {
+      "eyebrow": "Device setup",
+      "stepScan": "Scan",
+      "stepPair": "Pair",
+      "stepDone": "Done",
+      "introTitle": "Pair your companion",
+      "introBody": "CrossWave works with one paired companion per account. Link yours over Bluetooth to start using the app.",
+      "prereqTitle": "Before you start",
+      "prereq1": "Your companion is powered on",
+      "prereq2": "It's within arm's reach of this phone",
+      "prereq3": "Bluetooth is enabled on this phone",
+      "startScan": "Start scanning",
+      "scanningTitle": "Searching nearby…",
+      "scanningBody": "Keep your companion close. Tap a device to pair.",
+      "scanningMore": "Scanning…",
+      "rescanHint": "Don't see your device? Move it closer and rescan.",
+      "rescan": "Rescan",
+      "connectingTitle": "Connecting…",
+      "connectingBody": "Pairing with {name}",
+      "confirmTitle": "Confirm the code",
+      "confirmBody": "Check that this code matches the one shown on <strong>{name}</strong>.",
+      "encrypted": "Encrypted Bluetooth pairing",
+      "codesMatch": "Codes match — pair",
+      "codesDontMatch": "Codes don't match",
+      "doneTitle": "You're all set",
+      "doneBody": "{name} is paired and ready. Give it a name you'll recognise.",
+      "nameLabel": "Device name",
+      "goToDevice": "Go to device"
+    },
+    "manage": {
+      "title": "Companion",
+      "connected": "Connected",
+      "noteNameUpdated": "Device name updated",
+      "noteSyncComplete": "Sync complete",
+      "noteBuzzed": "Your companion buzzed",
+      "noteFirmwareUpdated": "Updated to firmware {version}",
+      "namePlaceholder": "Device name",
+      "saveName": "Save name",
+      "bluetooth": "Bluetooth",
+      "signalStrong": "Strong",
+      "lastSyncRecent": "2 min ago",
+      "lastSyncJustNow": "just now",
+      "battery": "Battery",
+      "charging": "Charging",
+      "batteryRemaining": "≈ 2 days remaining",
+      "syncNow": "Sync now",
+      "syncing": "Syncing…",
+      "identify": "Identify",
+      "identifying": "Buzzing…",
+      "liveReadings": "Live readings",
+      "readingHeartRate": "Heart rate",
+      "readingSteps": "Today",
+      "readingSleep": "Last sleep",
+      "unitSteps": "steps",
+      "firmware": "Firmware",
+      "firmwareUpToDate": "Up to date",
+      "firmwareVersion": "Firmware {version}",
+      "firmwareUpdateAvailable": "Update available",
+      "firmwareInstalling": "Installing… {progress}% — keep the device nearby",
+      "firmwareInstall": "Install update",
+      "deviceInfo": "Device info",
+      "infoModel": "Model",
+      "infoSerial": "Serial number",
+      "infoMac": "MAC address",
+      "infoPaired": "Paired since",
+      "preferences": "Preferences",
+      "prefs": {
+        "autoConnect": { "label": "Auto-connect", "hint": "Reconnect when in range" },
+        "backgroundSync": { "label": "Background sync", "hint": "Keep readings up to date" },
+        "notifications": { "label": "Push notifications", "hint": "Alerts from your companion" },
+        "haptics": { "label": "Haptic alerts", "hint": "Vibrate on the device" },
+        "doNotDisturb": { "label": "Do not disturb", "hint": "Mute alerts overnight" }
+      },
+      "forget": "Forget this device",
+      "dismiss": "Dismiss",
+      "close": "Close",
+      "forgetTitle": "Forget {name}?",
+      "forgetBody": "Each account links one companion. Forgetting {name} unlinks it — and since CrossWave needs a linked device, you'll be taken straight to pairing.",
+      "forgetConfirm": "Forget device",
+      "forgetCancel": "Keep paired"
+    }
   }
 }
