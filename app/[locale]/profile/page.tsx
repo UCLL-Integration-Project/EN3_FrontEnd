@@ -49,8 +49,13 @@ export default function ProfilePage() {
           age: data.age ?? 0,
           bio: data.bio ?? "",
           avatarUrl: data.avatarUrl ?? "",
-          bannerUrl: data.bannerUrl ?? ""
+          bannerUrl: data.bannerUrl ?? "",
         });
+        
+        // Ensure global user state is updated with latest count if available
+        if (data.connectionsCount !== undefined) {
+          updateUser({ connectionsCount: data.connectionsCount });
+        }
         
         // Fetch activity
         if (data.username) {

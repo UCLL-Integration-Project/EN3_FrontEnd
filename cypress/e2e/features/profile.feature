@@ -32,3 +32,10 @@ Feature: Social User Profile
     When I click the "Connect" button
     Then the button should change to "Connected"
     And the connection count should increase
+
+  Scenario: Connection count synchronizes when removing a connection
+    Given I have a connection with "janedoe"
+    When I navigate to the "/en/connections" page
+    And I remove the connection with "janedoe"
+    And I navigate to the "/en/profile" page
+    Then I should see the connection count as "9"

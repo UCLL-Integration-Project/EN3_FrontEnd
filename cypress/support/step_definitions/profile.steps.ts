@@ -110,3 +110,40 @@ Then("the button should change to {string}", (text: string) => {
 Then("the connection count should increase", () => {
   cy.get("span").contains("6").should("be.visible"); // 5 + 1
 });
+
+Given("I have a connection with {string}", (username: string) => {
+  cy.intercept("GET", "**/api/users/me/connections", {
+    statusCode: 200,
+    body: [{ id: 2, username, firstName: "Jane", lastName: "Doe" }],
+  }).as("getConnectionsRequest");
+  
+  cy.intercept("DELETE", `**/api/users/me/connections/${username}`, {
+    statusCode: 200,
+  }).as("removeConnectionRequest");
+
+  // Mock the profile call to return 10 connections initially, 
+  // then 9 connections after removal (simulating backend update)
+  let callCount = 0;
+  cy.intercept("GET", "**/api/users/me", (req) => {
+    callCount++;
+    req.reply({
+      statusCode: 200,
+      body: { 
+        id: 1, 
+        username: "johndoe", 
+        firstName: "John", 
+        lastName: "Doe", 
+        connectionsCount: callCount === 1 ? 10 : 9 
+      },
+    });
+  }).as("getMeRequestSync");
+});
+
+When("I remove the connection with {string}", (username: string) => {
+  cy.get(`button[aria-label*='${username}']`).click();
+  cy.wait("@removeConnectionRequest");
+});
+
+Then("I should see the connection count as {string}", (count: string) => {
+  cy.get("span").contains(count).should("be.visible");
+});
