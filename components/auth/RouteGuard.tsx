@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import type { ReactNode } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
 import { Waves } from "lucide-react";
 import useAuth from "@hooks/useAuth";
@@ -12,10 +12,10 @@ import { sanitizeReturnPath } from "@components/auth/returnUrl";
 /* -------------------------------------------------------------------------
  * Client-side route guards.
  *
- * Auth state lives in sessionStorage and is only known after AuthProvider's
- * mount effect runs, so every guard must wait for `isLoading` to be false
- * before deciding — otherwise a signed-in user would be wrongly bounced on
- * the first paint.
+ * Auth state lives in localStorage (via safeStorage) and is only known after
+ * AuthProvider's mount effect runs, so every guard must wait for `isLoading`
+ * to be false before deciding — otherwise a signed-in user would be wrongly
+ * bounced on the first paint.
  *
  * Redirects use router.replace() (not push) so the guarded page is never
  * left in history: a signed-in user cannot press "back" into /login, and a
@@ -42,14 +42,18 @@ export function AuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const locale = useLocale();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!isLoading && !user) {
-      // Remember where the user was headed so login can return them there.
-      const query = new URLSearchParams({ next: pathname }).toString();
+      // Remember where the user was headed — including any query string, so
+      // a deep link like /en/settings?tab=profile is restored after login.
+      const search = searchParams.toString();
+      const dest = search ? `${pathname}?${search}` : pathname;
+      const query = new URLSearchParams({ next: dest }).toString();
       router.replace(`/${locale}/login?${query}`);
     }
-  }, [isLoading, user, locale, pathname, router]);
+  }, [isLoading, user, locale, pathname, searchParams, router]);
 
   // Still resolving, or signed-out and about to be redirected.
   if (isLoading || !user) return <AuthSplash />;
@@ -100,5 +104,29 @@ export function DeviceGuard({ children }: { children: ReactNode }) {
 
   // Still resolving, or no device and about to be redirected to setup.
   if (isLoading || !deviceLinked) return <AuthSplash />;
+  return <>{children}</>;
+}
+
+/**
+ * Wrap the device-pairing flow (/device/setup). Use *inside* AuthGuard.
+ *
+ * The one-companion model has no "add another device" path, so an account
+ * that already has a linked companion must not be able to re-enter the
+ * pairing wizard — already-linked users are sent to /device instead.
+ * This is the inverse of DeviceGuard; the two never wrap the same route.
+ */
+export function SetupGuard({ children }: { children: ReactNode }) {
+  const { deviceLinked, isLoading } = useDevice();
+  const router = useRouter();
+  const locale = useLocale();
+
+  useEffect(() => {
+    if (!isLoading && deviceLinked) {
+      router.replace(`/${locale}/device`);
+    }
+  }, [isLoading, deviceLinked, locale, router]);
+
+  // Still resolving, or already linked and about to be redirected to /device.
+  if (isLoading || deviceLinked) return <AuthSplash />;
   return <>{children}</>;
 }

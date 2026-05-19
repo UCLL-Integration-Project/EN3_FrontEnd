@@ -8,11 +8,16 @@ import {
   ReactNode,
 } from "react";
 import { safeStorage } from "./safeStorage";
+import useAuth from "@hooks/useAuth";
 
 /* -------------------------------------------------------------------------
  * Tracks whether the account has a companion device linked.
  * CrossWave requires exactly one linked device to be usable, so the route
  * guards consult this to send device-less users into the setup flow.
+ *
+ * Linked-state is *per account*: the storage key is scoped to the signed-in
+ * user, so a second account on the same browser never inherits the previous
+ * user's linked device and is correctly sent through setup.
  *
  * MOCK: linked-state is persisted in localStorage (so it survives an app
  * restart, matching the auth cache). Replace the initial read, linkDevice
@@ -29,29 +34,43 @@ type DeviceContextType = {
 
 const DeviceContext = createContext<DeviceContextType | undefined>(undefined);
 
-const STORAGE_KEY = "crosswave.deviceLinked";
+const STORAGE_PREFIX = "crosswave.deviceLinked";
 
 export const DeviceProvider = ({ children }: { children: ReactNode }) => {
+  const { user, isLoading: authLoading } = useAuth();
   const [deviceLinked, setDeviceLinked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Storage key scoped to the current account — null when signed out.
+  const storageKey = user
+    ? `${STORAGE_PREFIX}:${user.username ?? user.email ?? "unknown"}`
+    : null;
+
   useEffect(() => {
+    // Wait for auth to resolve before deciding — the key depends on the user.
+    if (authLoading) return;
+
     // TODO: replace with a backend call — "does this account have a device?".
-    // Resolved via a promise so the shape matches the eventual fetch, and
-    // via safeStorage so blocked storage can't strand the loading state.
-    Promise.resolve(safeStorage.get(STORAGE_KEY) === "true").then((linked) => {
+    // Signed out (no key) → no linked device. Resolved via a promise so the
+    // shape matches the eventual fetch, setState stays inside a callback, and
+    // blocked storage (safeStorage) can't strand the loading state.
+    Promise.resolve(
+      storageKey ? safeStorage.get(storageKey) === "true" : false,
+    ).then((linked) => {
       setDeviceLinked(linked);
       setIsLoading(false);
     });
-  }, []);
+  }, [authLoading, storageKey]);
 
   const linkDevice = () => {
-    safeStorage.set(STORAGE_KEY, "true");
+    if (!storageKey) return;
+    safeStorage.set(storageKey, "true");
     setDeviceLinked(true);
   };
 
   const unlinkDevice = () => {
-    safeStorage.remove(STORAGE_KEY);
+    if (!storageKey) return;
+    safeStorage.remove(storageKey);
     setDeviceLinked(false);
   };
 

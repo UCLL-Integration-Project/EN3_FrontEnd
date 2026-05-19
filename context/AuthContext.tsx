@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode } from "react";
-import { AuthContextType, User } from "@types";
+import { AuthContextType, User, UserResponse } from "@types";
 import { getMyProfileRequest, logoutRequest } from "@services/UserService";
 import { safeStorage } from "./safeStorage";
 
@@ -26,6 +26,20 @@ function writeSessionHint(signedIn: boolean) {
   }
 }
 
+/* Pick only the non-sensitive profile fields the UI needs. The /me response
+   is typed UserResponse, which includes `password`; that field must never be
+   written to localStorage, where any script on the origin could read it and
+   it would survive browser restarts. */
+function toSafeUser(profile: UserResponse): User {
+  return {
+    username: profile.username,
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    email: profile.email,
+    age: profile.age,
+  };
+}
+
 /** Read the cached user; tolerates missing/unavailable/corrupt storage. */
 function readCachedUser(): User | null {
   const raw = safeStorage.get(STORAGE_KEY);
@@ -43,51 +57,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   /* Verify the session on mount via /api/users/me.
-     This must NEVER strand the app on the splash, so every outcome —
-     success, error, a slow/hung network, unavailable storage — is funnelled
-     through `finish`, which always clears isLoading exactly once. */
+     The 6s timer is a *fallback* that only unblocks the splash (showing the
+     cached user as a provisional value). It deliberately does NOT settle the
+     auth check: a slow /me response still applies its result whenever it
+     finally resolves, so a valid signed-in user is never stranded as
+     signed-out until a reload. */
   useEffect(() => {
-    let settled = false;
-
-    const finish = (apply: () => void) => {
-      if (settled) return;
-      settled = true;
-      try {
-        apply();
-      } catch (e) {
-        console.error("Auth init failed:", e);
-      }
-      setIsLoading(false);
-    };
-
+    let cancelled = false;
     const cached = readCachedUser();
 
-    // Fallback: if /me hasn't answered in time, stop blocking the UI.
-    const timer = setTimeout(() => finish(() => setUser(cached)), 6000);
+    // Fallback: if /me is slow, stop blocking the UI with the cached user.
+    // The request below still updates auth state when it resolves.
+    const timer = setTimeout(() => {
+      if (cancelled) return;
+      setUser(cached);
+      setIsLoading(false);
+    }, 6000);
 
     getMyProfileRequest()
       .then((profile) => {
-        finish(() => {
-          safeStorage.set(STORAGE_KEY, JSON.stringify(profile));
-          writeSessionHint(true);
-          setUser(profile);
-        });
+        if (cancelled) return;
+        const safeUser = toSafeUser(profile);
+        safeStorage.set(STORAGE_KEY, JSON.stringify(safeUser));
+        writeSessionHint(true);
+        setUser(safeUser);
       })
       .catch((error: unknown) => {
+        if (cancelled) return;
         const message = error instanceof Error ? error.message : "";
-        finish(() => {
-          if (message === "NETWORK_ERROR" && cached) {
-            // Backend unreachable — trust the cache for now.
-            setUser(cached);
-          } else {
-            // Rejected / invalid session — clear it.
-            safeStorage.remove(STORAGE_KEY);
-            writeSessionHint(false);
-            setUser(null);
-          }
-        });
+        if (message === "NETWORK_ERROR" && cached) {
+          // Backend unreachable — trust the cache, and refresh the session
+          // hint cookie so proxy.ts and the client agree on "signed in"
+          // (otherwise the middleware would still bounce protected routes).
+          writeSessionHint(true);
+          setUser(cached);
+        } else {
+          // Rejected / invalid session — clear it.
+          safeStorage.remove(STORAGE_KEY);
+          writeSessionHint(false);
+          setUser(null);
+        }
       })
-      .finally(() => clearTimeout(timer));
+      .finally(() => {
+        if (cancelled) return;
+        clearTimeout(timer);
+        setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, []);
 
   /* Any API call that returns 401 dispatches `auth:unauthorized`

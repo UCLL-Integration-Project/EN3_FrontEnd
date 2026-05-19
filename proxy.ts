@@ -40,20 +40,30 @@ export default function proxy(request: NextRequest) {
   const signedIn = request.cookies.get("cw_session")?.value === "1";
 
   // Protected route, no session → send to login with a return path.
+  // The return path keeps the original query string so a deep link like
+  // /en/settings?tab=profile survives the login round-trip.
   if (matchesPrefix(rest, PROTECTED) && !signedIn) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/login`;
     url.search = "";
-    url.searchParams.set("next", pathname);
+    url.searchParams.set("next", pathname + request.nextUrl.search);
     return NextResponse.redirect(url);
   }
 
   // Auth route, already signed in → send home (or to ?next= if present).
   if (matchesPrefix(rest, GUEST_ONLY) && signedIn) {
     const next = request.nextUrl.searchParams.get("next");
+    // Resolve the return path through a URL so a query string in `next` lands
+    // in `search`, not encoded into `pathname` (which would 404). The path is
+    // same-origin-sanitised first, so the origin here is just a parse base.
+    const target = new URL(
+      sanitizeReturnPath(next, `/${locale}`),
+      request.nextUrl.origin,
+    );
     const url = request.nextUrl.clone();
-    url.search = "";
-    url.pathname = sanitizeReturnPath(next, `/${locale}`);
+    url.pathname = target.pathname;
+    url.search = target.search;
+    url.hash = "";
     return NextResponse.redirect(url);
   }
 

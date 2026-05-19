@@ -1,10 +1,12 @@
 import DeviceSetup from "@components/device/DeviceSetup";
-import { AuthGuard } from "@components/auth/RouteGuard";
+import { AuthGuard, SetupGuard } from "@components/auth/RouteGuard";
 
 export default function DeviceSetupPage() {
   return (
     <AuthGuard>
-      <DeviceSetup />
+      <SetupGuard>
+        <DeviceSetup />
+      </SetupGuard>
     </AuthGuard>
   );
 }

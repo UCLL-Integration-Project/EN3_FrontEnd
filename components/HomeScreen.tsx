@@ -28,11 +28,12 @@ export default function HomeScreen() {
   const { user, logout } = useAuth();
   const t = useTranslations("home.dashboard");
   const tHome = useTranslations("home");
+  const tDevice = useTranslations("device");
   const locale = useLocale();
   const router = useRouter();
 
   const displayName =
-    user?.firstName?.trim() || user?.username?.trim() || "there";
+    user?.firstName?.trim() || user?.username?.trim() || t("fallbackName");
   const initial = displayName.charAt(0).toUpperCase();
 
   // Computed at render — wrapped in suppressHydrationWarning where shown,
@@ -115,7 +116,7 @@ export default function HomeScreen() {
               {t("companionTitle")}
             </p>
             <p className="truncate text-[19px] font-bold tracking-tight text-white">
-              My Companion
+              {tDevice("defaultName")}
             </p>
           </div>
           <ChevronRight size={20} className="shrink-0 text-white/70" />
@@ -183,8 +184,11 @@ export default function HomeScreen() {
       <div className="mt-auto flex items-center justify-between gap-3 pt-10 pb-[calc(theme(spacing.6)+env(safe-area-inset-bottom))]">
         <button
           type="button"
-          onClick={() => {
-            logout();
+          onClick={async () => {
+            // Await logout so auth state is cleared before navigating —
+            // otherwise GuestGuard on /login can still see a signed-in user
+            // and bounce straight back here.
+            await logout();
             // replace() so the back button can't return into the app after
             // signing out.
             router.replace(`/${locale}/login`);

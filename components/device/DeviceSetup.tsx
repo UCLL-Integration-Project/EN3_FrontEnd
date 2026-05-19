@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   Bluetooth,
   BluetoothSearching,
@@ -23,6 +23,7 @@ import { SignalBars } from "./DeviceUI";
  * to function, so there is no skip/close affordance here.
  * Frontend only — the scan/pair lifecycle is simulated with timers.
  * Wire `Web Bluetooth API` (navigator.bluetooth) into the marked spots later.
+ * All user-visible copy comes from the `device` message catalogue.
  * ---------------------------------------------------------------------- */
 
 type Step = "intro" | "scanning" | "pairing" | "connected";
@@ -33,6 +34,8 @@ type FoundDevice = {
   signal: number; // 0–3
 };
 
+/* Mock scan results. These stand in for BLE-advertised device names, which
+   are not localized — real results replace them via navigator.bluetooth. */
 const NEARBY_DEVICES: FoundDevice[] = [
   { id: "CW-2F8A", name: "CrossWave Band 2", signal: 3 },
   { id: "CW-9C41", name: "CW Companion", signal: 2 },
@@ -41,13 +44,9 @@ const NEARBY_DEVICES: FoundDevice[] = [
 
 const PAIRING_CODE = ["4", "8", "2", "9", "1", "7"];
 
-const PREREQS = [
-  "Your companion is powered on",
-  "It's within arm's reach of this phone",
-  "Bluetooth is enabled on this phone",
-];
-
-const WIZARD_STEPS = ["Scan", "Pair", "Done"] as const;
+/* Catalogue keys (device.setup.*) resolved at render time. */
+const PREREQS = ["prereq1", "prereq2", "prereq3"] as const;
+const WIZARD_STEPS = ["stepScan", "stepPair", "stepDone"] as const;
 
 /** Decorative scanning radar — emanating rings around a Bluetooth core. */
 function Radar() {
@@ -69,10 +68,10 @@ function Radar() {
   );
 }
 
-function Stepper({ active }: { active: number }) {
+function Stepper({ active, labels }: { active: number; labels: string[] }) {
   return (
     <div className="flex items-center justify-center gap-2" aria-hidden="true">
-      {WIZARD_STEPS.map((label, i) => (
+      {labels.map((label, i) => (
         <div key={label} className="flex items-center gap-2">
           <span
             className={`flex h-6 items-center gap-1.5 rounded-pill px-2.5 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
@@ -86,7 +85,7 @@ function Stepper({ active }: { active: number }) {
             {i < active ? <Check size={12} strokeWidth={3} /> : i + 1}
             {label}
           </span>
-          {i < WIZARD_STEPS.length - 1 && (
+          {i < labels.length - 1 && (
             <span
               className={`h-[2px] w-3 rounded-full ${
                 i < active ? "bg-brand-300" : "bg-ink-200"
@@ -102,6 +101,7 @@ function Stepper({ active }: { active: number }) {
 export default function DeviceSetup() {
   const locale = useLocale();
   const router = useRouter();
+  const t = useTranslations("device");
   const { linkDevice } = useDevice();
 
   const [step, setStep] = useState<Step>("intro");
@@ -110,6 +110,8 @@ export default function DeviceSetup() {
   const [selected, setSelected] = useState<FoundDevice | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [deviceName, setDeviceName] = useState("");
+
+  const pairTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeStepIndex =
     step === "intro" || step === "scanning" ? 0 : step === "pairing" ? 1 : 2;
@@ -123,6 +125,15 @@ export default function DeviceSetup() {
     );
     return () => timers.forEach(clearTimeout);
   }, [step, scanNonce]);
+
+  /* Clear a pending pairing timer if the user leaves mid-connect, so its
+     callback never updates state on an unmounted component. */
+  useEffect(
+    () => () => {
+      if (pairTimer.current) clearTimeout(pairTimer.current);
+    },
+    [],
+  );
 
   function startScan() {
     setVisibleCount(0);
@@ -139,7 +150,8 @@ export default function DeviceSetup() {
   function confirmPairing() {
     setConnecting(true);
     // TODO: establish GATT connection here.
-    setTimeout(() => {
+    pairTimer.current = setTimeout(() => {
+      pairTimer.current = null;
       setConnecting(false);
       setStep("connected");
     }, 1900);
@@ -159,12 +171,15 @@ export default function DeviceSetup() {
           <Bluetooth size={18} strokeWidth={2.25} />
         </span>
         <span className="text-[13px] font-semibold uppercase tracking-wider text-ink-500">
-          Device setup
+          {t("setup.eyebrow")}
         </span>
       </div>
 
       <div className="mt-4">
-        <Stepper active={activeStepIndex} />
+        <Stepper
+          active={activeStepIndex}
+          labels={WIZARD_STEPS.map((key) => t(`setup.${key}`))}
+        />
       </div>
 
       {/* ---------------------------------------------------------------- */}
@@ -180,22 +195,21 @@ export default function DeviceSetup() {
             </span>
           </div>
 
-          <h2 className="mt-6 text-center">Pair your companion</h2>
+          <h2 className="mt-6 text-center">{t("setup.introTitle")}</h2>
           <p className="mt-2 text-center text-ink-600">
-            CrossWave works with one paired companion per account. Link yours
-            over Bluetooth to start using the app.
+            {t("setup.introBody")}
           </p>
 
           <div className="card mt-6">
-            <h5>Before you start</h5>
+            <h5>{t("setup.prereqTitle")}</h5>
             <ul className="mt-3 flex flex-col gap-3">
-              {PREREQS.map((item) => (
-                <li key={item} className="flex items-start gap-3">
+              {PREREQS.map((key) => (
+                <li key={key} className="flex items-start gap-3">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
                     <Check size={13} strokeWidth={3} />
                   </span>
                   <span className="text-[14px] leading-snug text-ink-700">
-                    {item}
+                    {t(`setup.${key}`)}
                   </span>
                 </li>
               ))}
@@ -204,7 +218,7 @@ export default function DeviceSetup() {
 
           <div className="action-dock mt-auto">
             <button className="btn-cta" onClick={startScan}>
-              Start scanning
+              {t("setup.startScan")}
             </button>
           </div>
         </div>
@@ -216,9 +230,9 @@ export default function DeviceSetup() {
       {step === "scanning" && (
         <div className="mt-2 flex flex-1 flex-col">
           <Radar />
-          <h3 className="text-center">Searching nearby…</h3>
+          <h3 className="text-center">{t("setup.scanningTitle")}</h3>
           <p className="mt-1 text-center text-ink-500">
-            Keep your companion close. Tap a device to pair.
+            {t("setup.scanningBody")}
           </p>
 
           <div className="mt-5 flex flex-col gap-3">
@@ -251,14 +265,14 @@ export default function DeviceSetup() {
             {visibleCount < NEARBY_DEVICES.length && (
               <div className="flex items-center justify-center gap-2 py-3 text-[13px] font-medium text-ink-400">
                 <Loader2 size={16} className="animate-spin" />
-                Scanning…
+                {t("setup.scanningMore")}
               </div>
             )}
           </div>
 
           <div className="action-dock mt-auto">
             <p className="mb-3 text-center text-[12px] text-ink-400">
-              Don&apos;t see your device? Move it closer and rescan.
+              {t("setup.rescanHint")}
             </p>
             <button
               className="btn-ghost w-full"
@@ -266,7 +280,7 @@ export default function DeviceSetup() {
               disabled={visibleCount < NEARBY_DEVICES.length}
             >
               <RefreshCw size={16} strokeWidth={2.5} className="mr-2" />
-              Rescan
+              {t("setup.rescan")}
             </button>
           </div>
         </div>
@@ -285,9 +299,9 @@ export default function DeviceSetup() {
                   <Bluetooth size={28} strokeWidth={2.25} />
                 </span>
               </span>
-              <h3 className="mt-6">Connecting…</h3>
+              <h3 className="mt-6">{t("setup.connectingTitle")}</h3>
               <p className="mt-1 text-ink-500">
-                Pairing with {selected.name}
+                {t("setup.connectingBody", { name: selected.name })}
               </p>
             </div>
           ) : (
@@ -296,13 +310,16 @@ export default function DeviceSetup() {
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
                   <Watch size={26} strokeWidth={2.25} />
                 </span>
-                <h3 className="mt-4">Confirm the code</h3>
+                <h3 className="mt-4">{t("setup.confirmTitle")}</h3>
                 <p className="mt-1 text-ink-600">
-                  Check that this code matches the one shown on{" "}
-                  <span className="font-semibold text-ink-800">
-                    {selected.name}
-                  </span>
-                  .
+                  {t.rich("setup.confirmBody", {
+                    name: selected.name,
+                    strong: (chunks) => (
+                      <span className="font-semibold text-ink-800">
+                        {chunks}
+                      </span>
+                    ),
+                  })}
                 </p>
               </div>
 
@@ -319,19 +336,16 @@ export default function DeviceSetup() {
                 </div>
                 <div className="mt-4 flex items-center justify-center gap-2 text-[12px] font-medium text-ink-500">
                   <ShieldCheck size={14} className="text-brand-500" />
-                  Encrypted Bluetooth pairing
+                  {t("setup.encrypted")}
                 </div>
               </div>
 
               <div className="action-dock mt-auto">
                 <button className="btn-cta" onClick={confirmPairing}>
-                  Codes match — pair
+                  {t("setup.codesMatch")}
                 </button>
-                <button
-                  className="btn-quiet mt-2 w-full"
-                  onClick={rescan}
-                >
-                  Codes don&apos;t match
+                <button className="btn-quiet mt-2 w-full" onClick={rescan}>
+                  {t("setup.codesDontMatch")}
                 </button>
               </div>
             </>
@@ -348,22 +362,21 @@ export default function DeviceSetup() {
             <span className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
               <CheckCircle2 size={44} strokeWidth={2} />
             </span>
-            <h2 className="mt-5">You&apos;re all set</h2>
+            <h2 className="mt-5">{t("setup.doneTitle")}</h2>
             <p className="mt-2 text-ink-600">
-              {selected.name} is paired and ready. Give it a name you&apos;ll
-              recognise.
+              {t("setup.doneBody", { name: selected.name })}
             </p>
           </div>
 
           <div className="card mt-6">
             <label className="field">
-              <span className="field-label">Device name</span>
+              <span className="field-label">{t("setup.nameLabel")}</span>
               <span className="field-control">
                 <input
                   className="field-input"
                   value={deviceName}
                   onChange={(e) => setDeviceName(e.target.value)}
-                  placeholder="My Companion"
+                  placeholder={t("defaultName")}
                   autoCapitalize="words"
                   autoCorrect="off"
                   maxLength={32}
@@ -383,7 +396,7 @@ export default function DeviceSetup() {
                 router.replace(`/${locale}/device`);
               }}
             >
-              Go to device
+              {t("setup.goToDevice")}
             </button>
           </div>
         </div>

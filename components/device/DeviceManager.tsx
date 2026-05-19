@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowLeft,
   BellRing,
@@ -35,6 +35,7 @@ import { BatteryGlyph, SignalBars, Toggle } from "./DeviceUI";
  * linked device to function.
  * Frontend only — every value below is mock state. Wire up the GATT
  * characteristics / backend API where the TODO markers are.
+ * All user-visible copy comes from the `device` message catalogue.
  * ---------------------------------------------------------------------- */
 
 const DEVICE = {
@@ -53,58 +54,31 @@ type PrefKey =
   | "haptics"
   | "doNotDisturb";
 
-type Pref = {
-  key: PrefKey;
-  label: string;
-  hint: string;
-  icon: typeof Wifi;
-};
-
-const PREFERENCES: Pref[] = [
-  {
-    key: "autoConnect",
-    label: "Auto-connect",
-    hint: "Reconnect when in range",
-    icon: BluetoothConnected,
-  },
-  {
-    key: "backgroundSync",
-    label: "Background sync",
-    hint: "Keep readings up to date",
-    icon: RefreshCw,
-  },
-  {
-    key: "notifications",
-    label: "Push notifications",
-    hint: "Alerts from your companion",
-    icon: BellRing,
-  },
-  {
-    key: "haptics",
-    label: "Haptic alerts",
-    hint: "Vibrate on the device",
-    icon: Vibrate,
-  },
-  {
-    key: "doNotDisturb",
-    label: "Do not disturb",
-    hint: "Mute alerts overnight",
-    icon: Moon,
-  },
+/* Labels and hints are resolved from the catalogue at render time
+   (device.manage.prefs.<key>) — only the key and icon are static. */
+const PREFERENCES: { key: PrefKey; icon: typeof Wifi }[] = [
+  { key: "autoConnect", icon: BluetoothConnected },
+  { key: "backgroundSync", icon: RefreshCw },
+  { key: "notifications", icon: BellRing },
+  { key: "haptics", icon: Vibrate },
+  { key: "doNotDisturb", icon: Moon },
 ];
 
 export default function DeviceManager() {
   const locale = useLocale();
   const router = useRouter();
+  const t = useTranslations("device");
   const { unlinkDevice } = useDevice();
 
-  const [name, setName] = useState("My Companion");
+  const [name, setName] = useState(() => t("defaultName"));
   const [editingName, setEditingName] = useState(false);
   const [draftName, setDraftName] = useState(name);
 
   const [battery] = useState(72);
   const [charging] = useState(false);
-  const [lastSync, setLastSync] = useState("2 min ago");
+  const [lastSync, setLastSync] = useState<
+    "lastSyncRecent" | "lastSyncJustNow"
+  >("lastSyncRecent");
 
   const [prefs, setPrefs] = useState<Record<PrefKey, boolean>>({
     autoConnect: true,
@@ -124,10 +98,17 @@ export default function DeviceManager() {
   const [note, setNote] = useState<string | null>(null);
   const [showForget, setShowForget] = useState(false);
   const noteTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fwTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => () => {
-    if (noteTimer.current) clearTimeout(noteTimer.current);
-  }, []);
+  // Clear any pending timer/interval if the user leaves mid-operation, so
+  // no callback fires state setters on an unmounted component.
+  useEffect(
+    () => () => {
+      if (noteTimer.current) clearTimeout(noteTimer.current);
+      if (fwTimer.current) clearInterval(fwTimer.current);
+    },
+    [],
+  );
 
   function flash(message: string) {
     setNote(message);
@@ -143,7 +124,7 @@ export default function DeviceManager() {
     const next = draftName.trim() || name;
     setName(next);
     setEditingName(false);
-    flash("Device name updated");
+    flash(t("manage.noteNameUpdated"));
   }
 
   function syncNow() {
@@ -152,8 +133,8 @@ export default function DeviceManager() {
     // TODO: trigger a real sync over the GATT connection.
     setTimeout(() => {
       setSyncing(false);
-      setLastSync("just now");
-      flash("Sync complete");
+      setLastSync("lastSyncJustNow");
+      flash(t("manage.noteSyncComplete"));
     }, 1800);
   }
 
@@ -163,7 +144,7 @@ export default function DeviceManager() {
     // TODO: write to the device's "identify" characteristic.
     setTimeout(() => {
       setIdentifying(false);
-      flash("Your companion buzzed");
+      flash(t("manage.noteBuzzed"));
     }, 2600);
   }
 
@@ -172,12 +153,17 @@ export default function DeviceManager() {
     setFw("installing");
     setFwProgress(0);
     // TODO: stream the firmware image to the device.
-    const id = setInterval(() => {
+    fwTimer.current = setInterval(() => {
       setFwProgress((p) => {
         if (p >= 100) {
-          clearInterval(id);
+          if (fwTimer.current) clearInterval(fwTimer.current);
+          fwTimer.current = null;
           setFw("current");
-          flash(`Updated to firmware ${DEVICE.latestFirmware}`);
+          flash(
+            t("manage.noteFirmwareUpdated", {
+              version: DEVICE.latestFirmware,
+            }),
+          );
           return 100;
         }
         return p + 5;
@@ -194,10 +180,26 @@ export default function DeviceManager() {
   }
 
   const infoRows = [
-    { icon: Watch, label: "Model", value: DEVICE.model },
-    { icon: Hash, label: "Serial number", value: DEVICE.serial },
-    { icon: Cpu, label: "MAC address", value: DEVICE.mac },
-    { icon: Plug, label: "Paired since", value: DEVICE.pairedSince },
+    { icon: Watch, label: t("manage.infoModel"), value: DEVICE.model },
+    { icon: Hash, label: t("manage.infoSerial"), value: DEVICE.serial },
+    { icon: Cpu, label: t("manage.infoMac"), value: DEVICE.mac },
+    { icon: Plug, label: t("manage.infoPaired"), value: DEVICE.pairedSince },
+  ];
+
+  const readings = [
+    {
+      icon: HeartPulse,
+      value: "68",
+      unit: "bpm",
+      label: t("manage.readingHeartRate"),
+    },
+    {
+      icon: Footprints,
+      value: "7.4k",
+      unit: t("manage.unitSteps"),
+      label: t("manage.readingSteps"),
+    },
+    { icon: Moon, value: "7h 12m", unit: "", label: t("manage.readingSleep") },
   ];
 
   return (
@@ -206,15 +208,15 @@ export default function DeviceManager() {
       <div className="flex items-center gap-3 pt-safe-t">
         <Link
           href={`/${locale}`}
-          aria-label="Back"
+          aria-label={t("common.back")}
           className="back-btn flex items-center justify-center"
         >
           <ArrowLeft size={22} strokeWidth={2.25} />
         </Link>
-        <h4 className="flex-1">Companion</h4>
+        <h4 className="flex-1">{t("manage.title")}</h4>
         <span className="flex items-center gap-1.5 rounded-pill bg-emerald-50 px-3 py-1.5 text-[12px] font-semibold text-emerald-700 ring-1 ring-emerald-200">
           <span className="h-2 w-2 rounded-full bg-emerald-500" />
-          Connected
+          {t("manage.connected")}
         </span>
       </div>
 
@@ -242,10 +244,10 @@ export default function DeviceManager() {
                   onKeyDown={(e) => e.key === "Enter" && saveName()}
                   maxLength={32}
                   className="min-w-0 flex-1 rounded-xl bg-white/15 px-3 py-1.5 text-[18px] font-semibold text-white outline-none ring-1 ring-white/40 placeholder:text-white/50"
-                  placeholder="Device name"
+                  placeholder={t("manage.namePlaceholder")}
                 />
                 <button
-                  aria-label="Save name"
+                  aria-label={t("manage.saveName")}
                   onClick={saveName}
                   className="tap h-9 w-9 shrink-0 rounded-pill bg-white/20 active:scale-95"
                 >
@@ -273,15 +275,15 @@ export default function DeviceManager() {
         <div className="mt-5 flex items-center gap-4 border-t border-white/15 pt-4 text-[12px] font-medium text-white/85">
           <span className="flex items-center gap-1.5">
             <BluetoothConnected size={14} />
-            Bluetooth
+            {t("manage.bluetooth")}
           </span>
           <span className="flex items-center gap-1.5">
             <SignalBars level={3} light />
-            Strong
+            {t("manage.signalStrong")}
           </span>
           <span className="ml-auto flex items-center gap-1.5 text-white/70">
             <RefreshCw size={13} />
-            {lastSync}
+            {t(`manage.${lastSync}`)}
           </span>
         </div>
       </div>
@@ -290,13 +292,15 @@ export default function DeviceManager() {
       <div className="card mt-4">
         <div className="flex items-center justify-between">
           <div>
-            <h5>Battery</h5>
+            <h5>{t("manage.battery")}</h5>
             <p className="mt-1 text-[22px] font-semibold text-ink-900">
               {battery}
               <span className="text-[14px] text-ink-400">%</span>
             </p>
             <p className="text-[12px] text-ink-500">
-              {charging ? "Charging" : "≈ 2 days remaining"}
+              {charging
+                ? t("manage.charging")
+                : t("manage.batteryRemaining")}
             </p>
           </div>
           <BatteryGlyph percent={battery} charging={charging} />
@@ -313,7 +317,7 @@ export default function DeviceManager() {
               className={syncing ? "animate-spin" : ""}
               strokeWidth={2.5}
             />
-            {syncing ? "Syncing…" : "Sync now"}
+            {syncing ? t("manage.syncing") : t("manage.syncNow")}
           </button>
           <button
             className="chip flex-1 justify-center"
@@ -325,19 +329,15 @@ export default function DeviceManager() {
               className={identifying ? "animate-pulse" : ""}
               strokeWidth={2.5}
             />
-            {identifying ? "Buzzing…" : "Identify"}
+            {identifying ? t("manage.identifying") : t("manage.identify")}
           </button>
         </div>
       </div>
 
       {/* Live readings */}
-      <h5 className="mt-6 px-1">Live readings</h5>
+      <h5 className="mt-6 px-1">{t("manage.liveReadings")}</h5>
       <div className="mt-3 grid grid-cols-3 gap-2.5">
-        {[
-          { icon: HeartPulse, value: "68", unit: "bpm", label: "Heart rate" },
-          { icon: Footprints, value: "7.4k", unit: "steps", label: "Today" },
-          { icon: Moon, value: "7h 12m", unit: "", label: "Last sleep" },
-        ].map((stat) => (
+        {readings.map((stat) => (
           <div
             key={stat.label}
             className="rounded-2xl bg-white p-3.5 shadow-card ring-1 ring-ink-100"
@@ -358,7 +358,7 @@ export default function DeviceManager() {
       </div>
 
       {/* Firmware */}
-      <h5 className="mt-6 px-1">Firmware</h5>
+      <h5 className="mt-6 px-1">{t("manage.firmware")}</h5>
       <div className="card mt-3">
         {fw === "current" ? (
           <div className="flex items-center gap-3">
@@ -367,10 +367,12 @@ export default function DeviceManager() {
             </span>
             <div>
               <p className="text-[14px] font-semibold text-ink-900">
-                Up to date
+                {t("manage.firmwareUpToDate")}
               </p>
               <p className="text-[12px] text-ink-500">
-                Firmware {DEVICE.latestFirmware}
+                {t("manage.firmwareVersion", {
+                  version: DEVICE.latestFirmware,
+                })}
               </p>
             </div>
           </div>
@@ -382,7 +384,7 @@ export default function DeviceManager() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-[14px] font-semibold text-ink-900">
-                  Update available
+                  {t("manage.firmwareUpdateAvailable")}
                 </p>
                 <p className="text-[12px] text-ink-500">
                   {DEVICE.installedFirmware} → {DEVICE.latestFirmware}
@@ -399,7 +401,7 @@ export default function DeviceManager() {
                   />
                 </div>
                 <p className="mt-2 text-center text-[12px] font-medium text-ink-500">
-                  Installing… {fwProgress}% — keep the device nearby
+                  {t("manage.firmwareInstalling", { progress: fwProgress })}
                 </p>
               </div>
             ) : (
@@ -407,7 +409,7 @@ export default function DeviceManager() {
                 className="btn-secondary mt-4 w-full"
                 onClick={installFirmware}
               >
-                Install update
+                {t("manage.firmwareInstall")}
               </button>
             )}
           </>
@@ -415,7 +417,7 @@ export default function DeviceManager() {
       </div>
 
       {/* Device info */}
-      <h5 className="mt-6 px-1">Device info</h5>
+      <h5 className="mt-6 px-1">{t("manage.deviceInfo")}</h5>
       <div className="card mt-3 py-2">
         {infoRows.map((row, i) => (
           <div
@@ -436,7 +438,7 @@ export default function DeviceManager() {
       </div>
 
       {/* Preferences */}
-      <h5 className="mt-6 px-1">Preferences</h5>
+      <h5 className="mt-6 px-1">{t("manage.preferences")}</h5>
       <div className="card mt-3 py-2">
         {PREFERENCES.map((pref, i) => (
           <button
@@ -453,10 +455,10 @@ export default function DeviceManager() {
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-[14px] font-medium text-ink-900">
-                {pref.label}
+                {t(`manage.prefs.${pref.key}.label`)}
               </span>
               <span className="block text-[12px] text-ink-500">
-                {pref.hint}
+                {t(`manage.prefs.${pref.key}.hint`)}
               </span>
             </span>
             <Toggle on={prefs[pref.key]} />
@@ -472,7 +474,7 @@ export default function DeviceManager() {
           onClick={() => setShowForget(true)}
         >
           <Trash2 size={16} strokeWidth={2.25} className="mr-2" />
-          Forget this device
+          {t("manage.forget")}
         </button>
       </div>
 
@@ -480,26 +482,29 @@ export default function DeviceManager() {
       {showForget && (
         <>
           <button
-            aria-label="Dismiss"
+            aria-label={t("manage.dismiss")}
             className="sheet-backdrop"
             onClick={() => setShowForget(false)}
           />
-          <div className="sheet-bottom px-5" role="dialog" aria-modal="true">
+          <div
+            className="sheet-bottom px-5"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="forget-device-title"
+          >
             <div className="sheet-grabber" />
             <div className="mt-2 flex items-start gap-3">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600">
                 <Trash2 size={20} />
               </span>
               <div className="flex-1">
-                <h4>Forget {name}?</h4>
-                <p className="mt-1">
-                  Each account links one companion. Forgetting {name} unlinks
-                  it — and since CrossWave needs a linked device, you&apos;ll
-                  be taken straight to pairing.
-                </p>
+                <h4 id="forget-device-title">
+                  {t("manage.forgetTitle", { name })}
+                </h4>
+                <p className="mt-1">{t("manage.forgetBody", { name })}</p>
               </div>
               <button
-                aria-label="Close"
+                aria-label={t("manage.close")}
                 onClick={() => setShowForget(false)}
                 className="icon-btn"
               >
@@ -511,13 +516,13 @@ export default function DeviceManager() {
                 className="tap w-full rounded-pill bg-red-600 px-5 py-3.5 text-[15px] font-semibold text-white shadow-card transition-transform duration-100 active:scale-[0.98] active:bg-red-700"
                 onClick={forgetDevice}
               >
-                Forget device
+                {t("manage.forgetConfirm")}
               </button>
               <button
                 className="btn-ghost w-full"
                 onClick={() => setShowForget(false)}
               >
-                Keep paired
+                {t("manage.forgetCancel")}
               </button>
             </div>
           </div>
