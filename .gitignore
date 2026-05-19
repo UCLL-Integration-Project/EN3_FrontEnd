@@ -46,3 +46,7 @@ next-env.d.ts
 cypress/screenshots
 cypress/videos
 cypress/reports
+
+# Serwist
+public/sw*
+public/swe-worker*

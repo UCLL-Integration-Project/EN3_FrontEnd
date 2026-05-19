@@ -11,17 +11,42 @@ type RootLayoutProps = {
   }>;
 };
 
+const APP_NAME = "CrossWave";
+const APP_DEFAULT_TITLE = "CrossWave";
+const APP_TITLE_TEMPLATE = "%s - PWA CrossWave";
+const APP_DESCRIPTION = "Curious what people around you are doing?";
+
 export const metadata: Metadata = {
-  title: "CrossWave",
-  description: "CrossWave — your mobile companion app.",
-  applicationName: "CrossWave",
+  applicationName: APP_NAME,
+  title: {
+    default: APP_DEFAULT_TITLE,
+    template: APP_TITLE_TEMPLATE,
+  },
+  description: APP_DESCRIPTION,
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "CrossWave",
+    title: APP_DEFAULT_TITLE,
   },
   formatDetection: {
     telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME,
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
   },
 };
 
