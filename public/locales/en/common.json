@@ -125,6 +125,23 @@
       "UNKNOWN_ERROR": "Something went wrong. Please try again."
     }
   },
+  "social": {
+    "about": "About",
+    "connections": "Connections",
+    "activity": "Activity",
+    "noActivity": "No recent activity to show.",
+    "editProfile": "Edit Profile",
+    "editProfileDetails": "Edit Profile Details",
+    "connect": "Connect",
+    "connected": "Connected",
+    "noBio": "No bio yet.",
+    "noBioSelf": "No bio yet. Tell the world who you are.",
+    "publicProfile": "Public Profile",
+    "accountDetails": "Account Details",
+    "bioPlaceholder": "Tell us about yourself...",
+    "avatarUrl": "Avatar URL",
+    "bannerUrl": "Banner URL"
+  },
   "UserSignupForm": {
     "title": "Create your account",
     "subtitle": "Just a few quick details.",

@@ -12,7 +12,7 @@ import { Users, UserMinus, AlertCircle } from "lucide-react";
 export default function ConnectionsView() {
   const router = useRouter();
   const locale = useLocale();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, updateUser } = useAuth();
   const t = useTranslations("ConnectionsPage");
 
   const [connections, setConnections] = useState<UserResponse[]>([]);
@@ -26,7 +26,10 @@ export default function ConnectionsView() {
       return;
     }
     getConnectionsRequest()
-      .then((data) => setConnections(data))
+      .then((data) => {
+        setConnections(data);
+        updateUser({ connectionsCount: data.length });
+      })
       .catch(() => setError(t("error.UNKNOWN_ERROR")))
       .finally(() => setFetched(true));
   }, [isLoading]);
@@ -34,7 +37,9 @@ export default function ConnectionsView() {
   const handleRemove = async (username: string) => {
     try {
       await removeConnectionRequest(username);
-      setConnections((prev) => prev.filter((c) => c.username !== username));
+      const updatedList = connections.filter((c) => c.username !== username);
+      setConnections(updatedList);
+      updateUser({ connectionsCount: updatedList.length });
     } catch {
       setError(t("error.UNKNOWN_ERROR"));
     }

@@ -158,6 +158,33 @@ export const changePasswordRequest = async (currentPassword: string, newPassword
   }
 };
 
+export const getActivityRequest = async (username: string): Promise<any[]> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/${username}/activity`, {
+      method: "GET",
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    return []; // Return empty activity on error for better UX
+  }
+};
+
+export const connectRequest = async (username: string): Promise<void> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/${username}/connect`, {
+      method: "POST",
+      credentials: "include",
+    });
+    await handleResponse(response);
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
 export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
   try {
     const response = await fetch(`${apiUrl}/api/users/me/connections`, {
