@@ -8,7 +8,10 @@ import { useLocale, useTranslations } from "use-intl";
 
 export default function UserLoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [mfaCode, setMfaCode] = useState("");
+  const [isMfaRequired, setIsMfaRequired] = useState(false);
+  const [tempUsername, setTempUsername] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string; mfa?: string }>({});
   const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
   const router = useRouter();
   const locale = useLocale();
@@ -44,10 +47,17 @@ export default function UserLoginForm() {
     };
 
     try {
-      const loggedInUser = await loginRequest(authRequest);
-      setStatusMessages([{ message: t("success"), type: "success" }]);
-      login(loggedInUser);
-      setTimeout(() => router.push(`/`), 500);
+      const response = await loginRequest(authRequest);
+      // If token is null, it means MFA is required
+      if (response.username && !response.token) {
+        setTempUsername(response.username);
+        setIsMfaRequired(true);
+        setStatusMessages([{ message: t("mfa_required"), type: "success" }]);
+      } else {
+        setStatusMessages([{ message: t("success"), type: "success" }]);
+        login(response);
+        setTimeout(() => router.push(`/`), 500);
+      }
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["INVALID_CREDENTIALS", "USERNAME_TAKEN", "NETWORK_ERROR"];
@@ -55,6 +65,65 @@ export default function UserLoginForm() {
       setStatusMessages([{ message: t(`error.${messageKey}`), type: "error" }]);
     }
   };
+
+  const handleMfaSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    clearMessages();
+    if (!mfaCode.trim()) {
+      setErrors({ mfa: t("validate.error") });
+      return;
+    }
+
+    try {
+      const { verifyMfaRequest } = await import("@services/UserService");
+      const loggedInUser = await verifyMfaRequest(tempUsername, mfaCode);
+      setStatusMessages([{ message: t("success"), type: "success" }]);
+      login(loggedInUser);
+      setTimeout(() => router.push(`/`), 500);
+    } catch (error) {
+      const code = (error as Error).message;
+      const knownCodes = ["MFA_CODE_NOT_FOUND", "MFA_CODE_EXPIRED", "INVALID_MFA_CODE", "NETWORK_ERROR"];
+      const messageKey = knownCodes.includes(code) ? code : "UNKNOWN_ERROR";
+      setStatusMessages([{ message: t(`error.${messageKey}`), type: "error" }]);
+    }
+  };
+
+  if (isMfaRequired) {
+    return (
+      <form onSubmit={handleMfaSubmit} className="flex Padding Border Gap flex-col">
+        <div className="Wrapper flex-col">
+          <div className="flex gap-1">
+            <label htmlFor="mfaInput">{t("label.mfa_code")}</label>
+            <div className="min-h-6 text-red-500-500">{errors.mfa || ""}</div>
+          </div>
+          <div className="input-wrapper">
+            <input
+              id="mfaInput"
+              type="text"
+              placeholder="123456"
+              value={mfaCode}
+              onChange={(e) => setMfaCode(e.target.value)}
+              className="input text-center text-2xl tracking-widest"
+              maxLength={6}
+            />
+          </div>
+        </div>
+
+        <div className="Wrapper Gap items-center">
+          <button className="btn" type="submit">
+            {t("button_verify")}
+          </button>
+          <ul>
+            {statusMessages.map(({ message, type }, index) => (
+              <li key={index} className={type === "error" ? "text-red-500-500" : "text-green-500-500"}>
+                {message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </form>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="flex Padding Border Gap flex-col">

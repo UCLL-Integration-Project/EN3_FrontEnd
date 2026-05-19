@@ -18,7 +18,8 @@
     "button": "Login",
     "label": {
       "email": "Email",
-      "password": "Password"
+      "password": "Password",
+      "mfa_code": "MFA Verification Code"
     },
     "validate": {
       "error": " - Missing"
@@ -27,9 +28,14 @@
       "INVALID_CREDENTIALS": "Invalid username or password.",
       "USERNAME_TAKEN": "This username is already taken.",
       "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
-      "NETWORK_ERROR": "Unable to connect to the server."
+      "NETWORK_ERROR": "Unable to connect to the server.",
+      "MFA_CODE_NOT_FOUND": "MFA code not found.",
+      "MFA_CODE_EXPIRED": "MFA code has expired.",
+      "INVALID_MFA_CODE": "Invalid MFA code."
     },
-    "success": "Login successful. Redirecting..."
+    "success": "Login successful. Redirecting...",
+    "mfa_required": "MFA code sent to your email.",
+    "button_verify": "Verify Code"
   },
   "UserSignupForm": {
     "button": "Sign Up",

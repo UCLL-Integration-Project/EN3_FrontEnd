@@ -49,6 +49,22 @@ export const loginRequest = async (authRequest: AuthenticationRequest): Promise<
   }
 };
 
+export const verifyMfaRequest = async (username: string, code: string): Promise<User> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/mfa/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, code }),
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
 export const logoutRequest = async (): Promise<void> => {
   try {
     const response = await fetch(`${apiUrl}/api/users/logout`, {
