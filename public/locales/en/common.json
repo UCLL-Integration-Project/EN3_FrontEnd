@@ -2,6 +2,15 @@
   "general": {
     "error": "An error has occurred. Please try again later."
   },
+  "errors": {
+    "USER_NOT_FOUND": "The requested user '{{username}}' could not be found.",
+    "EMAIL_TAKEN": "The email address '{{email}}' is already registered.",
+    "CONNECTION_ALREADY_EXISTS": "You are already connected with {{target}}.",
+    "validation": {
+      "not_blank": "The {{field}} field cannot be left blank.",
+      "email": "Please provide a valid email structure."
+    }
+  },
   "notFound": {
     "eyebrow": "Error 404",
     "title": "Lost the signal",

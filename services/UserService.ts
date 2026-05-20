@@ -7,13 +7,13 @@ const handleResponse = async (response: Response): Promise<void> => {
   if (!response.ok) {
     try {
       const body = await response.json();
-      
+
       if (body?.errors && Array.isArray(body.errors)) {
         const specificError = body.errors.find((e: any) => e.code === "EMAIL_TAKEN");
         const code = specificError ? specificError.code : (body.errors[0]?.code ?? "UNKNOWN_ERROR");
         throw new Error(code);
       }
-      
+
       throw new Error("UNKNOWN_ERROR");
     } catch (err) {
       if (err instanceof Error && err.message !== "UNKNOWN_ERROR") throw err;
@@ -22,9 +22,13 @@ const handleResponse = async (response: Response): Promise<void> => {
   }
 };
 
+/* ==========================================================================
+   1. AUTHENTICATION DOMAIN (/api/auth)
+   ========================================================================== */
+
 export const signupRequest = async (userInput: User): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/signup`, {
+    const response = await fetch(`${apiUrl}/api/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userInput),
@@ -40,7 +44,7 @@ export const signupRequest = async (userInput: User): Promise<User> => {
 
 export const loginRequest = async (authRequest: AuthenticationRequest): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/login`, {
+    const response = await fetch(`${apiUrl}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(authRequest),
@@ -49,7 +53,6 @@ export const loginRequest = async (authRequest: AuthenticationRequest): Promise<
     await handleResponse(response);
     return response.json();
   } catch (err) {
-    // fetch() itself throws a TypeError on network failure
     if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
     throw err;
   }
@@ -73,25 +76,11 @@ export const verifyMfaRequest = async (username: string, code: string): Promise<
 
 export const logoutRequest = async (): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/logout`, {
+    const response = await fetch(`${apiUrl}/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
     await handleResponse(response);
-  } catch (err) {
-    throw new Error(err instanceof Error ? err.message : "network");
-  }
-};
-
-export const getUserData = async (username: string): Promise<User> => {
-  try {
-    const response = await fetch(`${apiUrl}/api/users/${username}`, {
-      method: "GET",
-      credentials: "include",
-    });
-
-    await handleResponse(response);
-    return response.json();
   } catch (err) {
     throw new Error(err instanceof Error ? err.message : "network");
   }
@@ -127,9 +116,13 @@ export const updateProfileRequest = async (input: UpdateProfileInput): Promise<U
   }
 };
 
+/* ==========================================================================
+   3. PASSWORD / ACCOUNT DOMAIN (/api/account)
+   ========================================================================== */
+
 export const changePasswordRequest = async (currentPassword: string, newPassword: string): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/me/password`, {
+    const response = await fetch(`${apiUrl}/api/account/password`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ currentPassword, newPassword }),
@@ -142,36 +135,13 @@ export const changePasswordRequest = async (currentPassword: string, newPassword
   }
 };
 
-export const getActivityRequest = async (username: string): Promise<any[]> => {
-  try {
-    const response = await fetch(`${apiUrl}/api/users/${username}/activity`, {
-      method: "GET",
-      credentials: "include",
-    });
-    await handleResponse(response);
-    return response.json();
-  } catch (err) {
-    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
-    return []; // Return empty activity on error for better UX
-  }
-};
-
-export const connectRequest = async (username: string): Promise<void> => {
-  try {
-    const response = await fetch(`${apiUrl}/api/users/${username}/connect`, {
-      method: "POST",
-      credentials: "include",
-    });
-    await handleResponse(response);
-  } catch (err) {
-    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
-    throw err;
-  }
-};
+/* ==========================================================================
+   4. CONNECTIONS DOMAIN (/api/connections)
+   ========================================================================== */
 
 export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/me/connections`, {
+    const response = await fetch(`${apiUrl}/api/connections`, {
       method: "GET",
       credentials: "include",
     });
@@ -185,7 +155,7 @@ export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
 
 export const addConnectionRequest = async (username: string): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/me/connections/${encodeURIComponent(username)}`, {
+    const response = await fetch(`${apiUrl}/api/connections/${encodeURIComponent(username)}`, {
       method: "POST",
       credentials: "include",
     });
@@ -198,11 +168,81 @@ export const addConnectionRequest = async (username: string): Promise<void> => {
 
 export const removeConnectionRequest = async (username: string): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/me/connections/${encodeURIComponent(username)}`, {
+    const response = await fetch(`${apiUrl}/api/connections/${encodeURIComponent(username)}`, {
       method: "DELETE",
       credentials: "include",
     });
     await handleResponse(response);
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+// Aliased helper if you are migrating old connectRequest() invocations to the new flatter design
+export const connectRequest = addConnectionRequest;
+
+/* ==========================================================================
+   5. USER QUERIES DOMAIN (/api/users)
+   ========================================================================== */
+
+export const getUserData = async (username: string): Promise<User> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/${encodeURIComponent(username)}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    throw new Error(err instanceof Error ? err.message : "network");
+  }
+};
+
+export const getActivityRequest = async (username: string): Promise<any[]> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/${encodeURIComponent(username)}/activity`, {
+      method: "GET",
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    return [];
+  }
+};
+
+/* ==========================================================================
+   MISC PROFILES EXTENSIONS (Legacy tracking endpoints)
+   ========================================================================== */
+
+export const changeHeightRequest = async (newValue: number): Promise<User> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/height`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newValue),
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const changeWeightRequest = async (newValue: number): Promise<User> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/weight`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newValue),
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
   } catch (err) {
     if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
     throw err;
