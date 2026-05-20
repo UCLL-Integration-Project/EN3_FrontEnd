@@ -183,6 +183,19 @@ export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
   }
 };
 
+export const addConnectionRequest = async (username: string): Promise<void> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/connections/${encodeURIComponent(username)}`, {
+      method: "POST",
+      credentials: "include",
+    });
+    await handleResponse(response);
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
 export const removeConnectionRequest = async (username: string): Promise<void> => {
   try {
     const response = await fetch(`${apiUrl}/api/users/me/connections/${encodeURIComponent(username)}`, {
