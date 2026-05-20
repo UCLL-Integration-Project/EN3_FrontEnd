@@ -58,6 +58,30 @@ export function toGrantedAuthority(role: Role): string {
   return `ROLE_${role}`;
 }
 
+export type Status = "ACTIVE" | "FLAGGED" | "SUSPENDED";
+
+export type AdminMemberSummary = {
+  id: number;
+  displayName: string;
+  handle: string;
+  email: string;
+  avatarUrl?: string | null;
+  status: Status;
+  joinedAt: string; // ISO timestamp from the backend's Instant
+};
+
+/* Spring Data's Page<T> response shape. Keep the fields we actually use. */
+export type Page<T> = {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+};
+
 export type AuthenticationResponse = {
   message: string;
   token: string;

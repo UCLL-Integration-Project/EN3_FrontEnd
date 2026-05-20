@@ -24,6 +24,40 @@
     "subtitle": "Deze pagina is alleen voor beheerders. Denk je dat dit een vergissing is? Meld je aan met een beheerdersaccount.",
     "home": "Terug naar start"
   },
+  "admin": {
+    "members": {
+      "title": "Leden",
+      "joined": "Lid sinds",
+      "search": {
+        "placeholder": "Zoek op naam of e-mail"
+      },
+      "filter": {
+        "ariaLabel": "Filter op status",
+        "all": "Alle",
+        "active": "Actief",
+        "flagged": "Gemarkeerd",
+        "suspended": "Geschorst"
+      },
+      "results": {
+        "count": "{count, plural, =0 {Geen resultaten} one {1 resultaat} other {# resultaten}}"
+      },
+      "empty": {
+        "title": "Geen leden gevonden",
+        "subtitle": "Probeer een andere zoekterm of verwijder de statusfilter."
+      },
+      "pagination": {
+        "ariaLabel": "Paginering van leden",
+        "previous": "Vorige",
+        "next": "Volgende",
+        "page": "Pagina {current} van {total}"
+      },
+      "errors": {
+        "FORBIDDEN": "Je hebt geen toestemming om deze pagina te bekijken.",
+        "NETWORK_ERROR": "Kan de server niet bereiken. Probeer opnieuw.",
+        "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw."
+      }
+    }
+  },
   "home": {
     "welcome": "Welkom bij CrossWave",
     "subtitle": "Blijf in contact met je klas — overal, onderweg.",

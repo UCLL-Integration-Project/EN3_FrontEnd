@@ -24,6 +24,40 @@
     "subtitle": "This page is for admins only. If you think this is a mistake, sign in with an admin account.",
     "home": "Back to home"
   },
+  "admin": {
+    "members": {
+      "title": "Members",
+      "joined": "Joined",
+      "search": {
+        "placeholder": "Search by name or email"
+      },
+      "filter": {
+        "ariaLabel": "Filter by status",
+        "all": "All",
+        "active": "Active",
+        "flagged": "Flagged",
+        "suspended": "Suspended"
+      },
+      "results": {
+        "count": "{count, plural, =0 {No results} one {1 result} other {# results}}"
+      },
+      "empty": {
+        "title": "No members match",
+        "subtitle": "Try a different search or clear the status filter."
+      },
+      "pagination": {
+        "ariaLabel": "Members pagination",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {current} of {total}"
+      },
+      "errors": {
+        "FORBIDDEN": "You don't have permission to view this page.",
+        "NETWORK_ERROR": "Couldn't reach the server. Try again.",
+        "UNKNOWN_ERROR": "Something went wrong. Try again."
+      }
+    }
+  },
   "home": {
     "welcome": "Welcome to CrossWave",
     "subtitle": "Stay connected with your class — anywhere, on the go.",
