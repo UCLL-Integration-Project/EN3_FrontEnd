@@ -13,6 +13,7 @@ const STORAGE_KEY = "loggedInUser";
    backend's httpOnly `authToken`; this lets proxy.ts redirect before a
    page renders. UX gate only — see proxy.ts. */
 const SESSION_HINT_COOKIE = "cw_session";
+const ADMIN_HINT_COOKIE = "cw_admin";
 const SESSION_HINT_MAX_AGE = 3600;
 
 function writeSessionHint(signedIn: boolean) {
@@ -21,6 +22,20 @@ function writeSessionHint(signedIn: boolean) {
     document.cookie = signedIn
       ? `${SESSION_HINT_COOKIE}=1; path=/; max-age=${SESSION_HINT_MAX_AGE}; samesite=lax`
       : `${SESSION_HINT_COOKIE}=; path=/; max-age=0; samesite=lax`;
+  } catch {
+    /* ignore */
+  }
+}
+
+/* Sibling of cw_session — set only when the signed-in user is an admin so
+   proxy.ts can bounce non-admins off /admin/* before a page renders. UX
+   gate only; the backend's RBAC remains the real enforcement. */
+function writeAdminHint(isAdmin: boolean) {
+  if (typeof document === "undefined") return;
+  try {
+    document.cookie = isAdmin
+      ? `${ADMIN_HINT_COOKIE}=1; path=/; max-age=${SESSION_HINT_MAX_AGE}; samesite=lax`
+      : `${ADMIN_HINT_COOKIE}=; path=/; max-age=0; samesite=lax`;
   } catch {
     /* ignore */
   }
@@ -37,6 +52,7 @@ function toSafeUser(profile: UserResponse): User {
     lastName: profile.lastName,
     email: profile.email,
     age: profile.age,
+    role: profile.role,
   };
 }
 
@@ -80,6 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const safeUser = toSafeUser(profile);
         safeStorage.set(STORAGE_KEY, JSON.stringify(safeUser));
         writeSessionHint(true);
+        writeAdminHint(safeUser.role === "ADMIN");
         setUser(safeUser);
       })
       .catch((error: unknown) => {
@@ -90,11 +107,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // hint cookie so proxy.ts and the client agree on "signed in"
           // (otherwise the middleware would still bounce protected routes).
           writeSessionHint(true);
+          writeAdminHint(cached.role === "ADMIN");
           setUser(cached);
         } else {
           // Rejected / invalid session — clear it.
           safeStorage.remove(STORAGE_KEY);
           writeSessionHint(false);
+          writeAdminHint(false);
           setUser(null);
         }
       })
@@ -116,6 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const handleUnauthorized = () => {
       safeStorage.remove(STORAGE_KEY);
       writeSessionHint(false);
+      writeAdminHint(false);
       setUser(null);
     };
     window.addEventListener("auth:unauthorized", handleUnauthorized);
@@ -126,6 +146,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (userData: User) => {
     safeStorage.set(STORAGE_KEY, JSON.stringify(userData));
     writeSessionHint(true);
+    writeAdminHint(userData.role === "ADMIN");
     setUser(userData);
   };
 
@@ -137,6 +158,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     safeStorage.remove(STORAGE_KEY);
     writeSessionHint(false);
+    writeAdminHint(false);
     setUser(null);
   };
 

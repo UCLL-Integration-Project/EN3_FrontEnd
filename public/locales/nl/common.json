@@ -6,6 +6,7 @@
     "USER_NOT_FOUND": "De gevraagde gebruiker '{{username}}' kon niet worden gevonden.",
     "EMAIL_TAKEN": "Het e-mailadres '{{email}}' is al geregistreerd.",
     "CONNECTION_ALREADY_EXISTS": "Je bent al verbonden met {{target}}.",
+    "FORBIDDEN": "Je hebt geen toestemming om deze pagina te bekijken.",
     "validation": {
       "not_blank": "Het veld {{field}} mag niet leeg zijn.",
       "email": "Geef een geldig e-mailadres op."
@@ -15,6 +16,12 @@
     "eyebrow": "Fout 404",
     "title": "Signaal verloren",
     "subtitle": "We konden die pagina niet vinden. Misschien is ze verplaatst of werkt de link niet meer.",
+    "home": "Terug naar start"
+  },
+  "forbidden": {
+    "eyebrow": "Fout 403",
+    "title": "Buiten bereik",
+    "subtitle": "Deze pagina is alleen voor beheerders. Denk je dat dit een vergissing is? Meld je aan met een beheerdersaccount.",
     "home": "Terug naar start"
   },
   "home": {

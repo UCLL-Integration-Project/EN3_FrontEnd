@@ -43,6 +43,7 @@ export type UserResponse = {
   avatarUrl?: string;
   bannerUrl?: string;
   connectionsCount?: number;
+  role?: Role;
 };
 
 export type AuthenticationRequest = {

@@ -6,6 +6,7 @@
     "USER_NOT_FOUND": "The requested user '{{username}}' could not be found.",
     "EMAIL_TAKEN": "The email address '{{email}}' is already registered.",
     "CONNECTION_ALREADY_EXISTS": "You are already connected with {{target}}.",
+    "FORBIDDEN": "You don't have permission to view this page.",
     "validation": {
       "not_blank": "The {{field}} field cannot be left blank.",
       "email": "Please provide a valid email structure."
@@ -15,6 +16,12 @@
     "eyebrow": "Error 404",
     "title": "Lost the signal",
     "subtitle": "We couldn't find that page. It may have moved, or the link is broken.",
+    "home": "Back to home"
+  },
+  "forbidden": {
+    "eyebrow": "Error 403",
+    "title": "Off the air",
+    "subtitle": "This page is for admins only. If you think this is a mistake, sign in with an admin account.",
     "home": "Back to home"
   },
   "home": {
