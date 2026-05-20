@@ -69,7 +69,8 @@
     "button": "Inloggen",
     "label": {
       "email": "Email",
-      "password": "Wachtwoord"
+      "password": "Wachtwoord",
+      "mfa_code": "MFA Verificatiecode"
     },
     "validate": {
       "error": "Verplicht"
@@ -78,9 +79,14 @@
       "INVALID_CREDENTIALS": "Ongeldig e-mailadres of wachtwoord.",
       "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",
       "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
-      "NETWORK_ERROR": "Kan geen verbinding maken met de server."
+      "NETWORK_ERROR": "Kan geen verbinding maken met de server.",
+      "MFA_CODE_NOT_FOUND": "MFA-code niet gevonden.",
+      "MFA_CODE_EXPIRED": "MFA-code is verlopen.",
+      "INVALID_MFA_CODE": "Ongeldige MFA-code."
     },
     "success": "Inloggen gelukt. Doorsturen...",
+    "mfa_required": "MFA-code verzonden naar je e-mail.",
+    "button_verify": "Code Verifiëren",
     "signupLink": "Nieuw hier? Maak een account"
   },
   "UserSettingsForm": {
