@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
+  Activity,
   ArrowLeft,
   BellRing,
   BluetoothConnected,
@@ -12,20 +13,22 @@ import {
   CheckCircle2,
   Cpu,
   Download,
-  Footprints,
   Hash,
-  HeartPulse,
+  MessageSquare,
   Moon,
   Pencil,
   Plug,
+  Radio,
   RefreshCw,
   Trash2,
   Vibrate,
   Watch,
   Wifi,
+  WifiOff,
   X,
 } from "lucide-react";
 import { useDevice } from "@context/DeviceContext";
+import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
 import { BatteryGlyph, SignalBars, Toggle } from "./DeviceUI";
 
 /* -------------------------------------------------------------------------
@@ -68,11 +71,17 @@ export default function DeviceManager() {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("device");
-  const { unlinkDevice } = useDevice();
+  const { unlinkDevice, deviceIp, setDeviceIp } = useDevice();
+  const { isConnected, sensorData, sendMessage, forceReconnect } =
+    useDeviceWebSocket(deviceIp);
 
   const [name, setName] = useState(() => t("defaultName"));
   const [editingName, setEditingName] = useState(false);
   const [draftName, setDraftName] = useState(name);
+
+  const [editingIp, setEditingIp] = useState(false);
+  const [draftIp, setDraftIp] = useState(deviceIp);
+  const [msgText, setMsgText] = useState("");
 
   const [battery] = useState(72);
   const [charging] = useState(false);
@@ -125,6 +134,19 @@ export default function DeviceManager() {
     setName(next);
     setEditingName(false);
     flash(t("manage.noteNameUpdated"));
+  }
+
+  function saveIp() {
+    const next = draftIp.trim();
+    setDeviceIp(next);
+    setEditingIp(false);
+  }
+
+  function handleSendMessage() {
+    const text = msgText.trim();
+    if (!text) return;
+    sendMessage(text);
+    flash(t("manage.messageSent"));
   }
 
   function syncNow() {
@@ -188,18 +210,23 @@ export default function DeviceManager() {
 
   const readings = [
     {
-      icon: HeartPulse,
-      value: "68",
-      unit: "bpm",
-      label: t("manage.readingHeartRate"),
+      icon: Activity,
+      value: sensorData ? sensorData.ax.toFixed(3) : "—",
+      unit: sensorData ? "g" : "",
+      label: t("manage.readingAccelX"),
     },
     {
-      icon: Footprints,
-      value: "7.4k",
-      unit: t("manage.unitSteps"),
-      label: t("manage.readingSteps"),
+      icon: Activity,
+      value: sensorData ? sensorData.ay.toFixed(3) : "—",
+      unit: sensorData ? "g" : "",
+      label: t("manage.readingAccelY"),
     },
-    { icon: Moon, value: "7h 12m", unit: "", label: t("manage.readingSleep") },
+    {
+      icon: Activity,
+      value: sensorData ? sensorData.az.toFixed(3) : "—",
+      unit: sensorData ? "g" : "",
+      label: t("manage.readingAccelZ"),
+    },
   ];
 
   return (
@@ -214,9 +241,17 @@ export default function DeviceManager() {
           <ArrowLeft size={22} strokeWidth={2.25} />
         </Link>
         <h4 className="flex-1">{t("manage.title")}</h4>
-        <span className="flex items-center gap-1.5 rounded-pill bg-emerald-50 px-3 py-1.5 text-[12px] font-semibold text-emerald-700 ring-1 ring-emerald-200">
-          <span className="h-2 w-2 rounded-full bg-emerald-500" />
-          {t("manage.connected")}
+        <span
+          className={`flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12px] font-semibold ring-1 ${
+            isConnected
+              ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+              : "bg-ink-100 text-ink-500 ring-ink-200"
+          }`}
+        >
+          <span
+            className={`h-2 w-2 rounded-full ${isConnected ? "bg-emerald-500" : "bg-ink-400"}`}
+          />
+          {isConnected ? t("manage.connected") : t("manage.disconnected")}
         </span>
       </div>
 
@@ -334,6 +369,70 @@ export default function DeviceManager() {
         </div>
       </div>
 
+      {/* Device connection */}
+      <h5 className="mt-6 px-1">{t("manage.connection")}</h5>
+      <div className="card mt-3">
+        <div className="flex items-center gap-3">
+          <span
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${
+              isConnected ? "bg-emerald-50 text-emerald-600" : "bg-ink-50 text-ink-400"
+            }`}
+          >
+            {isConnected ? <Wifi size={20} /> : <WifiOff size={20} />}
+          </span>
+          <div className="min-w-0 flex-1">
+            {editingIp ? (
+              <div className="flex items-center gap-2">
+                <input
+                  autoFocus
+                  value={draftIp}
+                  onChange={(e) => setDraftIp(e.target.value)}
+                  onBlur={saveIp}
+                  onKeyDown={(e) => e.key === "Enter" && saveIp()}
+                  inputMode="decimal"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  placeholder="192.168.1.x"
+                  className="min-w-0 flex-1 rounded-xl bg-ink-50 px-3 py-1.5 text-[15px] font-semibold text-ink-900 outline-none ring-1 ring-ink-300 placeholder:text-ink-400 focus:ring-brand-400"
+                />
+                <button
+                  aria-label={t("manage.saveIp")}
+                  onClick={saveIp}
+                  className="tap h-9 w-9 shrink-0 rounded-pill bg-brand-500 text-white active:scale-95"
+                >
+                  <Check size={18} strokeWidth={2.75} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setDraftIp(deviceIp);
+                  setEditingIp(true);
+                }}
+                className="flex items-center gap-2 text-left"
+              >
+                <span className="truncate text-[14px] font-semibold text-ink-900">
+                  {deviceIp || t("manage.noIp")}
+                </span>
+                <Pencil size={13} className="shrink-0 text-ink-400" />
+              </button>
+            )}
+            <p className="mt-0.5 text-[12px] text-ink-500">
+              {isConnected ? t("manage.wsConnected") : t("manage.wsDisconnected")}
+            </p>
+          </div>
+        </div>
+        {!deviceIp && (
+          <p className="mt-3 text-[12px] text-ink-500">{t("manage.ipHint")}</p>
+        )}
+        {deviceIp && !isConnected && (
+          <button className="btn-secondary mt-4 w-full" onClick={forceReconnect}>
+            <RefreshCw size={15} strokeWidth={2.5} />
+            {t("manage.reconnect")}
+          </button>
+        )}
+      </div>
+
       {/* Live readings */}
       <h5 className="mt-6 px-1">{t("manage.liveReadings")}</h5>
       <div className="mt-3 grid grid-cols-3 gap-2.5">
@@ -355,6 +454,64 @@ export default function DeviceManager() {
             <p className="text-[11px] text-ink-500">{stat.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* RF messages */}
+      <div className="card mt-3">
+        <div className="flex items-center gap-2.5">
+          <Radio size={17} className="text-brand-500" strokeWidth={2.25} />
+          <h5 className="flex-1">{t("manage.rfMessages")}</h5>
+          {sensorData && (
+            <span className="rounded-pill bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-500">
+              {sensorData.rfCount}
+            </span>
+          )}
+        </div>
+        {sensorData && sensorData.rfMessages.length > 0 ? (
+          <ul className="mt-3 space-y-1.5">
+            {sensorData.rfMessages.map((m, i) => (
+              <li
+                key={i}
+                className="rounded-xl bg-ink-50 px-3 py-2 font-mono text-[12px] text-ink-700"
+              >
+                {m}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-2 text-[13px] text-ink-500">{t("manage.noRfMessages")}</p>
+        )}
+      </div>
+
+      {/* Send message to device */}
+      <h5 className="mt-6 px-1">{t("manage.messageSection")}</h5>
+      <div className="card mt-3">
+        <div className="flex items-center gap-2.5">
+          <MessageSquare size={17} className="text-brand-500" strokeWidth={2.25} />
+          <p className="text-[13px] text-ink-600">{t("manage.messageHint")}</p>
+        </div>
+        <textarea
+          value={msgText}
+          onChange={(e) => setMsgText(e.target.value)}
+          placeholder={t("manage.messagePlaceholder")}
+          rows={3}
+          className="mt-3 w-full resize-none rounded-xl bg-ink-50 px-3 py-2.5 text-[14px] text-ink-900 outline-none ring-1 ring-ink-200 placeholder:text-ink-400 focus:ring-brand-400"
+        />
+        <button
+          className="btn-cta mt-3 w-full"
+          onClick={handleSendMessage}
+          disabled={!msgText.trim() || !isConnected}
+        >
+          {t("manage.messageSend")}
+        </button>
+        {sensorData?.customMsg && (
+          <div className="mt-3 rounded-xl bg-brand-50 px-3 py-2.5 ring-1 ring-brand-200">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-500">
+              {t("manage.messageCurrent")}
+            </p>
+            <p className="mt-0.5 text-[13px] text-ink-900">{sensorData.customMsg}</p>
+          </div>
+        )}
       </div>
 
       {/* Firmware */}
