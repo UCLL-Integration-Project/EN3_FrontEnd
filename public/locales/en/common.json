@@ -214,7 +214,19 @@
       "doneTitle": "You're all set",
       "doneBody": "{name} is paired and ready. Give it a name you'll recognise.",
       "nameLabel": "Device name",
-      "goToDevice": "Go to device"
+      "goToDevice": "Go to device",
+      "stepWifi": "Wi-Fi",
+      "bleUnavailable": "Bluetooth not available",
+      "bleUnavailableHint": "Use Chrome or Edge on desktop or Android — Safari and Firefox do not support Web Bluetooth.",
+      "bleError": "Bluetooth error — please try again",
+      "wifiTitle": "Connect to Wi-Fi",
+      "wifiBody": "Send your network credentials to {name} so it can reach the internet.",
+      "wifiSsidLabel": "Network name (SSID)",
+      "wifiPassLabel": "Password",
+      "wifiSend": "Connect device to Wi-Fi",
+      "wifiSkip": "Skip for now",
+      "wifiProvisioning": "Sending…",
+      "wifiError": "Failed to send credentials — make sure the device is nearby and try again"
     },
     "manage": {
       "title": "Companion",

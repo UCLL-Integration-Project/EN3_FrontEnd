@@ -214,7 +214,19 @@
       "doneTitle": "Je bent helemaal klaar",
       "doneBody": "{name} is gekoppeld en klaar. Geef het een naam die je herkent.",
       "nameLabel": "Apparaatnaam",
-      "goToDevice": "Naar apparaat"
+      "goToDevice": "Naar apparaat",
+      "stepWifi": "Wi-Fi",
+      "bleUnavailable": "Bluetooth niet beschikbaar",
+      "bleUnavailableHint": "Gebruik Chrome of Edge op desktop of Android — Safari en Firefox ondersteunen Web Bluetooth niet.",
+      "bleError": "Bluetooth-fout — probeer het opnieuw",
+      "wifiTitle": "Verbinden met Wi-Fi",
+      "wifiBody": "Stuur je netwerkinloggegevens naar {name} zodat het verbinding kan maken met het internet.",
+      "wifiSsidLabel": "Netwerknaam (SSID)",
+      "wifiPassLabel": "Wachtwoord",
+      "wifiSend": "Apparaat verbinden met Wi-Fi",
+      "wifiSkip": "Overslaan voor nu",
+      "wifiProvisioning": "Verzenden…",
+      "wifiError": "Verzenden van inloggegevens mislukt — zorg dat het apparaat in de buurt is en probeer het opnieuw"
     },
     "manage": {
       "title": "Metgezel",
