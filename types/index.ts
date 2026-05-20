@@ -48,6 +48,7 @@ export type UserResponse = {
 export type AuthenticationRequest = {
   email: string;
   password: string;
+  mfaEnabled: boolean;
 };
 
 export type Role = "USER" | "ADMIN";

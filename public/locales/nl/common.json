@@ -70,7 +70,8 @@
     "label": {
       "email": "Email",
       "password": "Wachtwoord",
-      "mfa_code": "MFA Verificatiecode"
+      "mfa_code": "MFA Verificatiecode",
+      "mfa_enabled": "MFA inschakelen"
     },
     "validate": {
       "error": "Verplicht"

@@ -70,7 +70,8 @@
     "label": {
       "email": "Email",
       "password": "Password",
-      "mfa_code": "MFA Verification Code"
+      "mfa_code": "MFA Verification Code",
+      "mfa_enabled": "Enable MFA"
     },
     "validate": {
       "error": "Required"
