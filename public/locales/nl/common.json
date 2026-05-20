@@ -2,6 +2,15 @@
   "general": {
     "error": "Er is een foutmelding, probeer later opnieuw."
   },
+  "errors": {
+    "USER_NOT_FOUND": "De gevraagde gebruiker '{{username}}' kon niet worden gevonden.",
+    "EMAIL_TAKEN": "Het e-mailadres '{{email}}' is al geregistreerd.",
+    "CONNECTION_ALREADY_EXISTS": "Je bent al verbonden met {{target}}.",
+    "validation": {
+      "not_blank": "Het veld {{field}} mag niet leeg zijn.",
+      "email": "Geef een geldig e-mailadres op."
+    }
+  },
   "notFound": {
     "eyebrow": "Fout 404",
     "title": "Signaal verloren",
