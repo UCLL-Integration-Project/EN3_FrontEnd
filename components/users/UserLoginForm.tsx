@@ -11,7 +11,7 @@ import BackButton from "@components/BackButton";
 import { sanitizeReturnPath } from "@components/auth/returnUrl";
 
 export default function UserLoginForm() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", mfaEnabled: false });
   const [mfaCode, setMfaCode] = useState("");
   const [isMfaRequired, setIsMfaRequired] = useState(false);
   const [tempUsername, setTempUsername] = useState("");
@@ -24,7 +24,7 @@ export default function UserLoginForm() {
   const { login } = useAuth();
   const t = useTranslations("UserLoginForm");
 
-  const handleChange = (field: "email" | "password", value: string) => {
+  const handleChange = (field: "email" | "password" | "mfaEnabled", value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -49,14 +49,15 @@ export default function UserLoginForm() {
     const authRequest: AuthenticationRequest = {
       email: form.email,
       password: form.password,
+      mfaEnabled: form.mfaEnabled,
     };
 
     setSubmitting(true);
     try {
       const response = await loginRequest(authRequest);
-      // If token is null, it means MFA is required
-      if (response.username && !response.token) {
-        setTempUsername(response.username);
+      // If token is null AND mfa was enabled, it means MFA is required
+      if (authRequest.mfaEnabled && !response.token) {
+        setTempUsername(response.username!);
         setIsMfaRequired(true);
         setStatusMessages([{ message: t("mfa_required"), type: "success" }]);
       } else {
@@ -221,6 +222,19 @@ export default function UserLoginForm() {
             </button>
           </div>
           <div className="field-error">{errors.password || ""}</div>
+        </div>
+
+        <div className="flex items-center gap-3 px-1 py-1">
+          <input
+            id="mfaEnabledInput"
+            type="checkbox"
+            checked={form.mfaEnabled}
+            onChange={(e) => handleChange("mfaEnabled", e.target.checked)}
+            className="h-5 w-5 rounded border-ink-300 text-brand-500 focus:ring-brand-500"
+          />
+          <label htmlFor="mfaEnabledInput" className="tap text-[15px] font-medium text-ink-700">
+            {t("label.mfa_enabled")}
+          </label>
         </div>
 
         {statusMessages.length > 0 && (
