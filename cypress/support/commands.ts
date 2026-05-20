@@ -27,7 +27,7 @@ Cypress.Commands.add("login", (email: string, password: string) => {
     });
   });
 
-  cy.contains("Settings").should("be.visible");
+  cy.get('button[aria-label="Settings"]').should("be.visible");
 });
 
 Cypress.Commands.add("visitWithLocale", (path: string, locale?: string) => {
