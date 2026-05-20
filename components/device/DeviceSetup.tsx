@@ -1,54 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
   Bluetooth,
   BluetoothSearching,
-  ChevronRight,
   Check,
   CheckCircle2,
+  Eye,
+  EyeOff,
   Loader2,
-  RefreshCw,
-  ShieldCheck,
   Watch,
+  Wifi,
 } from "lucide-react";
 import { useDevice } from "@context/DeviceContext";
-import { SignalBars } from "./DeviceUI";
 
-/* -------------------------------------------------------------------------
- * Companion-device pairing wizard.
- * This flow is mandatory: CrossWave needs one linked companion per account
- * to function, so there is no skip/close affordance here.
- * Frontend only — the scan/pair lifecycle is simulated with timers.
- * Wire `Web Bluetooth API` (navigator.bluetooth) into the marked spots later.
- * All user-visible copy comes from the `device` message catalogue.
- * ---------------------------------------------------------------------- */
+// BLE UUIDs — must match the ESP32 firmware (src/ble_comm.cpp)
+const DEVICE_BLE_NAME = "EN3_IOT";
+const WIFI_SERVICE    = "c7a2e3b4-d5f6-4789-a012-3456789abcde";
+const WIFI_SSID_CHAR  = "c7a2e3b4-d5f6-4789-a012-3456789abcdf";
+const WIFI_PASS_CHAR  = "c7a2e3b4-d5f6-4789-a012-3456789abce0";
 
-type Step = "intro" | "scanning" | "pairing" | "connected";
+type Step = "intro" | "scanning" | "wifi" | "done";
 
-type FoundDevice = {
-  id: string;
-  name: string;
-  signal: number; // 0–3
-};
+const PREREQS       = ["prereq1", "prereq2", "prereq3"] as const;
+const WIZARD_STEPS  = ["stepScan", "stepWifi", "stepDone"] as const;
 
-/* Mock scan results. These stand in for BLE-advertised device names, which
-   are not localized — real results replace them via navigator.bluetooth. */
-const NEARBY_DEVICES: FoundDevice[] = [
-  { id: "CW-2F8A", name: "CrossWave Band 2", signal: 3 },
-  { id: "CW-9C41", name: "CW Companion", signal: 2 },
-  { id: "BT-D7E0", name: "Unknown device", signal: 1 },
-];
-
-const PAIRING_CODE = ["4", "8", "2", "9", "1", "7"];
-
-/* Catalogue keys (device.setup.*) resolved at render time. */
-const PREREQS = ["prereq1", "prereq2", "prereq3"] as const;
-const WIZARD_STEPS = ["stepScan", "stepPair", "stepDone"] as const;
-
-/** Decorative scanning radar — emanating rings around a Bluetooth core. */
 function Radar() {
   return (
     <div className="relative mx-auto my-3 h-[210px] w-[210px]">
@@ -105,67 +83,82 @@ export default function DeviceSetup() {
   const { linkDevice } = useDevice();
 
   const [step, setStep] = useState<Step>("intro");
-  const [visibleCount, setVisibleCount] = useState(0);
-  const [scanNonce, setScanNonce] = useState(0);
-  const [selected, setSelected] = useState<FoundDevice | null>(null);
-  const [connecting, setConnecting] = useState(false);
-  const [deviceName, setDeviceName] = useState("");
 
-  const pairTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // BLE
+  const [bleDevice, setBleDevice] = useState<BluetoothDevice | null>(null);
+  const [deviceName, setDeviceName] = useState("");
+  const [bleError, setBleError] = useState<string | null>(null);
+
+  // WiFi provisioning
+  const [ssid, setSsid] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [provisioning, setProvisioning] = useState(false);
+  const [wifiError, setWifiError] = useState<string | null>(null);
+
+  const bleAvailable =
+    typeof navigator !== "undefined" && "bluetooth" in navigator;
 
   const activeStepIndex =
-    step === "intro" || step === "scanning" ? 0 : step === "pairing" ? 1 : 2;
+    step === "intro" || step === "scanning" ? 0 : step === "wifi" ? 1 : 2;
 
-  /* Reveal nearby devices progressively while scanning. */
-  useEffect(() => {
-    if (step !== "scanning") return;
-    // TODO: replace timers with navigator.bluetooth.requestDevice() results.
-    const timers = [700, 1500, 2500].map((delay, i) =>
-      setTimeout(() => setVisibleCount(i + 1), delay),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [step, scanNonce]);
-
-  /* Clear a pending pairing timer if the user leaves mid-connect, so its
-     callback never updates state on an unmounted component. */
-  useEffect(
-    () => () => {
-      if (pairTimer.current) clearTimeout(pairTimer.current);
-    },
-    [],
-  );
-
-  function startScan() {
-    setVisibleCount(0);
-    setScanNonce((n) => n + 1);
+  // Opens the browser's BLE device picker, then immediately connects GATT
+  // so the ESP32 reflects the connection before the WiFi form is shown.
+  async function startScan() {
+    setBleError(null);
     setStep("scanning");
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [{ name: DEVICE_BLE_NAME }],
+        optionalServices: [WIFI_SERVICE],
+      });
+      // Connect GATT right away — this triggers onConnect on the ESP32,
+      // which transitions it from BLE_SETUP → BLE_CONNECTED and fires the
+      // haptic/animation. Pre-discovering the service also makes the WiFi
+      // write instant when the user submits the form.
+      await device.gatt!.connect();
+      setBleDevice(device);
+      setDeviceName(device.name ?? DEVICE_BLE_NAME);
+      setStep("wifi");
+    } catch (err: unknown) {
+      // NotFoundError = user dismissed the picker — fail silently.
+      if (!(err instanceof Error && err.name === "NotFoundError")) {
+        setBleError(err instanceof Error ? err.message : t("setup.bleError"));
+      }
+      setStep("intro");
+    }
   }
 
-  function pickDevice(device: FoundDevice) {
-    setSelected(device);
-    setDeviceName(device.name);
-    setStep("pairing");
-  }
+  // Writes SSID + password to the device over BLE GATT, then marks linked.
+  // gatt.connect() is called again in case the connection dropped while the
+  // user was filling in the form — it's a no-op if already connected.
+  async function sendWifiCredentials() {
+    if (!bleDevice || !ssid) return;
+    setWifiError(null);
+    setProvisioning(true);
+    try {
+      const server  = await bleDevice.gatt!.connect();
+      const service = await server.getPrimaryService(WIFI_SERVICE);
+      const ssidChar = await service.getCharacteristic(WIFI_SSID_CHAR);
+      const passChar = await service.getCharacteristic(WIFI_PASS_CHAR);
 
-  function confirmPairing() {
-    setConnecting(true);
-    // TODO: establish GATT connection here.
-    pairTimer.current = setTimeout(() => {
-      pairTimer.current = null;
-      setConnecting(false);
-      setStep("connected");
-    }, 1900);
-  }
+      const enc = new TextEncoder();
+      await ssidChar.writeValueWithResponse(enc.encode(ssid));
+      await passChar.writeValueWithResponse(enc.encode(password));
 
-  function rescan() {
-    setSelected(null);
-    startScan();
+      setStep("done");
+    } catch (err: unknown) {
+      setWifiError(
+        err instanceof Error ? err.message : t("setup.wifiError"),
+      );
+    } finally {
+      setProvisioning(false);
+    }
   }
 
   return (
     <section className="app-screen">
-      {/* In-screen header — no close button: pairing is required to use
-          the app, so this flow cannot be dismissed. */}
+      {/* Header — no close button: pairing is required to use the app */}
       <div className="flex items-center gap-2.5 pt-safe-t">
         <span className="brand-mark" aria-hidden="true">
           <Bluetooth size={18} strokeWidth={2.25} />
@@ -182,9 +175,9 @@ export default function DeviceSetup() {
         />
       </div>
 
-      {/* ---------------------------------------------------------------- */}
-      {/* STEP — intro                                                     */}
-      {/* ---------------------------------------------------------------- */}
+      {/* ------------------------------------------------------------------ */}
+      {/* INTRO                                                               */}
+      {/* ------------------------------------------------------------------ */}
       {step === "intro" && (
         <div className="mt-6 flex flex-1 flex-col">
           <div className="relative mx-auto mt-2 flex h-28 w-28 items-center justify-center">
@@ -199,6 +192,21 @@ export default function DeviceSetup() {
           <p className="mt-2 text-center text-ink-600">
             {t("setup.introBody")}
           </p>
+
+          {bleError && (
+            <div className="status status-error mt-4 animate-sheet-in">
+              {bleError}
+            </div>
+          )}
+
+          {!bleAvailable && (
+            <div className="status status-error mt-4">
+              <p className="font-semibold">{t("setup.bleUnavailable")}</p>
+              <p className="mt-0.5 text-[12px] opacity-80">
+                {t("setup.bleUnavailableHint")}
+              </p>
+            </div>
+          )}
 
           <div className="card mt-6">
             <h5>{t("setup.prereqTitle")}</h5>
@@ -217,16 +225,20 @@ export default function DeviceSetup() {
           </div>
 
           <div className="action-dock mt-auto">
-            <button className="btn-cta" onClick={startScan}>
+            <button
+              className="btn-cta"
+              onClick={startScan}
+              disabled={!bleAvailable}
+            >
               {t("setup.startScan")}
             </button>
           </div>
         </div>
       )}
 
-      {/* ---------------------------------------------------------------- */}
-      {/* STEP — scanning                                                  */}
-      {/* ---------------------------------------------------------------- */}
+      {/* ------------------------------------------------------------------ */}
+      {/* SCANNING — radar shown while browser BLE picker is open            */}
+      {/* ------------------------------------------------------------------ */}
       {step === "scanning" && (
         <div className="mt-2 flex flex-1 flex-col">
           <Radar />
@@ -234,129 +246,113 @@ export default function DeviceSetup() {
           <p className="mt-1 text-center text-ink-500">
             {t("setup.scanningBody")}
           </p>
+          <div className="mt-6 flex items-center justify-center gap-2 text-[13px] font-medium text-ink-400">
+            <Loader2 size={16} className="animate-spin" />
+            {t("setup.scanningMore")}
+          </div>
+        </div>
+      )}
 
-          <div className="mt-5 flex flex-col gap-3">
-            {NEARBY_DEVICES.slice(0, visibleCount).map((device) => (
-              <button
-                key={device.id}
-                onClick={() => pickDevice(device)}
-                className="flex w-full items-center gap-3 rounded-sheet bg-white p-4 text-left shadow-card ring-1 ring-ink-100 transition-transform duration-100 animate-sheet-in active:scale-[0.99]"
-              >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
-                  <Watch size={20} strokeWidth={2.25} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[15px] font-semibold text-ink-900">
-                    {device.name}
-                  </span>
-                  <span className="block text-[12px] text-ink-500">
-                    {device.id}
-                  </span>
-                </span>
-                <SignalBars level={device.signal} />
-                <ChevronRight
-                  size={18}
-                  className="text-ink-300"
-                  strokeWidth={2.5}
-                />
-              </button>
-            ))}
-
-            {visibleCount < NEARBY_DEVICES.length && (
-              <div className="flex items-center justify-center gap-2 py-3 text-[13px] font-medium text-ink-400">
-                <Loader2 size={16} className="animate-spin" />
-                {t("setup.scanningMore")}
-              </div>
-            )}
+      {/* ------------------------------------------------------------------ */}
+      {/* WIFI — send credentials to the device over BLE GATT               */}
+      {/* ------------------------------------------------------------------ */}
+      {step === "wifi" && bleDevice && (
+        <div className="mt-6 flex flex-1 flex-col">
+          <div className="flex flex-col items-center text-center">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
+              <Watch size={26} strokeWidth={2.25} />
+            </span>
+            <h3 className="mt-4">{t("setup.wifiTitle")}</h3>
+            <p className="mt-1 text-ink-600">
+              {t("setup.wifiBody", { name: deviceName })}
+            </p>
           </div>
 
+          <div className="card mt-6 flex flex-col gap-4">
+            <label className="field">
+              <span className="field-label">{t("setup.wifiSsidLabel")}</span>
+              <span className="field-control">
+                <input
+                  className="field-input"
+                  value={ssid}
+                  onChange={(e) => setSsid(e.target.value)}
+                  placeholder="MyNetwork"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  autoComplete="off"
+                  inputMode="text"
+                />
+              </span>
+            </label>
+
+            <label className="field">
+              <span className="field-label">{t("setup.wifiPassLabel")}</span>
+              <span className="field-control field-control-icon-r">
+                <input
+                  className="field-input"
+                  type={showPass ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  autoComplete="off"
+                />
+                <button
+                  type="button"
+                  aria-label={showPass ? "Hide password" : "Show password"}
+                  className="field-icon-btn"
+                  onClick={() => setShowPass((v) => !v)}
+                >
+                  {showPass ? (
+                    <EyeOff size={18} strokeWidth={2} />
+                  ) : (
+                    <Eye size={18} strokeWidth={2} />
+                  )}
+                </button>
+              </span>
+            </label>
+          </div>
+
+          {wifiError && (
+            <div className="status status-error mt-4 animate-sheet-in">
+              {wifiError}
+            </div>
+          )}
+
           <div className="action-dock mt-auto">
-            <p className="mb-3 text-center text-[12px] text-ink-400">
-              {t("setup.rescanHint")}
-            </p>
             <button
-              className="btn-ghost w-full"
-              onClick={rescan}
-              disabled={visibleCount < NEARBY_DEVICES.length}
+              className="btn-cta"
+              onClick={sendWifiCredentials}
+              disabled={!ssid || provisioning}
             >
-              <RefreshCw size={16} strokeWidth={2.5} className="mr-2" />
-              {t("setup.rescan")}
+              {provisioning ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  {t("setup.wifiProvisioning")}
+                </>
+              ) : (
+                <>
+                  <Wifi size={18} />
+                  {t("setup.wifiSend")}
+                </>
+              )}
+            </button>
+            <button
+              className="btn-ghost mt-2 w-full"
+              onClick={() => setStep("done")}
+              disabled={provisioning}
+            >
+              {t("setup.wifiSkip")}
             </button>
           </div>
         </div>
       )}
 
-      {/* ---------------------------------------------------------------- */}
-      {/* STEP — pairing                                                   */}
-      {/* ---------------------------------------------------------------- */}
-      {step === "pairing" && selected && (
-        <div className="mt-6 flex flex-1 flex-col">
-          {connecting ? (
-            <div className="flex flex-1 flex-col items-center justify-center pb-16 text-center">
-              <span className="relative flex h-24 w-24 items-center justify-center">
-                <span className="absolute inset-0 rounded-full border-2 border-brand-300/50 animate-ping" />
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-gradient text-white shadow-pop">
-                  <Bluetooth size={28} strokeWidth={2.25} />
-                </span>
-              </span>
-              <h3 className="mt-6">{t("setup.connectingTitle")}</h3>
-              <p className="mt-1 text-ink-500">
-                {t("setup.connectingBody", { name: selected.name })}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="flex flex-col items-center text-center">
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
-                  <Watch size={26} strokeWidth={2.25} />
-                </span>
-                <h3 className="mt-4">{t("setup.confirmTitle")}</h3>
-                <p className="mt-1 text-ink-600">
-                  {t.rich("setup.confirmBody", {
-                    name: selected.name,
-                    strong: (chunks) => (
-                      <span className="font-semibold text-ink-800">
-                        {chunks}
-                      </span>
-                    ),
-                  })}
-                </p>
-              </div>
-
-              <div className="card mt-6">
-                <div className="flex justify-center gap-2">
-                  {PAIRING_CODE.map((digit, i) => (
-                    <span
-                      key={i}
-                      className="flex h-14 w-10 items-center justify-center rounded-2xl bg-brand-50 font-display text-[26px] text-brand-700 ring-1 ring-brand-100"
-                    >
-                      {digit}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-4 flex items-center justify-center gap-2 text-[12px] font-medium text-ink-500">
-                  <ShieldCheck size={14} className="text-brand-500" />
-                  {t("setup.encrypted")}
-                </div>
-              </div>
-
-              <div className="action-dock mt-auto">
-                <button className="btn-cta" onClick={confirmPairing}>
-                  {t("setup.codesMatch")}
-                </button>
-                <button className="btn-quiet mt-2 w-full" onClick={rescan}>
-                  {t("setup.codesDontMatch")}
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* ---------------------------------------------------------------- */}
-      {/* STEP — connected                                                 */}
-      {/* ---------------------------------------------------------------- */}
-      {step === "connected" && selected && (
+      {/* ------------------------------------------------------------------ */}
+      {/* DONE                                                                */}
+      {/* ------------------------------------------------------------------ */}
+      {step === "done" && (
         <div className="mt-6 flex flex-1 flex-col">
           <div className="flex flex-col items-center text-center">
             <span className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
@@ -364,7 +360,7 @@ export default function DeviceSetup() {
             </span>
             <h2 className="mt-5">{t("setup.doneTitle")}</h2>
             <p className="mt-2 text-ink-600">
-              {t("setup.doneBody", { name: selected.name })}
+              {t("setup.doneBody", { name: deviceName || DEVICE_BLE_NAME })}
             </p>
           </div>
 
@@ -390,8 +386,6 @@ export default function DeviceSetup() {
             <button
               className="btn-cta"
               onClick={() => {
-                // Mark the account's device as linked, then leave setup —
-                // replace() so this completed flow stays out of history.
                 linkDevice();
                 router.replace(`/${locale}/device`);
               }}

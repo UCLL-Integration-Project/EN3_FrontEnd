@@ -215,7 +215,19 @@
       "doneTitle": "You're all set",
       "doneBody": "{name} is paired and ready. Give it a name you'll recognise.",
       "nameLabel": "Device name",
-      "goToDevice": "Go to device"
+      "goToDevice": "Go to device",
+      "stepWifi": "Wi-Fi",
+      "bleUnavailable": "Bluetooth not available",
+      "bleUnavailableHint": "Use Chrome or Edge on desktop or Android — Safari and Firefox do not support Web Bluetooth.",
+      "bleError": "Bluetooth error — please try again",
+      "wifiTitle": "Connect to Wi-Fi",
+      "wifiBody": "Send your network credentials to {name} so it can reach the internet.",
+      "wifiSsidLabel": "Network name (SSID)",
+      "wifiPassLabel": "Password",
+      "wifiSend": "Connect device to Wi-Fi",
+      "wifiSkip": "Skip for now",
+      "wifiProvisioning": "Sending…",
+      "wifiError": "Failed to send credentials — make sure the device is nearby and try again"
     },
     "manage": {
       "title": "Companion",
@@ -255,11 +267,26 @@
       "infoPaired": "Paired since",
       "preferences": "Preferences",
       "prefs": {
-        "autoConnect": { "label": "Auto-connect", "hint": "Reconnect when in range" },
-        "backgroundSync": { "label": "Background sync", "hint": "Keep readings up to date" },
-        "notifications": { "label": "Push notifications", "hint": "Alerts from your companion" },
-        "haptics": { "label": "Haptic alerts", "hint": "Vibrate on the device" },
-        "doNotDisturb": { "label": "Do not disturb", "hint": "Mute alerts overnight" }
+        "autoConnect": {
+          "label": "Auto-connect",
+          "hint": "Reconnect when in range"
+        },
+        "backgroundSync": {
+          "label": "Background sync",
+          "hint": "Keep readings up to date"
+        },
+        "notifications": {
+          "label": "Push notifications",
+          "hint": "Alerts from your companion"
+        },
+        "haptics": {
+          "label": "Haptic alerts",
+          "hint": "Vibrate on the device"
+        },
+        "doNotDisturb": {
+          "label": "Do not disturb",
+          "hint": "Mute alerts overnight"
+        }
       },
       "forget": "Forget this device",
       "dismiss": "Dismiss",
@@ -267,7 +294,26 @@
       "forgetTitle": "Forget {name}?",
       "forgetBody": "Each account links one companion. Forgetting {name} unlinks it — and since CrossWave needs a linked device, you'll be taken straight to pairing.",
       "forgetConfirm": "Forget device",
-      "forgetCancel": "Keep paired"
+      "forgetCancel": "Keep paired",
+      "disconnected": "Disconnected",
+      "connection": "Device connection",
+      "noIp": "No IP address set",
+      "ipHint": "Tap to enter the IP shown on the device OLED. The app connects over Wi-Fi — no Bluetooth required.",
+      "saveIp": "Save IP",
+      "wsConnected": "WebSocket live",
+      "wsDisconnected": "Not connected",
+      "reconnect": "Reconnect",
+      "readingAccelX": "X-axis",
+      "readingAccelY": "Y-axis",
+      "readingAccelZ": "Z-axis",
+      "rfMessages": "RF messages",
+      "noRfMessages": "No RF devices detected",
+      "messageSection": "Send message",
+      "messageHint": "Broadcast this text from your device over Wi-Fi.",
+      "messagePlaceholder": "Enter a message…",
+      "messageSend": "Send to device",
+      "messageSent": "Message sent to device",
+      "messageCurrent": "Current message on device"
     }
   }
 }

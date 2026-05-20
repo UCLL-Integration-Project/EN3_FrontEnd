@@ -30,20 +30,27 @@ type DeviceContextType = {
   isLoading: boolean;
   linkDevice: () => void;
   unlinkDevice: () => void;
+  deviceIp: string;
+  setDeviceIp: (ip: string) => void;
 };
 
 const DeviceContext = createContext<DeviceContextType | undefined>(undefined);
 
 const STORAGE_PREFIX = "crosswave.deviceLinked";
+const IP_PREFIX = "crosswave.deviceIp";
 
 export const DeviceProvider = ({ children }: { children: ReactNode }) => {
   const { user, isLoading: authLoading } = useAuth();
   const [deviceLinked, setDeviceLinked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [deviceIp, setDeviceIpState] = useState("");
 
-  // Storage key scoped to the current account — null when signed out.
+  // Storage keys scoped to the current account — null when signed out.
   const storageKey = user
     ? `${STORAGE_PREFIX}:${user.username ?? user.email ?? "unknown"}`
+    : null;
+  const ipKey = user
+    ? `${IP_PREFIX}:${user.username ?? user.email ?? "unknown"}`
     : null;
 
   useEffect(() => {
@@ -60,7 +67,9 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
       setDeviceLinked(linked);
       setIsLoading(false);
     });
-  }, [authLoading, storageKey]);
+
+    setDeviceIpState(ipKey ? (safeStorage.get(ipKey) ?? "") : "");
+  }, [authLoading, storageKey, ipKey]);
 
   const linkDevice = () => {
     if (!storageKey) return;
@@ -72,11 +81,19 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
     if (!storageKey) return;
     safeStorage.remove(storageKey);
     setDeviceLinked(false);
+    // Clear the stored IP so the next account starts fresh.
+    if (ipKey) safeStorage.remove(ipKey);
+    setDeviceIpState("");
+  };
+
+  const setDeviceIp = (ip: string) => {
+    if (ipKey) safeStorage.set(ipKey, ip);
+    setDeviceIpState(ip);
   };
 
   return (
     <DeviceContext.Provider
-      value={{ deviceLinked, isLoading, linkDevice, unlinkDevice }}
+      value={{ deviceLinked, isLoading, linkDevice, unlinkDevice, deviceIp, setDeviceIp }}
     >
       {children}
     </DeviceContext.Provider>
