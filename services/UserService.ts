@@ -28,7 +28,7 @@ const handleResponse = async (response: Response): Promise<void> => {
 
 export const signupRequest = async (userInput: User): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/auth/signup`, {
+    const response = await fetch(`${apiUrl}/api/users/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userInput),
@@ -44,7 +44,7 @@ export const signupRequest = async (userInput: User): Promise<User> => {
 
 export const loginRequest = async (authRequest: AuthenticationRequest): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/auth/login`, {
+    const response = await fetch(`${apiUrl}/api/users/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(authRequest),
@@ -76,7 +76,7 @@ export const verifyMfaRequest = async (username: string, code: string): Promise<
 
 export const logoutRequest = async (): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/auth/logout`, {
+    const response = await fetch(`${apiUrl}/api/users/logout`, {
       method: "POST",
       credentials: "include",
     });
