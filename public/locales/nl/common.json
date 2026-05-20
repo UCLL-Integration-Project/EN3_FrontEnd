@@ -55,6 +55,24 @@
         "FORBIDDEN": "Je hebt geen toestemming om deze pagina te bekijken.",
         "NETWORK_ERROR": "Kan de server niet bereiken. Probeer opnieuw.",
         "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw."
+      },
+      "detail": {
+        "title": "Lid",
+        "back": "Terug",
+        "lastSeenNever": "Nooit",
+        "fields": {
+          "display": "Weergavenaam",
+          "username": "Gebruikersnaam",
+          "bio": "Bio",
+          "joined": "Lid sinds",
+          "lastSeen": "Laatst gezien"
+        },
+        "errors": {
+          "USER_NOT_FOUND": "Dat lid konden we niet vinden.",
+          "FORBIDDEN": "Je hebt geen toestemming om dit lid te bekijken.",
+          "NETWORK_ERROR": "Kan de server niet bereiken. Probeer opnieuw.",
+          "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw."
+        }
       }
     }
   },

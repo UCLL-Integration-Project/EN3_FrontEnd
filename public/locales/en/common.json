@@ -55,6 +55,24 @@
         "FORBIDDEN": "You don't have permission to view this page.",
         "NETWORK_ERROR": "Couldn't reach the server. Try again.",
         "UNKNOWN_ERROR": "Something went wrong. Try again."
+      },
+      "detail": {
+        "title": "Member",
+        "back": "Back",
+        "lastSeenNever": "Never",
+        "fields": {
+          "display": "Display",
+          "username": "Username",
+          "bio": "Bio",
+          "joined": "Joined",
+          "lastSeen": "Last seen"
+        },
+        "errors": {
+          "USER_NOT_FOUND": "We couldn't find that member.",
+          "FORBIDDEN": "You don't have permission to view this member.",
+          "NETWORK_ERROR": "Couldn't reach the server. Try again.",
+          "UNKNOWN_ERROR": "Something went wrong. Try again."
+        }
       }
     }
   },

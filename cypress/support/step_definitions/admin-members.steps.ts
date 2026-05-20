@@ -29,3 +29,32 @@ Then("I should see {string} in the list", (name: string) => {
 Then("I should not see {string} in the list", (name: string) => {
   cy.contains("li", name).should("not.exist");
 });
+
+When("I open the member named {string}", (name: string) => {
+  cy.intercept("GET", "**/api/admin/members/*").as("getMember");
+  cy.contains("li", name).find("a").click();
+  cy.wait("@getMember");
+});
+
+Then("I should land on the member detail page", () => {
+  cy.location("pathname").should("match", /\/[a-z]{2}\/admin\/members\/\d+$/);
+});
+
+Then("I should see {string} on the detail page", (name: string) => {
+  cy.contains("h3", name).should("be.visible");
+});
+
+When("I go back to the members list", () => {
+  cy.intercept("GET", "**/api/admin/members*").as("listAgain");
+  cy.contains("a", /Back|Terug/).click();
+  cy.wait("@listAgain");
+});
+
+Then("I should be on the members list", () => {
+  cy.location("pathname").should("match", /\/[a-z]{2}\/admin\/members$/);
+});
+
+Then("the search should still be {string}", (q: string) => {
+  cy.location("search").should("include", `search=${encodeURIComponent(q)}`);
+  cy.get('input[type="search"]').should("have.value", q);
+});

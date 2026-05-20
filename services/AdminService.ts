@@ -1,4 +1,4 @@
-import { AdminMemberSummary, Page, Status } from "@types";
+import { AdminMemberDetail, AdminMemberSummary, Page, Status } from "@types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL is not defined");
@@ -37,6 +37,20 @@ export const listMembersRequest = async (
 
   try {
     const response = await fetch(`${apiUrl}/api/admin/members?${qs.toString()}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const getMemberRequest = async (id: number): Promise<AdminMemberDetail> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/admin/members/${id}`, {
       method: "GET",
       credentials: "include",
     });

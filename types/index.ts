@@ -70,6 +70,18 @@ export type AdminMemberSummary = {
   joinedAt: string; // ISO timestamp from the backend's Instant
 };
 
+export type AdminMemberDetail = {
+  id: number;
+  displayName: string;
+  username: string;
+  email: string;
+  bio?: string | null;
+  avatarUrl?: string | null;
+  status: Status;
+  joinedAt: string;
+  lastSeenAt?: string | null;
+};
+
 /* Spring Data's Page<T> response shape. Keep the fields we actually use. */
 export type Page<T> = {
   content: T[];

@@ -23,7 +23,7 @@ export default function MemberRow({ member }: { member: AdminMemberSummary }) {
   const t = useTranslations("admin.members");
   const locale = useLocale();
   return (
-    <li className="card flex items-center gap-3 px-3 py-3">
+    <article className="card flex items-center gap-3 px-3 py-3">
       <span
         aria-hidden
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700"
@@ -52,6 +52,6 @@ export default function MemberRow({ member }: { member: AdminMemberSummary }) {
           {formatJoined(member.joinedAt, locale)}
         </span>
       </p>
-    </li>
+    </article>
   );
 }
