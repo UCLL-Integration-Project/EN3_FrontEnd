@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -11,13 +11,10 @@ import {
   CheckCircle2,
   Cpu,
   Hash,
-  MessageSquare,
   Pencil,
   Plug,
-  Radio,
   RefreshCw,
   Trash2,
-  Watch,
   Wifi,
   WifiOff,
 } from "lucide-react";
@@ -34,11 +31,11 @@ import {
 } from "./DeviceCards";
 
 const DEVICE = {
-  model: "CrossWave Band 2",
-  serial: "CW2-0A91-7F3C",
+  model: "CrossWave",
+  serial: "CW-0A91-7F3C",
   mac: "A4:2F:8C:1D:9E:0B",
   pairedSince: "12 May 2026",
-  installedFirmware: "2.3.1",
+  installedFirmware: "2.4.0",
   latestFirmware: "2.4.0",
 };
 
@@ -46,20 +43,20 @@ export default function DeviceManager() {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("device");
-  const { unlinkDevice, deviceIp, setDeviceIp } = useDevice();
-  const { isConnected, sensorData, sendMessage, forceReconnect } =
+  const { unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName, hapticsEnabled } = useDevice();
+  const { isConnected, sensorData, sendCommand, forceReconnect } =
     useDeviceWebSocket(deviceIp);
 
-  const [deviceName, setDeviceName] = useState(() => t("defaultName"));
-  const [lastSync, setLastSync] = useState<"lastSyncRecent" | "lastSyncJustNow">(
-    "lastSyncRecent",
-  );
-  const [battery] = useState(72);
-  const [charging] = useState(false);
+  const resolvedName = deviceName || t("defaultName");
+  const [lastReceivedAt, setLastReceivedAt] = useState<number | null>(null);
+  useEffect(() => {
+    if (sensorData) setLastReceivedAt(Date.now());
+  }, [sensorData]);
+
+  const isStale = lastReceivedAt !== null && Date.now() - lastReceivedAt > 120_000;
 
   const [editingIp, setEditingIp] = useState(false);
   const [draftIp, setDraftIp] = useState(deviceIp);
-  const [msgText, setMsgText] = useState("");
 
   const [note, setNote] = useState<string | null>(null);
   const [showForget, setShowForget] = useState(false);
@@ -76,13 +73,6 @@ export default function DeviceManager() {
     setEditingIp(false);
   }
 
-  function handleSendMessage() {
-    const text = msgText.trim();
-    if (!text) return;
-    sendMessage(text);
-    flash(t("manage.messageSent"));
-  }
-
   function forgetDevice() {
     setShowForget(false);
     unlinkDevice();
@@ -90,7 +80,7 @@ export default function DeviceManager() {
   }
 
   const infoRows = [
-    { icon: Watch, label: t("manage.infoModel"), value: DEVICE.model },
+    { icon: Cpu, label: t("manage.infoModel"), value: DEVICE.model },
     { icon: Hash, label: t("manage.infoSerial"), value: DEVICE.serial },
     { icon: Cpu, label: t("manage.infoMac"), value: DEVICE.mac },
     { icon: Plug, label: t("manage.infoPaired"), value: DEVICE.pairedSince },
@@ -143,6 +133,20 @@ export default function DeviceManager() {
         </span>
       </div>
 
+      {!deviceIp && (
+        <button
+          className="mt-3 flex w-full items-center gap-3 rounded-2xl bg-secondary-50 px-4 py-3 ring-1 ring-secondary-200 text-left"
+          onClick={() => setEditingIp(true)}
+        >
+          <Wifi size={18} className="shrink-0 text-secondary-600" />
+          <div className="min-w-0 flex-1">
+            <p className="text-[13px] font-semibold text-secondary-800">{t("manage.noIpBanner")}</p>
+            <p className="text-[11px] text-secondary-600">{t("manage.noIpBannerHint")}</p>
+          </div>
+          <Pencil size={14} className="shrink-0 text-secondary-500" />
+        </button>
+      )}
+
       {note && (
         <div className="status status-success mt-3 animate-sheet-in">
           <CheckCircle2 size={18} />
@@ -152,15 +156,21 @@ export default function DeviceManager() {
 
       <DeviceHeroCard
         model={DEVICE.model}
-        lastSync={lastSync}
+        name={resolvedName}
+        isConnected={isConnected}
+        lastReceivedAt={lastReceivedAt}
+        isStale={isStale}
         onNameChange={setDeviceName}
       />
 
       <BatteryCard
-        battery={battery}
-        charging={charging}
+        battery={sensorData?.batteryPct != null && sensorData.batteryPct >= 0 ? sensorData.batteryPct : null}
+        vcc={sensorData?.vcc ?? 0}
+        isStale={isStale}
+        lastReadingAt={lastReceivedAt}
         flash={flash}
-        onSyncDone={() => setLastSync("lastSyncJustNow")}
+        onSyncDone={() => {}}
+        onIdentify={() => hapticsEnabled && sendCommand("BUZZ:")}
       />
 
       {/* WebSocket connection */}
@@ -233,66 +243,6 @@ export default function DeviceManager() {
       <h5 className="mt-6 px-1">{t("manage.liveReadings")}</h5>
       <ReadingsGrid readings={readings} />
 
-      {/* RF messages from second device */}
-      <div className="card mt-3">
-        <div className="flex items-center gap-2.5">
-          <Radio size={17} className="text-brand-500" strokeWidth={2.25} />
-          <h5 className="flex-1">{t("manage.rfMessages")}</h5>
-          {sensorData && (
-            <span className="rounded-pill bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-500">
-              {sensorData.rfCount}
-            </span>
-          )}
-        </div>
-        {sensorData && sensorData.rfMessages.length > 0 ? (
-          <ul className="mt-3 space-y-1.5">
-            {sensorData.rfMessages.map((m, i) => (
-              <li
-                key={i}
-                className="rounded-xl bg-ink-50 px-3 py-2 font-mono text-[12px] text-ink-700"
-              >
-                {m}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-2 text-[13px] text-ink-500">
-            {t("manage.noRfMessages")}
-          </p>
-        )}
-      </div>
-
-      {/* Send custom message to device display */}
-      <h5 className="mt-6 px-1">{t("manage.messageSection")}</h5>
-      <div className="card mt-3">
-        <div className="flex items-center gap-2.5">
-          <MessageSquare size={17} className="text-brand-500" strokeWidth={2.25} />
-          <p className="text-[13px] text-ink-600">{t("manage.messageHint")}</p>
-        </div>
-        <textarea
-          value={msgText}
-          onChange={(e) => setMsgText(e.target.value)}
-          placeholder={t("manage.messagePlaceholder")}
-          rows={3}
-          className="mt-3 w-full resize-none rounded-xl bg-ink-50 px-3 py-2.5 text-[14px] text-ink-900 outline-none ring-1 ring-ink-200 placeholder:text-ink-400 focus:ring-brand-400"
-        />
-        <button
-          className="btn-cta mt-3 w-full"
-          onClick={handleSendMessage}
-          disabled={!msgText.trim() || !isConnected}
-        >
-          {t("manage.messageSend")}
-        </button>
-        {sensorData?.customMsg && (
-          <div className="mt-3 rounded-xl bg-brand-50 px-3 py-2.5 ring-1 ring-brand-200">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-500">
-              {t("manage.messageCurrent")}
-            </p>
-            <p className="mt-0.5 text-[13px] text-ink-900">{sensorData.customMsg}</p>
-          </div>
-        )}
-      </div>
-
       <h5 className="mt-6 px-1">{t("manage.firmware")}</h5>
       <FirmwareCard
         installed={DEVICE.installedFirmware}
@@ -318,7 +268,7 @@ export default function DeviceManager() {
 
       {showForget && (
         <ForgetSheet
-          name={deviceName}
+          name={resolvedName}
           onConfirm={forgetDevice}
           onDismiss={() => setShowForget(false)}
         />

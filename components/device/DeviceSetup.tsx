@@ -17,10 +17,11 @@ import {
 import { useDevice } from "@context/DeviceContext";
 
 // BLE UUIDs — must match the ESP32 firmware (src/ble_comm.cpp)
-const DEVICE_BLE_NAME = "EN3_IOT";
-const WIFI_SERVICE    = "c7a2e3b4-d5f6-4789-a012-3456789abcde";
-const WIFI_SSID_CHAR  = "c7a2e3b4-d5f6-4789-a012-3456789abcdf";
-const WIFI_PASS_CHAR  = "c7a2e3b4-d5f6-4789-a012-3456789abce0";
+const DEVICE_BLE_NAME  = "EN3_IOT";
+const WIFI_SERVICE     = "c7a2e3b4-d5f6-4789-a012-3456789abcde";
+const WIFI_SSID_CHAR   = "c7a2e3b4-d5f6-4789-a012-3456789abcdf";
+const WIFI_PASS_CHAR   = "c7a2e3b4-d5f6-4789-a012-3456789abce0";
+const WIFI_STATUS_CHAR = "c7a2e3b4-d5f6-4789-a012-3456789abce1";
 
 type Step = "intro" | "scanning" | "wifi" | "done";
 
@@ -80,7 +81,7 @@ export default function DeviceSetup() {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("device");
-  const { linkDevice } = useDevice();
+  const { linkDevice, setDeviceIp } = useDevice();
 
   const [step, setStep] = useState<Step>("intro");
 
@@ -94,6 +95,7 @@ export default function DeviceSetup() {
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [provisioning, setProvisioning] = useState(false);
+  const [wifiPhase, setWifiPhase] = useState<"sending" | "waiting">("sending");
   const [wifiError, setWifiError] = useState<string | null>(null);
 
   const bleAvailable =
@@ -129,22 +131,65 @@ export default function DeviceSetup() {
     }
   }
 
-  // Writes SSID + password to the device over BLE GATT, then marks linked.
-  // gatt.connect() is called again in case the connection dropped while the
-  // user was filling in the form — it's a no-op if already connected.
+  // Waits up to timeoutMs for the device's WiFi status characteristic to
+  // report "CONNECTED:ip:port". Returns the IP string, or null on timeout.
+  async function waitForWifiIp(
+    char: BluetoothRemoteGATTCharacteristic,
+    timeoutMs: number,
+  ): Promise<string | null> {
+    function parseIp(raw: DataView): string | null {
+      const value = new TextDecoder().decode(raw);
+      if (!value.startsWith("CONNECTED:")) return null;
+      return value.split(":")[1] ?? null;
+    }
+    try {
+      const current = await char.readValue();
+      const ip = parseIp(current);
+      if (ip) return ip;
+    } catch { /* not connected yet — fall through to notifications */ }
+
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        char.removeEventListener("characteristicvaluechanged", onNotify);
+        resolve(null);
+      }, timeoutMs);
+
+      function onNotify(e: Event) {
+        const ip = parseIp((e.target as BluetoothRemoteGATTCharacteristic).value!);
+        if (ip) {
+          clearTimeout(timeout);
+          char.removeEventListener("characteristicvaluechanged", onNotify);
+          resolve(ip);
+        }
+      }
+
+      char.addEventListener("characteristicvaluechanged", onNotify);
+      char.startNotifications().catch(() => { /* notifications unavailable — let timeout expire */ });
+    });
+  }
+
+  // Writes SSID + password to the device over BLE GATT, then waits for the
+  // device to join WiFi and report its IP via the status characteristic.
   async function sendWifiCredentials() {
     if (!bleDevice || !ssid) return;
     setWifiError(null);
     setProvisioning(true);
+    setWifiPhase("sending");
     try {
-      const server  = await bleDevice.gatt!.connect();
-      const service = await server.getPrimaryService(WIFI_SERVICE);
-      const ssidChar = await service.getCharacteristic(WIFI_SSID_CHAR);
-      const passChar = await service.getCharacteristic(WIFI_PASS_CHAR);
+      const server     = await bleDevice.gatt!.connect();
+      const service    = await server.getPrimaryService(WIFI_SERVICE);
+      const ssidChar   = await service.getCharacteristic(WIFI_SSID_CHAR);
+      const passChar   = await service.getCharacteristic(WIFI_PASS_CHAR);
+      const statusChar = await service.getCharacteristic(WIFI_STATUS_CHAR);
 
       const enc = new TextEncoder();
       await ssidChar.writeValueWithResponse(enc.encode(ssid));
       await passChar.writeValueWithResponse(enc.encode(password));
+
+      // Wait up to 15 s for the device to connect and broadcast its IP.
+      setWifiPhase("waiting");
+      const ip = await waitForWifiIp(statusChar, 15_000);
+      if (ip) setDeviceIp(ip);
 
       setStep("done");
     } catch (err: unknown) {
@@ -153,6 +198,7 @@ export default function DeviceSetup() {
       );
     } finally {
       setProvisioning(false);
+      setWifiPhase("sending");
     }
   }
 
@@ -329,7 +375,9 @@ export default function DeviceSetup() {
               {provisioning ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  {t("setup.wifiProvisioning")}
+                  {wifiPhase === "waiting"
+                    ? t("setup.wifiWaiting")
+                    : t("setup.wifiProvisioning")}
                 </>
               ) : (
                 <>

@@ -2,33 +2,43 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { BluetoothConnected, Check, Pencil, RefreshCw, Watch } from "lucide-react";
-import { SignalBars } from "./DeviceUI";
+import { Check, Pencil, RefreshCw, WifiOff } from "lucide-react";
+import { PagerIcon } from "./PagerIcon";
 
 interface HeroProps {
   model: string;
-  lastSync: "lastSyncRecent" | "lastSyncJustNow";
+  name: string;
+  isConnected: boolean;
+  lastReceivedAt: number | null;
+  isStale?: boolean;
   onNameChange?: (name: string) => void;
 }
 
-export function DeviceHeroCard({ model, lastSync, onNameChange }: HeroProps) {
+export function DeviceHeroCard({ model, name, isConnected, lastReceivedAt, isStale = false, onNameChange }: HeroProps) {
   const t = useTranslations("device");
-  const [name, setName] = useState(() => t("defaultName"));
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
 
   function save() {
     const next = draft.trim() || name;
-    setName(next);
     setEditing(false);
     onNameChange?.(next);
+  }
+
+  function formatElapsed(ts: number): string {
+    const sec = Math.floor((Date.now() - ts) / 1000);
+    if (sec < 10) return t("manage.lastSyncJustNow");
+    if (sec < 60) return t("manage.lastSyncSecondsAgo", { n: sec });
+    const min = Math.floor(sec / 60);
+    if (min < 60) return t("manage.lastSyncMinutesAgo", { n: min });
+    return `${Math.floor(min / 60)}h`;
   }
 
   return (
     <div className="mt-4 rounded-sheet bg-brand-gradient p-6 text-white shadow-pop">
       <div className="flex items-center gap-4">
         <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/25">
-          <Watch size={30} strokeWidth={2} />
+          <PagerIcon size={30} />
         </span>
         <div className="min-w-0 flex-1">
           {editing ? (
@@ -55,7 +65,9 @@ export function DeviceHeroCard({ model, lastSync, onNameChange }: HeroProps) {
               onClick={() => { setDraft(name); setEditing(true); }}
               className="flex items-center gap-2 text-left"
             >
-              <span className="truncate font-display text-[24px] leading-tight">{name}</span>
+              <span className="truncate font-display text-[24px] leading-tight text-white">
+                {name}
+              </span>
               <Pencil size={15} className="shrink-0 opacity-70" />
             </button>
           )}
@@ -64,18 +76,44 @@ export function DeviceHeroCard({ model, lastSync, onNameChange }: HeroProps) {
       </div>
 
       <div className="mt-5 flex items-center gap-4 border-t border-white/15 pt-4 text-[12px] font-medium text-white/85">
-        <span className="flex items-center gap-1.5">
-          <BluetoothConnected size={14} />
-          {t("manage.bluetooth")}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <SignalBars level={3} light />
-          {t("manage.signalStrong")}
-        </span>
-        <span className="ml-auto flex items-center gap-1.5 text-white/70">
-          <RefreshCw size={13} />
-          {t(`manage.${lastSync}`)}
-        </span>
+        {isConnected && !isStale ? (
+          <>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+              {t("manage.signalLive")}
+            </span>
+            <span className="ml-auto flex items-center gap-1.5 text-white/70">
+              <RefreshCw size={13} />
+              {lastReceivedAt ? formatElapsed(lastReceivedAt) : "—"}
+            </span>
+          </>
+        ) : isStale ? (
+          <>
+            <span className="flex items-center gap-1.5 text-amber-300">
+              <span className="h-2 w-2 rounded-full bg-amber-400" />
+              {t("manage.stale")}
+            </span>
+            {lastReceivedAt && (
+              <span className="ml-auto flex items-center gap-1.5 text-white/50">
+                <RefreshCw size={13} />
+                {formatElapsed(lastReceivedAt)}
+              </span>
+            )}
+          </>
+        ) : (
+          <>
+            <span className="flex items-center gap-1.5 text-white/60">
+              <WifiOff size={13} />
+              {t("manage.disconnected")}
+            </span>
+            {lastReceivedAt && (
+              <span className="ml-auto flex items-center gap-1.5 text-white/50">
+                <RefreshCw size={13} />
+                {formatElapsed(lastReceivedAt)}
+              </span>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
