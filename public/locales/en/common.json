@@ -73,6 +73,55 @@
           "NETWORK_ERROR": "Couldn't reach the server. Try again.",
           "UNKNOWN_ERROR": "Something went wrong. Try again."
         }
+      },
+      "moderation": {
+        "title": "Moderation",
+        "cancel": "Cancel",
+        "note": {
+          "placeholder": "Add an optional note"
+        },
+        "suspend": {
+          "label": "Suspend member",
+          "title": "Suspend {name}?",
+          "message": "They won't be able to sign in and their profile is hidden from other members until reactivated.",
+          "confirm": "Suspend"
+        },
+        "reactivate": {
+          "label": "Reactivate member",
+          "title": "Reactivate {name}?",
+          "message": "Full access is restored — they can sign in and their profile is visible again.",
+          "confirm": "Reactivate"
+        },
+        "clearBio": {
+          "label": "Clear bio",
+          "title": "Clear {name}'s bio?",
+          "message": "The bio is replaced with an empty placeholder. This cannot be undone.",
+          "confirm": "Clear bio"
+        },
+        "clearAvatar": {
+          "label": "Clear profile picture",
+          "title": "Clear {name}'s profile picture?",
+          "message": "The picture is replaced with an empty placeholder. This cannot be undone.",
+          "confirm": "Clear picture"
+        },
+        "audit": {
+          "title": "Audit log",
+          "empty": "No moderation actions yet.",
+          "action": {
+            "SUSPEND": "suspended this member",
+            "REACTIVATE": "reactivated this member",
+            "CLEAR_BIO": "cleared the bio",
+            "CLEAR_AVATAR": "cleared the profile picture"
+          }
+        },
+        "errors": {
+          "ALREADY_SUSPENDED": "This member is already suspended.",
+          "ALREADY_ACTIVE": "This member is already active.",
+          "CANNOT_MODERATE_SELF": "You can't moderate your own account.",
+          "USER_NOT_FOUND": "We couldn't find that member.",
+          "NETWORK_ERROR": "Couldn't reach the server. Try again.",
+          "UNKNOWN_ERROR": "Something went wrong. Try again."
+        }
       }
     }
   },
@@ -137,6 +186,7 @@
     },
     "error": {
       "INVALID_CREDENTIALS": "Invalid email or password.",
+      "ACCOUNT_SUSPENDED": "This account has been suspended. Contact an administrator.",
       "USERNAME_TAKEN": "This username is already taken.",
       "UNKNOWN_ERROR": "An unexpected error occurred. Please try again later.",
       "NETWORK_ERROR": "Unable to connect to the server.",

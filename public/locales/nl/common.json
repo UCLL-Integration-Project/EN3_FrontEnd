@@ -73,6 +73,55 @@
           "NETWORK_ERROR": "Kan de server niet bereiken. Probeer opnieuw.",
           "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw."
         }
+      },
+      "moderation": {
+        "title": "Moderatie",
+        "cancel": "Annuleren",
+        "note": {
+          "placeholder": "Voeg een optionele notitie toe"
+        },
+        "suspend": {
+          "label": "Lid schorsen",
+          "title": "{name} schorsen?",
+          "message": "Dit lid kan niet meer inloggen en het profiel is verborgen voor andere leden tot het weer wordt geactiveerd.",
+          "confirm": "Schorsen"
+        },
+        "reactivate": {
+          "label": "Lid heractiveren",
+          "title": "{name} heractiveren?",
+          "message": "Volledige toegang wordt hersteld — dit lid kan weer inloggen en het profiel is opnieuw zichtbaar.",
+          "confirm": "Heractiveren"
+        },
+        "clearBio": {
+          "label": "Bio wissen",
+          "title": "Bio van {name} wissen?",
+          "message": "De bio wordt vervangen door een lege placeholder. Dit kan niet ongedaan worden gemaakt.",
+          "confirm": "Bio wissen"
+        },
+        "clearAvatar": {
+          "label": "Profielfoto wissen",
+          "title": "Profielfoto van {name} wissen?",
+          "message": "De foto wordt vervangen door een lege placeholder. Dit kan niet ongedaan worden gemaakt.",
+          "confirm": "Foto wissen"
+        },
+        "audit": {
+          "title": "Auditlogboek",
+          "empty": "Nog geen moderatieacties.",
+          "action": {
+            "SUSPEND": "heeft dit lid geschorst",
+            "REACTIVATE": "heeft dit lid geheractiveerd",
+            "CLEAR_BIO": "heeft de bio gewist",
+            "CLEAR_AVATAR": "heeft de profielfoto gewist"
+          }
+        },
+        "errors": {
+          "ALREADY_SUSPENDED": "Dit lid is al geschorst.",
+          "ALREADY_ACTIVE": "Dit lid is al actief.",
+          "CANNOT_MODERATE_SELF": "Je kunt je eigen account niet modereren.",
+          "USER_NOT_FOUND": "Dat lid konden we niet vinden.",
+          "NETWORK_ERROR": "Kan de server niet bereiken. Probeer opnieuw.",
+          "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw."
+        }
       }
     }
   },
@@ -137,6 +186,7 @@
     },
     "error": {
       "INVALID_CREDENTIALS": "Ongeldig e-mailadres of wachtwoord.",
+      "ACCOUNT_SUSPENDED": "Dit account is geschorst. Neem contact op met een beheerder.",
       "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",
       "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
       "NETWORK_ERROR": "Kan geen verbinding maken met de server.",
