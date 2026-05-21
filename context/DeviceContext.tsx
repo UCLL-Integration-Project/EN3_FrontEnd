@@ -32,18 +32,22 @@ type DeviceContextType = {
   unlinkDevice: () => void;
   deviceIp: string;
   setDeviceIp: (ip: string) => void;
+  deviceName: string;
+  setDeviceName: (name: string) => void;
 };
 
 const DeviceContext = createContext<DeviceContextType | undefined>(undefined);
 
 const STORAGE_PREFIX = "crosswave.deviceLinked";
 const IP_PREFIX = "crosswave.deviceIp";
+const NAME_PREFIX = "crosswave.deviceName";
 
 export const DeviceProvider = ({ children }: { children: ReactNode }) => {
   const { user, isLoading: authLoading } = useAuth();
   const [deviceLinked, setDeviceLinked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [deviceIp, setDeviceIpState] = useState("");
+  const [deviceName, setDeviceNameState] = useState("");
 
   // Storage keys scoped to the current account — null when signed out.
   const storageKey = user
@@ -51,6 +55,9 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
     : null;
   const ipKey = user
     ? `${IP_PREFIX}:${user.username ?? user.email ?? "unknown"}`
+    : null;
+  const nameKey = user
+    ? `${NAME_PREFIX}:${user.username ?? user.email ?? "unknown"}`
     : null;
 
   useEffect(() => {
@@ -69,7 +76,8 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
     });
 
     setDeviceIpState(ipKey ? (safeStorage.get(ipKey) ?? "") : "");
-  }, [authLoading, storageKey, ipKey]);
+    setDeviceNameState(nameKey ? (safeStorage.get(nameKey) ?? "") : "");
+  }, [authLoading, storageKey, ipKey, nameKey]);
 
   const linkDevice = () => {
     if (!storageKey) return;
@@ -81,9 +89,10 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
     if (!storageKey) return;
     safeStorage.remove(storageKey);
     setDeviceLinked(false);
-    // Clear the stored IP so the next account starts fresh.
     if (ipKey) safeStorage.remove(ipKey);
+    if (nameKey) safeStorage.remove(nameKey);
     setDeviceIpState("");
+    setDeviceNameState("");
   };
 
   const setDeviceIp = (ip: string) => {
@@ -91,9 +100,14 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
     setDeviceIpState(ip);
   };
 
+  const setDeviceName = (name: string) => {
+    if (nameKey) safeStorage.set(nameKey, name);
+    setDeviceNameState(name);
+  };
+
   return (
     <DeviceContext.Provider
-      value={{ deviceLinked, isLoading, linkDevice, unlinkDevice, deviceIp, setDeviceIp }}
+      value={{ deviceLinked, isLoading, linkDevice, unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName }}
     >
       {children}
     </DeviceContext.Provider>

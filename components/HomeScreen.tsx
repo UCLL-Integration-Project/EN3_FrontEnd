@@ -13,6 +13,7 @@ import {
   MessageSquare,
   Radio,
   Settings,
+  Wifi,
 } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import { useDevice } from "@context/DeviceContext";
@@ -201,6 +202,39 @@ export default function HomeScreen() {
               {t("messageCurrent")}
             </p>
             <p className="mt-0.5 text-[13px] text-ink-900">{sensorData.customMsg}</p>
+          </div>
+        )}
+      </div>
+
+      {/* RF messages from nearby devices */}
+      <div className="mt-5 rounded-sheet bg-white p-5 shadow-card ring-1 ring-ink-100">
+        <div className="flex items-center gap-2.5">
+          <Radio size={18} className="text-brand-500" strokeWidth={2.25} />
+          <h5 className="flex-1">{t("rfTitle")}</h5>
+          {sensorData && (
+            <span className="rounded-pill bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-500">
+              {sensorData.rfCount}
+            </span>
+          )}
+        </div>
+        {sensorData?.rfMessages && sensorData.rfMessages.length > 0 ? (
+          <ul className="mt-3 space-y-1.5">
+            {sensorData.rfMessages.map((m, i) => (
+              <li
+                key={i}
+                className="rounded-xl bg-ink-50 px-3 py-2 font-mono text-[12px] text-ink-700"
+              >
+                {m}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-2 text-[13px] text-ink-400">{t("noRfMessages")}</p>
+        )}
+        {!isConnected && (
+          <div className="mt-3 flex items-center gap-2 text-[12px] text-ink-400">
+            <Wifi size={13} />
+            {t("messageNoDevice")}
           </div>
         )}
       </div>

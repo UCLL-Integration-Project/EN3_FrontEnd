@@ -59,21 +59,20 @@ export function PagerIcon({ size, className }: { size: number; className?: strin
 
 interface HeroProps {
   model: string;
+  name: string;
   isConnected: boolean;
   lastReceivedAt: number | null;
   isStale?: boolean;
   onNameChange?: (name: string) => void;
 }
 
-export function DeviceHeroCard({ model, isConnected, lastReceivedAt, isStale = false, onNameChange }: HeroProps) {
+export function DeviceHeroCard({ model, name, isConnected, lastReceivedAt, isStale = false, onNameChange }: HeroProps) {
   const t = useTranslations("device");
-  const [name, setName] = useState(() => t("defaultName"));
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
 
   function save() {
     const next = draft.trim() || name;
-    setName(next);
     setEditing(false);
     onNameChange?.(next);
   }
@@ -118,7 +117,7 @@ export function DeviceHeroCard({ model, isConnected, lastReceivedAt, isStale = f
               onClick={() => { setDraft(name); setEditing(true); }}
               className="flex items-center gap-2 text-left"
             >
-              <span className="truncate font-display text-[24px] leading-tight">
+              <span className="truncate font-display text-[24px] leading-tight text-white">
                 {name}
               </span>
               <Pencil size={15} className="shrink-0 opacity-70" />
@@ -212,6 +211,8 @@ export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = f
 
   const hasBattery = battery != null && battery >= 0;
   const hasVcc = !hasBattery && vcc > 0;
+  // Device is USB-powered when no battery sensor — always show USB label
+  const isUsbPowered = !hasBattery;
 
   const batteryColor = hasBattery
     ? battery! < 10
@@ -259,9 +260,7 @@ export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = f
                   : charging
                     ? t("manage.charging")
                     : t("manage.batteryRemaining")
-              : hasVcc
-                ? t("manage.batteryUsb")
-                : t("manage.batteryUnavailable")}
+              : t("manage.batteryUsb")}
           </p>
         </div>
         {hasBattery && <BatteryGlyph percent={battery!} charging={charging} />}

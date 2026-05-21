@@ -51,7 +51,9 @@
       "messageSend": "Broadcast",
       "messageSent": "Sent to device",
       "messageCurrent": "On device now",
-      "messageNoDevice": "Connect your device to broadcast"
+      "messageNoDevice": "Connect your device to broadcast",
+      "rfTitle": "From nearby devices",
+      "noRfMessages": "No nearby devices detected"
     }
   },
   "header": {

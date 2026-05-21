@@ -51,7 +51,9 @@
       "messageSend": "Diffuser",
       "messageSent": "Envoyé à l'appareil",
       "messageCurrent": "Sur l'appareil maintenant",
-      "messageNoDevice": "Connectez votre appareil pour diffuser"
+      "messageNoDevice": "Connectez votre appareil pour diffuser",
+      "rfTitle": "Des appareils à proximité",
+      "noRfMessages": "Aucun appareil à proximité détecté"
     }
   },
   "header": {

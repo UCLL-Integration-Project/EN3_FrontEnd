@@ -51,7 +51,9 @@
       "messageSend": "Uitzenden",
       "messageSent": "Verzonden naar apparaat",
       "messageCurrent": "Nu op apparaat",
-      "messageNoDevice": "Verbind je apparaat om uit te zenden"
+      "messageNoDevice": "Verbind je apparaat om uit te zenden",
+      "rfTitle": "Van apparaten in de buurt",
+      "noRfMessages": "Geen apparaten in de buurt gedetecteerd"
     }
   },
   "header": {

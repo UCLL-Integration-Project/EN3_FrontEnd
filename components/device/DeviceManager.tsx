@@ -13,7 +13,6 @@ import {
   Hash,
   Pencil,
   Plug,
-  Radio,
   RefreshCw,
   Trash2,
   Wifi,
@@ -36,7 +35,7 @@ const DEVICE = {
   serial: "CW-0A91-7F3C",
   mac: "A4:2F:8C:1D:9E:0B",
   pairedSince: "12 May 2026",
-  installedFirmware: "2.3.1",
+  installedFirmware: "2.4.0",
   latestFirmware: "2.4.0",
 };
 
@@ -44,11 +43,11 @@ export default function DeviceManager() {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("device");
-  const { unlinkDevice, deviceIp, setDeviceIp } = useDevice();
+  const { unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName } = useDevice();
   const { isConnected, sensorData, sendCommand, forceReconnect } =
     useDeviceWebSocket(deviceIp);
 
-  const [deviceName, setDeviceName] = useState(() => t("defaultName"));
+  const resolvedName = deviceName || t("defaultName");
   const [lastReceivedAt, setLastReceivedAt] = useState<number | null>(null);
   useEffect(() => {
     if (sensorData) setLastReceivedAt(Date.now());
@@ -157,6 +156,7 @@ export default function DeviceManager() {
 
       <DeviceHeroCard
         model={DEVICE.model}
+        name={resolvedName}
         isConnected={isConnected}
         lastReceivedAt={lastReceivedAt}
         isStale={isStale}
@@ -243,35 +243,6 @@ export default function DeviceManager() {
       <h5 className="mt-6 px-1">{t("manage.liveReadings")}</h5>
       <ReadingsGrid readings={readings} />
 
-      {/* RF messages from second device */}
-      <div className="card mt-3">
-        <div className="flex items-center gap-2.5">
-          <Radio size={17} className="text-brand-500" strokeWidth={2.25} />
-          <h5 className="flex-1">{t("manage.rfMessages")}</h5>
-          {sensorData && (
-            <span className="rounded-pill bg-ink-100 px-2 py-0.5 text-[11px] font-semibold text-ink-500">
-              {sensorData.rfCount}
-            </span>
-          )}
-        </div>
-        {sensorData && sensorData.rfMessages.length > 0 ? (
-          <ul className="mt-3 space-y-1.5">
-            {sensorData.rfMessages.map((m, i) => (
-              <li
-                key={i}
-                className="rounded-xl bg-ink-50 px-3 py-2 font-mono text-[12px] text-ink-700"
-              >
-                {m}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-2 text-[13px] text-ink-500">
-            {t("manage.noRfMessages")}
-          </p>
-        )}
-      </div>
-
       <h5 className="mt-6 px-1">{t("manage.firmware")}</h5>
       <FirmwareCard
         installed={DEVICE.installedFirmware}
@@ -297,7 +268,7 @@ export default function DeviceManager() {
 
       {showForget && (
         <ForgetSheet
-          name={deviceName}
+          name={resolvedName}
           onConfirm={forgetDevice}
           onDismiss={() => setShowForget(false)}
         />
