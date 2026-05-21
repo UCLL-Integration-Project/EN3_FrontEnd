@@ -9,25 +9,24 @@ declare global {
   }
 }
 
+/* Logs in via the API and primes the first-party hint cookies the
+   middleware (proxy.ts) reads before a page renders. The httpOnly
+   authToken cookie is set by the login response itself. The caller
+   navigates afterwards. */
 Cypress.Commands.add("login", (email: string, password: string) => {
   const apiUrl = Cypress.env("apiUrl") as string;
-  const locale = (Cypress.env("locale") as string) || "en";
 
   cy.request({
     method: "POST",
     url: `${apiUrl}/api/v1/users/login`,
-    body: { email, password },
+    body: { email, password, mfaEnabled: false },
     failOnStatusCode: true,
   }).then((response) => {
-    const userData = response.body;
-    cy.visit(`/${locale}/`, {
-      onBeforeLoad(win) {
-        win.sessionStorage.setItem("loggedInUser", JSON.stringify(userData));
-      },
-    });
+    cy.setCookie("cw_session", "1");
+    if (response.body?.role === "ADMIN") {
+      cy.setCookie("cw_admin", "1");
+    }
   });
-
-  cy.contains("Settings").should("be.visible");
 });
 
 Cypress.Commands.add("visitWithLocale", (path: string, locale?: string) => {

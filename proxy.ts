@@ -19,6 +19,7 @@ const intlMiddleware = createMiddleware({ locales, defaultLocale });
 
 /* Path prefixes, matched against the path after the /[locale] segment. */
 const PROTECTED = ["/device", "/settings"]; // require a signed-in user
+const ADMIN_ONLY = ["/admin"]; // require a signed-in admin (cw_admin hint cookie)
 const GUEST_ONLY = ["/login", "/signup"]; // require a signed-out user
 
 function matchesPrefix(rest: string, prefixes: string[]): boolean {
@@ -38,6 +39,7 @@ export default function proxy(request: NextRequest) {
 
   const rest = `/${segments.slice(1).join("/")}`;
   const signedIn = request.cookies.get("cw_session")?.value === "1";
+  const isAdmin = request.cookies.get("cw_admin")?.value === "1";
 
   // Protected route, no session → send to login with a return path.
   // The return path keeps the original query string so a deep link like
@@ -48,6 +50,24 @@ export default function proxy(request: NextRequest) {
     url.search = "";
     url.searchParams.set("next", pathname + request.nextUrl.search);
     return NextResponse.redirect(url);
+  }
+
+  // Admin route: must be signed in *and* flagged admin. Anonymous → login;
+  // signed-in non-admin → /403. Hint-cookie only; backend RBAC is the real gate.
+  if (matchesPrefix(rest, ADMIN_ONLY)) {
+    if (!signedIn) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${locale}/login`;
+      url.search = "";
+      url.searchParams.set("next", pathname + request.nextUrl.search);
+      return NextResponse.redirect(url);
+    }
+    if (!isAdmin) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${locale}/403`;
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
   }
 
   // Auth route, already signed in → send home (or to ?next= if present).
