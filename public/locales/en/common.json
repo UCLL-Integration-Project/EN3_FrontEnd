@@ -133,6 +133,7 @@
     "listTitle": "My connections",
     "empty": "You have no connections yet.",
     "removeAriaLabel": "Remove connection with {name}",
+    "changeLevelAriaLabel": "Change connection level with {name}",
     "error": {
       "USER_NOT_FOUND": "No user found with that username.",
       "ALREADY_CONNECTED": "You are already connected with this user.",

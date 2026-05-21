@@ -1,4 +1,4 @@
-import { AuthenticationRequest, UpdateProfileInput, User, UserResponse, UserStats } from "@types";
+import { AuthenticationRequest, UpdateProfileInput, User, UserResponse, UserStats, ConnectionDTO, ConnectionLevel } from "@types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL is not defined");
@@ -139,7 +139,7 @@ export const changePasswordRequest = async (currentPassword: string, newPassword
    4. CONNECTIONS DOMAIN (/api/connections)
    ========================================================================== */
 
-export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
+export const getConnectionsRequest = async (): Promise<ConnectionDTO[]> => {
   try {
     const response = await fetch(`${apiUrl}/api/connections`, {
       method: "GET",
@@ -170,6 +170,21 @@ export const removeConnectionRequest = async (username: string): Promise<void> =
   try {
     const response = await fetch(`${apiUrl}/api/connections/${encodeURIComponent(username)}`, {
       method: "DELETE",
+      credentials: "include",
+    });
+    await handleResponse(response);
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const setConnectionLevelRequest = async (username: string, level: ConnectionLevel): Promise<void> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/connections/${encodeURIComponent(username)}/level`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ level }),
       credentials: "include",
     });
     await handleResponse(response);
