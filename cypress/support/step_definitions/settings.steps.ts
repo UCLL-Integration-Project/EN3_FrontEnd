@@ -1,7 +1,7 @@
 import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 When("I navigate to the settings page", () => {
-  cy.intercept("GET", "**/api/users/me").as("getProfile");
+  cy.intercept("GET", "**/api/v1/users/me").as("getProfile");
   cy.visitWithLocale("/settings");
   cy.wait("@getProfile");
 });

@@ -292,6 +292,16 @@
     "loginLink": "Heb je al een account? Inloggen",
     "success": "Registratie gelukt. Doorsturen..."
   },
+  "StatsPage": {
+    "connections": "Verbindingen",
+    "timeActive": "Actief",
+    "dataShared": "Gedeeld",
+    "refresh": "Vernieuwen",
+    "emptyTitle": "Nog geen activiteit",
+    "emptySubtitle": "Begin met verbinden om je stats hier te zien.",
+    "exploreConnections": "Verken verbindingen",
+    "loadError": "Kon stats niet laden."
+  },
   "device": {
     "defaultName": "Mijn metgezel",
     "common": {
@@ -324,7 +334,19 @@
       "doneTitle": "Je bent helemaal klaar",
       "doneBody": "{name} is gekoppeld en klaar. Geef het een naam die je herkent.",
       "nameLabel": "Apparaatnaam",
-      "goToDevice": "Naar apparaat"
+      "goToDevice": "Naar apparaat",
+      "stepWifi": "Wi-Fi",
+      "bleUnavailable": "Bluetooth niet beschikbaar",
+      "bleUnavailableHint": "Gebruik Chrome of Edge op desktop of Android — Safari en Firefox ondersteunen Web Bluetooth niet.",
+      "bleError": "Bluetooth-fout — probeer het opnieuw",
+      "wifiTitle": "Verbinden met Wi-Fi",
+      "wifiBody": "Stuur je netwerkinloggegevens naar {name} zodat het verbinding kan maken met het internet.",
+      "wifiSsidLabel": "Netwerknaam (SSID)",
+      "wifiPassLabel": "Wachtwoord",
+      "wifiSend": "Apparaat verbinden met Wi-Fi",
+      "wifiSkip": "Overslaan voor nu",
+      "wifiProvisioning": "Verzenden…",
+      "wifiError": "Verzenden van inloggegevens mislukt — zorg dat het apparaat in de buurt is en probeer het opnieuw"
     },
     "manage": {
       "title": "Metgezel",
@@ -364,11 +386,26 @@
       "infoPaired": "Gekoppeld sinds",
       "preferences": "Voorkeuren",
       "prefs": {
-        "autoConnect": { "label": "Automatisch verbinden", "hint": "Opnieuw verbinden indien in bereik" },
-        "backgroundSync": { "label": "Synchroniseren op achtergrond", "hint": "Houd metingen actueel" },
-        "notifications": { "label": "Pushmeldingen", "hint": "Meldingen van je metgezel" },
-        "haptics": { "label": "Trilmeldingen", "hint": "Trillen op het apparaat" },
-        "doNotDisturb": { "label": "Niet storen", "hint": "Demp meldingen 's nachts" }
+        "autoConnect": {
+          "label": "Automatisch verbinden",
+          "hint": "Opnieuw verbinden indien in bereik"
+        },
+        "backgroundSync": {
+          "label": "Synchroniseren op achtergrond",
+          "hint": "Houd metingen actueel"
+        },
+        "notifications": {
+          "label": "Pushmeldingen",
+          "hint": "Meldingen van je metgezel"
+        },
+        "haptics": {
+          "label": "Trilmeldingen",
+          "hint": "Trillen op het apparaat"
+        },
+        "doNotDisturb": {
+          "label": "Niet storen",
+          "hint": "Demp meldingen 's nachts"
+        }
       },
       "forget": "Dit apparaat vergeten",
       "dismiss": "Sluiten",
@@ -376,7 +413,26 @@
       "forgetTitle": "{name} vergeten?",
       "forgetBody": "Elk account koppelt één metgezel. Als je {name} vergeet, wordt de koppeling verbroken — en omdat CrossWave een gekoppeld apparaat nodig heeft, ga je meteen naar het koppelen.",
       "forgetConfirm": "Apparaat vergeten",
-      "forgetCancel": "Gekoppeld houden"
+      "forgetCancel": "Gekoppeld houden",
+      "disconnected": "Niet verbonden",
+      "connection": "Apparaatverbinding",
+      "noIp": "Geen IP-adres ingesteld",
+      "ipHint": "Tik om het IP-adres in te voeren dat op het OLED-scherm van het apparaat staat. De app verbindt via Wi-Fi — geen Bluetooth vereist.",
+      "saveIp": "IP opslaan",
+      "wsConnected": "WebSocket actief",
+      "wsDisconnected": "Niet verbonden",
+      "reconnect": "Opnieuw verbinden",
+      "readingAccelX": "X-as",
+      "readingAccelY": "Y-as",
+      "readingAccelZ": "Z-as",
+      "rfMessages": "RF-berichten",
+      "noRfMessages": "Geen RF-apparaten gedetecteerd",
+      "messageSection": "Bericht verzenden",
+      "messageHint": "Verstuur deze tekst via Wi-Fi vanuit je apparaat.",
+      "messagePlaceholder": "Voer een bericht in…",
+      "messageSend": "Naar apparaat verzenden",
+      "messageSent": "Bericht verzonden naar apparaat",
+      "messageCurrent": "Huidig bericht op apparaat"
     }
   }
 }
