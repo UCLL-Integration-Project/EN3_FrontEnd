@@ -4,25 +4,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  BatteryMedium,
-  BluetoothConnected,
+  Activity,
   ChevronRight,
   LifeBuoy,
   LogOut,
-  RefreshCw,
+  Radio,
   Settings,
-  Trophy,
   Watch,
 } from "lucide-react";
 import useAuth from "@hooks/useAuth";
+import { useDevice } from "@context/DeviceContext";
+import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
 import LanguageChip from "@components/language";
-
-/* -------------------------------------------------------------------------
- * Signed-in app home — a companion-device dashboard.
- * CrossWave requires exactly one linked companion per account. This screen
- * assumes a device is linked; the guard that redirects to /device/setup when
- * none is linked belongs in the auth/device context (mock data for now).
- * ---------------------------------------------------------------------- */
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
@@ -32,12 +25,13 @@ export default function HomeScreen() {
   const locale = useLocale();
   const router = useRouter();
 
+  const { deviceIp } = useDevice();
+  const { isConnected, sensorData } = useDeviceWebSocket(deviceIp);
+
   const displayName =
     user?.firstName?.trim() || user?.username?.trim() || t("fallbackName");
   const initial = displayName.charAt(0).toUpperCase();
 
-  // Computed at render — wrapped in suppressHydrationWarning where shown,
-  // since the server hour and the device hour may differ.
   const hour = new Date().getHours();
   const greetingKey =
     hour < 12
@@ -47,38 +41,50 @@ export default function HomeScreen() {
         : "greetingEvening";
 
   const actions = [
-    {
-      icon: Settings,
-      label: t("actionSettings"),
-      href: `/${locale}/settings`,
-    },
-    {
-      icon: LifeBuoy,
-      label: t("actionHelp"),
-      href: `/${locale}`,
-    },
+    { icon: Settings, label: t("actionSettings"), href: `/${locale}/settings` },
+    { icon: LifeBuoy, label: t("actionHelp"), href: `/${locale}` },
   ];
 
-  const activity = [
-    {
-      icon: RefreshCw,
-      tone: "bg-brand-50 text-brand-600",
-      label: t("activitySynced"),
-      time: t("timeNow"),
-    },
-    {
-      icon: Trophy,
-      tone: "bg-secondary-50 text-secondary-600",
-      label: t("activityGoal"),
-      time: t("timeMinutes", { count: 42 }),
-    },
-    {
-      icon: BluetoothConnected,
-      tone: "bg-accent-50 text-accent-600",
-      label: t("activityFirmware"),
-      time: t("timeHours", { count: 5 }),
-    },
-  ];
+  const lastUpdateTime = sensorData
+    ? new Date(sensorData.ts).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+    : null;
+
+  const readings = sensorData
+    ? [
+        {
+          icon: Activity,
+          label: t("readingX"),
+          value: sensorData.ax.toFixed(3),
+          unit: "g",
+          tone: "bg-brand-50 text-brand-600",
+        },
+        {
+          icon: Activity,
+          label: t("readingY"),
+          value: sensorData.ay.toFixed(3),
+          unit: "g",
+          tone: "bg-secondary-50 text-secondary-600",
+        },
+        {
+          icon: Activity,
+          label: t("readingZ"),
+          value: sensorData.az.toFixed(3),
+          unit: "g",
+          tone: "bg-accent-50 text-accent-600",
+        },
+        {
+          icon: Radio,
+          label: t("readingRf"),
+          value: String(sensorData.rfCount),
+          unit: "",
+          tone: "bg-ink-50 text-ink-500",
+        },
+      ]
+    : null;
 
   return (
     <section className="app-screen bg-wave">
@@ -102,7 +108,7 @@ export default function HomeScreen() {
         </Link>
       </div>
 
-      {/* Companion device — hero card */}
+      {/* Companion device hero card */}
       <Link
         href={`/${locale}/device`}
         className="mt-5 block rounded-sheet bg-brand-gradient p-5 text-white shadow-pop transition-transform duration-100 active:scale-[0.99]"
@@ -123,19 +129,20 @@ export default function HomeScreen() {
         </div>
         <div className="mt-4 flex items-center gap-4 border-t border-white/15 pt-3 text-[12px] font-medium text-white/85">
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-300" />
-            {t("companionConnected")}
+            <span
+              className={`h-2 w-2 rounded-full ${isConnected ? "bg-emerald-300" : "bg-white/40"}`}
+            />
+            {isConnected ? t("companionConnected") : t("companionDisconnected")}
           </span>
-          <span className="flex items-center gap-1.5">
-            <BatteryMedium size={15} />
-            72%
+          <span className="ml-auto text-white/65">
+            {lastUpdateTime
+              ? t("companionLastUpdate", { time: lastUpdateTime })
+              : t("companionManage")}
           </span>
-          <span className="ml-auto text-white/65">{t("companionManage")}</span>
         </div>
       </Link>
 
-      {/* Quick actions — note: no "pair device" here; one companion per
-          account, and swapping happens by forgetting the current one. */}
+      {/* Quick actions */}
       <h5 className="mt-6 px-1">{t("actionsTitle")}</h5>
       <div className="mt-3 flex flex-col gap-2.5">
         {actions.map((action) => (
@@ -155,42 +162,49 @@ export default function HomeScreen() {
         ))}
       </div>
 
-      {/* Recent activity */}
-      <h5 className="mt-6 px-1">{t("activityTitle")}</h5>
-      <div className="card mt-3 py-2">
-        {activity.map((item, i) => (
-          <div
-            key={item.label}
-            className={`flex items-center gap-3 py-3 ${
-              i > 0 ? "border-t border-ink-100" : ""
-            }`}
-          >
-            <span
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${item.tone}`}
+      {/* Live sensor readings */}
+      <h5 className="mt-6 px-1">{t("readingsTitle")}</h5>
+      {readings ? (
+        <div className="card mt-3 py-2">
+          {readings.map((r, i) => (
+            <div
+              key={r.label}
+              className={`flex items-center gap-3 py-3 ${
+                i > 0 ? "border-t border-ink-100" : ""
+              }`}
             >
-              <item.icon size={16} strokeWidth={2.25} />
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[14px] font-medium text-ink-900">
-              {item.label}
-            </span>
-            <span className="shrink-0 text-[12px] text-ink-400">
-              {item.time}
-            </span>
-          </div>
-        ))}
-      </div>
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${r.tone}`}
+              >
+                <r.icon size={16} strokeWidth={2.25} />
+              </span>
+              <span className="min-w-0 flex-1 text-[14px] font-medium text-ink-900">
+                {r.label}
+              </span>
+              <span className="shrink-0 font-mono text-[14px] font-semibold text-ink-900">
+                {r.value}
+                {r.unit && (
+                  <span className="text-[12px] font-normal text-ink-400">
+                    {" "}
+                    {r.unit}
+                  </span>
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="card mt-3">
+          <p className="text-center text-[13px] text-ink-400">{t("noData")}</p>
+        </div>
+      )}
 
-      {/* Footer — minor controls, kept off the sticky CTA dock */}
+      {/* Footer */}
       <div className="mt-auto flex items-center justify-between gap-3 pt-10 pb-[calc(theme(spacing.6)+env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={async () => {
-            // Await logout so auth state is cleared before navigating —
-            // otherwise GuestGuard on /login can still see a signed-in user
-            // and bounce straight back here.
             await logout();
-            // replace() so the back button can't return into the app after
-            // signing out.
             router.replace(`/${locale}/login`);
           }}
           className="tap gap-2 rounded-pill px-4 py-2.5 text-[13px] font-semibold text-ink-500 ring-1 ring-ink-200 transition-colors duration-100 active:bg-ink-100"
