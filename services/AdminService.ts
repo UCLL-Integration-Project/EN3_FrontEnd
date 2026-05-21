@@ -1,4 +1,4 @@
-import { AdminMemberSummary, Page, Status } from "@types";
+import { AdminMemberDetail, AdminMemberSummary, Page, Status } from "@types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL is not defined");
@@ -47,3 +47,51 @@ export const listMembersRequest = async (
     throw err;
   }
 };
+
+export const getMemberRequest = async (id: number): Promise<AdminMemberDetail> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/admin/members/${id}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+/* The four moderation actions (#9529). Each POSTs an optional note and
+   returns the refreshed member detail (status + new audit entry). */
+const moderationActionRequest = async (
+  id: number,
+  action: "suspend" | "reactivate" | "clear-bio" | "clear-avatar",
+  note?: string,
+): Promise<AdminMemberDetail> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/admin/members/${id}/${action}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ note: note ?? null }),
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const suspendMemberRequest = (id: number, note?: string) =>
+  moderationActionRequest(id, "suspend", note);
+
+export const reactivateMemberRequest = (id: number, note?: string) =>
+  moderationActionRequest(id, "reactivate", note);
+
+export const clearBioRequest = (id: number, note?: string) =>
+  moderationActionRequest(id, "clear-bio", note);
+
+export const clearAvatarRequest = (id: number, note?: string) =>
+  moderationActionRequest(id, "clear-avatar", note);

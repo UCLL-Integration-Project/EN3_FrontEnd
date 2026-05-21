@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useState, useCallback } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminMemberSummary, Page } from "@types";
 import { listMembersRequest } from "@services/AdminService";
@@ -11,18 +13,43 @@ import MembersSearch from "@components/admin/members/MembersSearch";
 
 const PAGE_SIZE = 20;
 
+/* State (search / status / page) lives in the URL so the detail view can
+   send the user back here with the same filters preserved — see #9528. */
 export default function AdminMembersPage() {
   const t = useTranslations("admin.members");
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+  const sp = useSearchParams();
 
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<StatusFilter>("ALL");
-  const [page, setPage] = useState(0);
+  const search = sp.get("search") ?? "";
+  const status = (sp.get("status") as StatusFilter | null) ?? "ALL";
+  const page = Math.max(0, Number(sp.get("page") ?? "0"));
+
   const [data, setData] = useState<Page<AdminMemberSummary> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset to first page whenever the filters change.
-  useEffect(() => setPage(0), [search, status]);
+  // Update URL params; resets `page` to 0 when filters change unless the
+  // caller explicitly keeps it (used by Prev/Next).
+  const setParams = useCallback(
+    (next: { search?: string; status?: StatusFilter; page?: number }, keepPage = false) => {
+      const params = new URLSearchParams(sp.toString());
+      const apply = (key: string, value: string | undefined | null, omit: (v: string) => boolean) => {
+        if (value === undefined) return;
+        if (value === null || omit(value)) params.delete(key);
+        else params.set(key, value);
+      };
+      apply("search", next.search, (v) => v === "");
+      apply("status", next.status, (v) => v === "ALL");
+      apply("page", next.page !== undefined ? String(next.page) : undefined, (v) => v === "0");
+      if (!keepPage && (next.search !== undefined || next.status !== undefined)) {
+        params.delete("page");
+      }
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [router, pathname, sp],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -46,13 +73,14 @@ export default function AdminMembersPage() {
 
   const total = data?.totalElements ?? 0;
   const isEmpty = !isLoading && data && data.empty;
+  const ret = sp.toString(); // forwarded to the detail page so Back can restore the list
 
   return (
     <section className="app-screen">
       <header className="space-y-3">
         <h2>{t("title")}</h2>
-        <MembersSearch value={search} onChange={setSearch} />
-        <FilterChips value={status} onChange={setStatus} />
+        <MembersSearch value={search} onChange={(v) => setParams({ search: v })} />
+        <FilterChips value={status} onChange={(v) => setParams({ status: v })} />
         {!isLoading && data && (
           <p className="text-xs text-ink-500">
             {t("results.count", { count: total })}
@@ -76,7 +104,14 @@ export default function AdminMembersPage() {
       {data && !data.empty && (
         <ul className="mt-4 space-y-2">
           {data.content.map((m) => (
-            <MemberRow key={m.id} member={m} />
+            <li key={m.id}>
+              <Link
+                href={`/${locale}/admin/members/${m.id}${ret ? `?ret=${encodeURIComponent(ret)}` : ""}`}
+                className="block no-underline"
+              >
+                <MemberRow member={m} />
+              </Link>
+            </li>
           ))}
         </ul>
       )}
@@ -88,7 +123,7 @@ export default function AdminMembersPage() {
         >
           <button
             className="btn-ghost flex items-center gap-1"
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            onClick={() => setParams({ page: Math.max(0, page - 1) }, true)}
             disabled={data.first}
             aria-label={t("pagination.previous")}
           >
@@ -100,7 +135,7 @@ export default function AdminMembersPage() {
           </span>
           <button
             className="btn-ghost flex items-center gap-1"
-            onClick={() => setPage((p) => p + 1)}
+            onClick={() => setParams({ page: page + 1 }, true)}
             disabled={data.last}
             aria-label={t("pagination.next")}
           >
