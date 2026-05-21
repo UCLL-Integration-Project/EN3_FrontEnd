@@ -43,7 +43,7 @@ export default function DeviceManager() {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("device");
-  const { unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName } = useDevice();
+  const { unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName, hapticsEnabled } = useDevice();
   const { isConnected, sensorData, sendCommand, forceReconnect } =
     useDeviceWebSocket(deviceIp);
 
@@ -170,7 +170,7 @@ export default function DeviceManager() {
         lastReadingAt={lastReceivedAt}
         flash={flash}
         onSyncDone={() => {}}
-        onIdentify={() => sendCommand("BUZZ:")}
+        onIdentify={() => hapticsEnabled && sendCommand("BUZZ:")}
       />
 
       {/* WebSocket connection */}

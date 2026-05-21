@@ -24,6 +24,7 @@ import {
   X,
 } from "lucide-react";
 import { BatteryGlyph, SignalBars, Toggle } from "./DeviceUI";
+import { useDevice } from "@context/DeviceContext";
 
 type PrefKey =
   | "autoConnect"
@@ -445,22 +446,35 @@ export function DeviceInfoCard({ rows }: { rows: InfoRow[] }) {
 
 export function PreferencesCard() {
   const t = useTranslations("device");
-  const [prefs, setPrefs] = useState<Record<PrefKey, boolean>>({
+  const { hapticsEnabled, setHapticsEnabled } = useDevice();
+  const [prefs, setPrefs] = useState<Record<Exclude<PrefKey, "haptics">, boolean>>({
     autoConnect: true,
     backgroundSync: true,
     notifications: true,
-    haptics: false,
     doNotDisturb: false,
   });
+
+  function togglePref(key: PrefKey) {
+    if (key === "haptics") {
+      setHapticsEnabled(!hapticsEnabled);
+    } else {
+      setPrefs((p) => ({ ...p, [key]: !p[key as Exclude<PrefKey, "haptics">] }));
+    }
+  }
+
+  function prefValue(key: PrefKey): boolean {
+    if (key === "haptics") return hapticsEnabled;
+    return prefs[key as Exclude<PrefKey, "haptics">];
+  }
 
   return (
     <div className="card mt-3 py-2">
       {PREFERENCES.map((pref, i) => (
         <button
           key={pref.key}
-          onClick={() => setPrefs((p) => ({ ...p, [pref.key]: !p[pref.key] }))}
+          onClick={() => togglePref(pref.key)}
           role="switch"
-          aria-checked={prefs[pref.key]}
+          aria-checked={prefValue(pref.key)}
           className={`flex w-full items-center gap-3 py-3 text-left ${
             i > 0 ? "border-t border-ink-100" : ""
           }`}
@@ -476,7 +490,7 @@ export function PreferencesCard() {
               {t(`manage.prefs.${pref.key}.hint`)}
             </span>
           </span>
-          <Toggle on={prefs[pref.key]} />
+          <Toggle on={prefValue(pref.key)} />
         </button>
       ))}
     </div>
