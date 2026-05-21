@@ -304,6 +304,8 @@
       "disconnected": "Disconnected",
       "connection": "Device connection",
       "noIp": "No IP address set",
+      "noIpBanner": "Enter device IP to connect",
+      "noIpBannerHint": "Tap here, then type the IP shown on the device screen.",
       "ipHint": "Tap to enter the IP shown on the device OLED. The app connects over Wi-Fi — no Bluetooth required.",
       "saveIp": "Save IP",
       "wsConnected": "WebSocket live",

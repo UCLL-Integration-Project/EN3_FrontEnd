@@ -17,7 +17,6 @@ import {
   Radio,
   RefreshCw,
   Trash2,
-  Watch,
   Wifi,
   WifiOff,
 } from "lucide-react";
@@ -34,8 +33,8 @@ import {
 } from "./DeviceCards";
 
 const DEVICE = {
-  model: "CrossWave Band 2",
-  serial: "CW2-0A91-7F3C",
+  model: "CrossWave",
+  serial: "CW-0A91-7F3C",
   mac: "A4:2F:8C:1D:9E:0B",
   pairedSince: "12 May 2026",
   installedFirmware: "2.3.1",
@@ -47,7 +46,7 @@ export default function DeviceManager() {
   const router = useRouter();
   const t = useTranslations("device");
   const { unlinkDevice, deviceIp, setDeviceIp } = useDevice();
-  const { isConnected, sensorData, sendMessage, forceReconnect } =
+  const { isConnected, sensorData, sendMessage, sendCommand, forceReconnect } =
     useDeviceWebSocket(deviceIp);
 
   const [deviceName, setDeviceName] = useState(() => t("defaultName"));
@@ -89,7 +88,7 @@ export default function DeviceManager() {
   }
 
   const infoRows = [
-    { icon: Watch, label: t("manage.infoModel"), value: DEVICE.model },
+    { icon: Cpu, label: t("manage.infoModel"), value: DEVICE.model },
     { icon: Hash, label: t("manage.infoSerial"), value: DEVICE.serial },
     { icon: Cpu, label: t("manage.infoMac"), value: DEVICE.mac },
     { icon: Plug, label: t("manage.infoPaired"), value: DEVICE.pairedSince },
@@ -142,6 +141,20 @@ export default function DeviceManager() {
         </span>
       </div>
 
+      {!deviceIp && (
+        <button
+          className="mt-3 flex w-full items-center gap-3 rounded-2xl bg-secondary-50 px-4 py-3 ring-1 ring-secondary-200 text-left"
+          onClick={() => setEditingIp(true)}
+        >
+          <Wifi size={18} className="shrink-0 text-secondary-600" />
+          <div className="min-w-0 flex-1">
+            <p className="text-[13px] font-semibold text-secondary-800">{t("manage.noIpBanner")}</p>
+            <p className="text-[11px] text-secondary-600">{t("manage.noIpBannerHint")}</p>
+          </div>
+          <Pencil size={14} className="shrink-0 text-secondary-500" />
+        </button>
+      )}
+
       {note && (
         <div className="status status-success mt-3 animate-sheet-in">
           <CheckCircle2 size={18} />
@@ -160,6 +173,7 @@ export default function DeviceManager() {
         battery={null}
         flash={flash}
         onSyncDone={() => {}}
+        onIdentify={() => sendCommand("BUZZ:")}
       />
 
       {/* WebSocket connection */}

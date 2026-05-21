@@ -103,6 +103,12 @@ export function useDeviceWebSocket(deviceIp: string) {
     }
   }, []);
 
+  const sendCommand = useCallback((cmd: string) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(cmd);
+    }
+  }, []);
+
   const forceReconnect = useCallback(() => {
     const ip = ipRef.current;
     if (!ip) return;
@@ -115,5 +121,5 @@ export function useDeviceWebSocket(deviceIp: string) {
     openRef.current(ip);
   }, []);
 
-  return { isConnected, sensorData, sendMessage, forceReconnect };
+  return { isConnected, sensorData, sendMessage, sendCommand, forceReconnect };
 }

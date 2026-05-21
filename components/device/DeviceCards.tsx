@@ -40,6 +40,21 @@ const PREFERENCES: { key: PrefKey; icon: typeof Watch }[] = [
   { key: "doNotDisturb", icon: Moon },
 ];
 
+// ── Pager device icon ─────────────────────────────────────────────────────────
+
+function PagerIcon({ size, className }: { size: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+      className={className}>
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <rect x="4" y="8.5" width="11" height="7" rx="1" />
+      <circle cx="19.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="19.5" cy="13.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 // ── DeviceHeroCard ────────────────────────────────────────────────────────────
 
 interface HeroProps {
@@ -75,7 +90,7 @@ export function DeviceHeroCard({ model, isConnected, lastReceivedAt, onNameChang
     <div className="mt-4 rounded-sheet bg-brand-gradient p-6 text-white shadow-pop">
       <div className="flex items-center gap-4">
         <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/25">
-          <Watch size={30} strokeWidth={2} />
+          <PagerIcon size={30} />
         </span>
         <div className="min-w-0 flex-1">
           {editing ? (
@@ -150,9 +165,10 @@ interface BatteryProps {
   charging?: boolean;
   flash: (msg: string) => void;
   onSyncDone: () => void;
+  onIdentify?: () => void;
 }
 
-export function BatteryCard({ battery, charging = false, flash, onSyncDone }: BatteryProps) {
+export function BatteryCard({ battery, charging = false, flash, onSyncDone, onIdentify }: BatteryProps) {
   const t = useTranslations("device");
   const [syncing, setSyncing] = useState(false);
   const [identifying, setIdentifying] = useState(false);
@@ -170,6 +186,7 @@ export function BatteryCard({ battery, charging = false, flash, onSyncDone }: Ba
   function identify() {
     if (identifying) return;
     setIdentifying(true);
+    onIdentify?.();
     setTimeout(() => {
       setIdentifying(false);
       flash(t("manage.noteBuzzed"));

@@ -304,6 +304,8 @@
       "disconnected": "Niet verbonden",
       "connection": "Apparaatverbinding",
       "noIp": "Geen IP-adres ingesteld",
+      "noIpBanner": "Voer apparaat-IP in om te verbinden",
+      "noIpBannerHint": "Tik hier en typ het IP-adres op het scherm van het apparaat.",
       "ipHint": "Tik om het IP-adres in te voeren dat op het OLED-scherm van het apparaat staat. De app verbindt via Wi-Fi — geen Bluetooth vereist.",
       "saveIp": "IP opslaan",
       "wsConnected": "WebSocket actief",
