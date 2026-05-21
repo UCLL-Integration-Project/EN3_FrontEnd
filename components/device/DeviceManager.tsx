@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   Cpu,
   Hash,
-  MessageSquare,
   Pencil,
   Plug,
   Radio,
@@ -46,7 +45,7 @@ export default function DeviceManager() {
   const router = useRouter();
   const t = useTranslations("device");
   const { unlinkDevice, deviceIp, setDeviceIp } = useDevice();
-  const { isConnected, sensorData, sendMessage, sendCommand, forceReconnect } =
+  const { isConnected, sensorData, sendCommand, forceReconnect } =
     useDeviceWebSocket(deviceIp);
 
   const [deviceName, setDeviceName] = useState(() => t("defaultName"));
@@ -55,9 +54,10 @@ export default function DeviceManager() {
     if (sensorData) setLastReceivedAt(Date.now());
   }, [sensorData]);
 
+  const isStale = lastReceivedAt !== null && Date.now() - lastReceivedAt > 120_000;
+
   const [editingIp, setEditingIp] = useState(false);
   const [draftIp, setDraftIp] = useState(deviceIp);
-  const [msgText, setMsgText] = useState("");
 
   const [note, setNote] = useState<string | null>(null);
   const [showForget, setShowForget] = useState(false);
@@ -72,13 +72,6 @@ export default function DeviceManager() {
   function saveIp() {
     setDeviceIp(draftIp.trim());
     setEditingIp(false);
-  }
-
-  function handleSendMessage() {
-    const text = msgText.trim();
-    if (!text) return;
-    sendMessage(text);
-    flash(t("manage.messageSent"));
   }
 
   function forgetDevice() {
@@ -166,11 +159,15 @@ export default function DeviceManager() {
         model={DEVICE.model}
         isConnected={isConnected}
         lastReceivedAt={lastReceivedAt}
+        isStale={isStale}
         onNameChange={setDeviceName}
       />
 
       <BatteryCard
-        battery={null}
+        battery={sensorData?.batteryPct != null && sensorData.batteryPct >= 0 ? sensorData.batteryPct : null}
+        vcc={sensorData?.vcc ?? 0}
+        isStale={isStale}
+        lastReadingAt={lastReceivedAt}
         flash={flash}
         onSyncDone={() => {}}
         onIdentify={() => sendCommand("BUZZ:")}
@@ -272,37 +269,6 @@ export default function DeviceManager() {
           <p className="mt-2 text-[13px] text-ink-500">
             {t("manage.noRfMessages")}
           </p>
-        )}
-      </div>
-
-      {/* Send custom message to device display */}
-      <h5 className="mt-6 px-1">{t("manage.messageSection")}</h5>
-      <div className="card mt-3">
-        <div className="flex items-center gap-2.5">
-          <MessageSquare size={17} className="text-brand-500" strokeWidth={2.25} />
-          <p className="text-[13px] text-ink-600">{t("manage.messageHint")}</p>
-        </div>
-        <textarea
-          value={msgText}
-          onChange={(e) => setMsgText(e.target.value)}
-          placeholder={t("manage.messagePlaceholder")}
-          rows={3}
-          className="mt-3 w-full resize-none rounded-xl bg-ink-50 px-3 py-2.5 text-[14px] text-ink-900 outline-none ring-1 ring-ink-200 placeholder:text-ink-400 focus:ring-brand-400"
-        />
-        <button
-          className="btn-cta mt-3 w-full"
-          onClick={handleSendMessage}
-          disabled={!msgText.trim() || !isConnected}
-        >
-          {t("manage.messageSend")}
-        </button>
-        {sensorData?.customMsg && (
-          <div className="mt-3 rounded-xl bg-brand-50 px-3 py-2.5 ring-1 ring-brand-200">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-500">
-              {t("manage.messageCurrent")}
-            </p>
-            <p className="mt-0.5 text-[13px] text-ink-900">{sensorData.customMsg}</p>
-          </div>
         )}
       </div>
 

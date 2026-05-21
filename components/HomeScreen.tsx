@@ -1,21 +1,24 @@
 "use client";
 
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
   Activity,
+  CheckCircle2,
   ChevronRight,
   LifeBuoy,
   LogOut,
+  MessageSquare,
   Radio,
   Settings,
-  Watch,
 } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import { useDevice } from "@context/DeviceContext";
 import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
 import LanguageChip from "@components/language";
+import { PagerIcon } from "@components/device/DeviceCards";
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
@@ -26,7 +29,21 @@ export default function HomeScreen() {
   const router = useRouter();
 
   const { deviceIp } = useDevice();
-  const { isConnected, sensorData } = useDeviceWebSocket(deviceIp);
+  const { isConnected, sensorData, sendMessage } = useDeviceWebSocket(deviceIp);
+
+  const [msgText, setMsgText] = useState("");
+  const [sentNote, setSentNote] = useState(false);
+  const sentTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function handleSendMessage() {
+    const text = msgText.trim();
+    if (!text || !isConnected) return;
+    sendMessage(text);
+    setMsgText("");
+    setSentNote(true);
+    if (sentTimer.current) clearTimeout(sentTimer.current);
+    sentTimer.current = setTimeout(() => setSentNote(false), 3000);
+  }
 
   const displayName =
     user?.firstName?.trim() || user?.username?.trim() || t("fallbackName");
@@ -115,7 +132,7 @@ export default function HomeScreen() {
       >
         <div className="flex items-center gap-4">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/25">
-            <Watch size={26} strokeWidth={2} />
+            <PagerIcon size={26} />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-white/65">
@@ -141,6 +158,52 @@ export default function HomeScreen() {
           </span>
         </div>
       </Link>
+
+      {/* Broadcast message — main product feature */}
+      <div className="mt-5 rounded-sheet bg-white p-5 shadow-card ring-1 ring-ink-100">
+        <div className="flex items-center gap-2.5">
+          <MessageSquare size={18} className="text-brand-500" strokeWidth={2.25} />
+          <h5 className="flex-1">{t("messageTitle")}</h5>
+        </div>
+        <p className="mt-1 text-[12px] text-ink-500">{t("messageSubtitle")}</p>
+        <textarea
+          value={msgText}
+          onChange={(e) => setMsgText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage();
+            }
+          }}
+          placeholder={t("messagePlaceholder")}
+          rows={3}
+          className="mt-3 w-full resize-none rounded-xl bg-ink-50 px-3 py-2.5 text-[14px] text-ink-900 outline-none ring-1 ring-ink-200 placeholder:text-ink-400 focus:ring-brand-400"
+        />
+        <button
+          className="btn-cta mt-3 w-full"
+          onClick={handleSendMessage}
+          disabled={!msgText.trim() || !isConnected}
+        >
+          {t("messageSend")}
+        </button>
+        {sentNote && (
+          <div className="mt-3 flex items-center gap-2 text-[13px] font-medium text-emerald-700">
+            <CheckCircle2 size={15} />
+            {t("messageSent")}
+          </div>
+        )}
+        {!isConnected && (
+          <p className="mt-2 text-center text-[12px] text-ink-400">{t("messageNoDevice")}</p>
+        )}
+        {sensorData?.customMsg && (
+          <div className="mt-3 rounded-xl bg-brand-50 px-3 py-2.5 ring-1 ring-brand-200">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-500">
+              {t("messageCurrent")}
+            </p>
+            <p className="mt-0.5 text-[13px] text-ink-900">{sensorData.customMsg}</p>
+          </div>
+        )}
+      </div>
 
       {/* Quick actions */}
       <h5 className="mt-6 px-1">{t("actionsTitle")}</h5>

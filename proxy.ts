@@ -12,7 +12,7 @@ import { sanitizeReturnPath } from "./components/auth/returnUrl";
  * API and the client-side route guards remain the real enforcement.
  * ---------------------------------------------------------------------- */
 
-const locales = ["en", "nl"] as const;
+const locales = ["en", "nl", "fr"] as const;
 const defaultLocale = "en";
 
 const intlMiddleware = createMiddleware({ locales, defaultLocale });

@@ -14,6 +14,8 @@ export interface SensorData {
   az: number;
   rfCount: number;
   rfMessages: string[];
+  batteryPct: number;  // 0-100, or -1 when sensor not available
+  vcc: number;         // supply voltage in volts, 0 when not connected
   customMsg: string;
   ts: number;
 }

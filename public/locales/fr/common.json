@@ -1,0 +1,339 @@
+{
+  "general": {
+    "error": "Une erreur s'est produite. Veuillez réessayer plus tard."
+  },
+  "errors": {
+    "USER_NOT_FOUND": "L'utilisateur demandé '{{username}}' est introuvable.",
+    "EMAIL_TAKEN": "L'adresse e-mail '{{email}}' est déjà enregistrée.",
+    "CONNECTION_ALREADY_EXISTS": "Vous êtes déjà connecté avec {{target}}.",
+    "validation": {
+      "not_blank": "Le champ {{field}} ne peut pas être vide.",
+      "email": "Veuillez fournir une adresse e-mail valide."
+    }
+  },
+  "notFound": {
+    "eyebrow": "Erreur 404",
+    "title": "Signal perdu",
+    "subtitle": "Nous n'avons pas trouvé cette page. Elle a peut-être été déplacée ou le lien est cassé.",
+    "home": "Retour à l'accueil"
+  },
+  "home": {
+    "welcome": "Bienvenue sur CrossWave",
+    "subtitle": "Restez connecté avec votre classe — partout, en déplacement.",
+    "loggedInAs": "Connecté en tant que {name}",
+    "signOut": "Se déconnecter",
+    "cta": {
+      "getStarted": "Commencer",
+      "haveAccount": "J'ai déjà un compte"
+    },
+    "dashboard": {
+      "greetingMorning": "Bonjour",
+      "greetingAfternoon": "Bon après-midi",
+      "greetingEvening": "Bonsoir",
+      "companionTitle": "Votre compagnon",
+      "companionConnected": "Connecté",
+      "companionDisconnected": "Déconnecté",
+      "companionLastUpdate": "Mis à jour {time}",
+      "companionManage": "Appuyer pour gérer",
+      "actionsTitle": "Actions rapides",
+      "actionSettings": "Paramètres",
+      "actionHelp": "Aide & support",
+      "readingsTitle": "Mesures en direct",
+      "readingX": "Accél X",
+      "readingY": "Accél Y",
+      "readingZ": "Accél Z",
+      "readingRf": "Paquets RF",
+      "noData": "En attente des données de l'appareil…",
+      "fallbackName": "vous",
+      "messageTitle": "Diffuser à la classe",
+      "messageSubtitle": "Envoyez ce texte depuis votre appareil via Wi-Fi.",
+      "messagePlaceholder": "Tapez un message pour votre classe…",
+      "messageSend": "Diffuser",
+      "messageSent": "Envoyé à l'appareil",
+      "messageCurrent": "Sur l'appareil maintenant",
+      "messageNoDevice": "Connectez votre appareil pour diffuser"
+    }
+  },
+  "header": {
+    "welcome": "Bienvenue !",
+    "loggedInAs": "Bonjour, {name}",
+    "nav": {
+      "home": "Accueil",
+      "login": "Connexion",
+      "logout": "Déconnexion",
+      "register": "S'inscrire",
+      "settings": "Paramètres"
+    }
+  },
+  "language": {
+    "chooseLanguage": "Choisir la langue"
+  },
+  "common": {
+    "back": "Retour"
+  },
+  "UserLoginForm": {
+    "title": "Bon retour",
+    "subtitle": "Connectez-vous pour continuer.",
+    "button": "Se connecter",
+    "label": {
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "mfa_code": "Code de vérification MFA",
+      "mfa_enabled": "Activer MFA"
+    },
+    "validate": {
+      "error": "Requis"
+    },
+    "error": {
+      "INVALID_CREDENTIALS": "E-mail ou mot de passe invalide.",
+      "USERNAME_TAKEN": "Ce nom d'utilisateur est déjà pris.",
+      "UNKNOWN_ERROR": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
+      "NETWORK_ERROR": "Impossible de se connecter au serveur.",
+      "MFA_CODE_NOT_FOUND": "Code MFA introuvable.",
+      "MFA_CODE_EXPIRED": "Le code MFA a expiré.",
+      "INVALID_MFA_CODE": "Code MFA invalide."
+    },
+    "success": "Connexion réussie. Redirection…",
+    "mfa_required": "Code MFA envoyé à votre e-mail.",
+    "button_verify": "Vérifier le code",
+    "signupLink": "Nouveau ici ? Créer un compte"
+  },
+  "UserSettingsForm": {
+    "title": "Paramètres",
+    "profileTitle": "Profil",
+    "passwordTitle": "Changer le mot de passe",
+    "accountTitle": "Compte",
+    "saveButton": "Enregistrer",
+    "logoutButton": "Se déconnecter",
+    "logoutConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "logoutConfirmButton": "Confirmer",
+    "cancelButton": "Annuler",
+    "profileSuccess": "Profil mis à jour avec succès.",
+    "passwordSuccess": "Mot de passe modifié avec succès.",
+    "label": {
+      "username": "Nom d'utilisateur",
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "email": "E-mail",
+      "age": "Âge",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe"
+    },
+    "validate": {
+      "error": " - Manquant ou invalide",
+      "weakPassword": " - Trop court (min. 8 caractères)",
+      "passwordMismatch": " - Les mots de passe ne correspondent pas"
+    },
+    "error": {
+      "USERNAME_TAKEN": "Ce nom d'utilisateur est déjà pris.",
+      "EMAIL_TAKEN": "Cet e-mail est déjà utilisé.",
+      "INVALID_CREDENTIALS": "Le mot de passe actuel est incorrect.",
+      "UNKNOWN_ERROR": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
+      "NETWORK_ERROR": "Impossible de se connecter au serveur."
+    }
+  },
+  "ConnectionsPage": {
+    "title": "Connexions",
+    "addTitle": "Ajouter une connexion",
+    "addPlaceholder": "Nom d'utilisateur",
+    "addButton": "Ajouter",
+    "listTitle": "Mes connexions",
+    "empty": "Vous n'avez pas encore de connexions.",
+    "removeAriaLabel": "Supprimer la connexion avec {name}",
+    "error": {
+      "USER_NOT_FOUND": "Aucun utilisateur trouvé avec ce nom d'utilisateur.",
+      "ALREADY_CONNECTED": "Vous êtes déjà connecté avec cet utilisateur.",
+      "SELF_CONNECTION": "Vous ne pouvez pas vous ajouter comme connexion.",
+      "NETWORK_ERROR": "Impossible de se connecter au serveur.",
+      "UNKNOWN_ERROR": "Une erreur s'est produite. Veuillez réessayer."
+    }
+  },
+  "social": {
+    "about": "À propos",
+    "connections": "Connexions",
+    "activity": "Activité",
+    "noActivity": "Aucune activité récente à afficher.",
+    "editProfile": "Modifier le profil",
+    "editProfileDetails": "Modifier les détails du profil",
+    "connect": "Se connecter",
+    "connected": "Connecté",
+    "noBio": "Pas encore de bio.",
+    "noBioSelf": "Pas encore de bio. Dites au monde qui vous êtes.",
+    "publicProfile": "Profil public",
+    "accountDetails": "Détails du compte",
+    "bioPlaceholder": "Parlez-nous de vous…",
+    "avatarUrl": "URL de l'avatar",
+    "bannerUrl": "URL de la bannière"
+  },
+  "UserSignupForm": {
+    "title": "Créer votre compte",
+    "subtitle": "Quelques détails rapides.",
+    "button": "S'inscrire",
+    "label": {
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "email": "E-mail",
+      "age": "Âge"
+    },
+    "validate": {
+      "error": "Requis ou invalide",
+      "weakPassword": "Trop court (min. 8 caractères)"
+    },
+    "error": {
+      "USERNAME_TAKEN": "Ce nom d'utilisateur est déjà pris.",
+      "EMAIL_TAKEN": "Cet e-mail est déjà utilisé.",
+      "UNKNOWN_ERROR": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
+      "NETWORK_ERROR": "Impossible de se connecter au serveur."
+    },
+    "loginLink": "Vous avez déjà un compte ? Se connecter",
+    "success": "Inscription réussie. Redirection…"
+  },
+  "device": {
+    "defaultName": "Mon compagnon",
+    "common": {
+      "back": "Retour"
+    },
+    "setup": {
+      "eyebrow": "Configuration de l'appareil",
+      "stepScan": "Scan",
+      "stepPair": "Coupler",
+      "stepDone": "Terminé",
+      "introTitle": "Couplez votre compagnon",
+      "introBody": "CrossWave fonctionne avec un seul compagnon couplé par compte. Liez le vôtre via Bluetooth pour commencer à utiliser l'application.",
+      "prereqTitle": "Avant de commencer",
+      "prereq1": "Votre compagnon est allumé",
+      "prereq2": "Il est à portée de main de ce téléphone",
+      "prereq3": "Le Bluetooth est activé sur ce téléphone",
+      "startScan": "Commencer le scan",
+      "scanningTitle": "Recherche à proximité…",
+      "scanningBody": "Gardez votre compagnon proche. Appuyez sur un appareil pour coupler.",
+      "scanningMore": "Scan en cours…",
+      "rescanHint": "Vous ne voyez pas votre appareil ? Rapprochez-le et rescannez.",
+      "rescan": "Rescanner",
+      "connectingTitle": "Connexion…",
+      "connectingBody": "Couplage avec {name}",
+      "confirmTitle": "Confirmez le code",
+      "confirmBody": "Vérifiez que ce code correspond à celui affiché sur <strong>{name}</strong>.",
+      "encrypted": "Couplage Bluetooth chiffré",
+      "codesMatch": "Codes correspondants — coupler",
+      "codesDontMatch": "Les codes ne correspondent pas",
+      "doneTitle": "Tout est prêt",
+      "doneBody": "{name} est couplé et prêt. Donnez-lui un nom que vous reconnaîtrez.",
+      "nameLabel": "Nom de l'appareil",
+      "goToDevice": "Aller à l'appareil",
+      "stepWifi": "Wi-Fi",
+      "bleUnavailable": "Bluetooth non disponible",
+      "bleUnavailableHint": "Utilisez Chrome ou Edge sur ordinateur ou Android — Safari et Firefox ne prennent pas en charge Web Bluetooth.",
+      "bleError": "Erreur Bluetooth — veuillez réessayer",
+      "wifiTitle": "Connexion au Wi-Fi",
+      "wifiBody": "Envoyez vos identifiants réseau à {name} pour qu'il puisse accéder à Internet.",
+      "wifiSsidLabel": "Nom du réseau (SSID)",
+      "wifiPassLabel": "Mot de passe",
+      "wifiSend": "Connecter l'appareil au Wi-Fi",
+      "wifiSkip": "Ignorer pour l'instant",
+      "wifiProvisioning": "Envoi…",
+      "wifiWaiting": "En attente de la connexion de l'appareil…",
+      "wifiError": "Échec de l'envoi des identifiants — assurez-vous que l'appareil est proche et réessayez"
+    },
+    "manage": {
+      "title": "Compagnon",
+      "connected": "Connecté",
+      "noteNameUpdated": "Nom de l'appareil mis à jour",
+      "noteSyncComplete": "Synchronisation terminée",
+      "noteBuzzed": "Votre compagnon a vibré",
+      "noteFirmwareUpdated": "Mis à jour vers le firmware {version}",
+      "namePlaceholder": "Nom de l'appareil",
+      "saveName": "Enregistrer le nom",
+      "bluetooth": "Bluetooth",
+      "signalStrong": "Fort",
+      "lastSyncRecent": "il y a 2 min",
+      "lastSyncJustNow": "à l'instant",
+      "lastSyncSecondsAgo": "il y a {n}s",
+      "lastSyncMinutesAgo": "il y a {n}m",
+      "signalLive": "En direct",
+      "battery": "Batterie",
+      "charging": "En charge",
+      "batteryRemaining": "≈ 2 jours restants",
+      "batteryUnavailable": "Capteur non disponible",
+      "batteryUsb": "Alimentation USB",
+      "batteryLow": "Batterie faible",
+      "batteryVeryLow": "Batterie très faible",
+      "syncNow": "Synchroniser maintenant",
+      "syncing": "Synchronisation…",
+      "identify": "Identifier",
+      "identifying": "Vibration…",
+      "liveReadings": "Mesures en direct",
+      "readingHeartRate": "Fréquence cardiaque",
+      "readingSteps": "Aujourd'hui",
+      "readingSleep": "Dernier sommeil",
+      "unitSteps": "pas",
+      "firmware": "Firmware",
+      "firmwareUpToDate": "À jour",
+      "firmwareVersion": "Firmware {version}",
+      "firmwareUpdateAvailable": "Mise à jour disponible",
+      "firmwareInstalling": "Installation… {progress}% — gardez l'appareil proche",
+      "firmwareInstall": "Installer la mise à jour",
+      "deviceInfo": "Infos de l'appareil",
+      "infoModel": "Modèle",
+      "infoSerial": "Numéro de série",
+      "infoMac": "Adresse MAC",
+      "infoPaired": "Couplé depuis",
+      "preferences": "Préférences",
+      "prefs": {
+        "autoConnect": {
+          "label": "Connexion automatique",
+          "hint": "Se reconnecter à portée"
+        },
+        "backgroundSync": {
+          "label": "Synchronisation en arrière-plan",
+          "hint": "Garder les mesures à jour"
+        },
+        "notifications": {
+          "label": "Notifications push",
+          "hint": "Alertes de votre compagnon"
+        },
+        "haptics": {
+          "label": "Alertes haptiques",
+          "hint": "Vibrer sur l'appareil"
+        },
+        "doNotDisturb": {
+          "label": "Ne pas déranger",
+          "hint": "Couper les alertes la nuit"
+        }
+      },
+      "forget": "Oublier cet appareil",
+      "dismiss": "Ignorer",
+      "close": "Fermer",
+      "forgetTitle": "Oublier {name} ?",
+      "forgetBody": "Chaque compte lie un seul compagnon. Oublier {name} le dissocie — et comme CrossWave nécessite un appareil lié, vous serez directement redirigé vers le couplage.",
+      "forgetConfirm": "Oublier l'appareil",
+      "forgetCancel": "Garder couplé",
+      "disconnected": "Déconnecté",
+      "stale": "Obsolète",
+      "staleTooltip": "Aucune donnée depuis plus de 2 minutes — mesure de {elapsed}",
+      "connection": "Connexion de l'appareil",
+      "noIp": "Aucune adresse IP définie",
+      "noIpBanner": "Saisir l'IP de l'appareil pour se connecter",
+      "noIpBannerHint": "Appuyez ici, puis tapez l'IP affichée sur l'écran de l'appareil.",
+      "ipHint": "Appuyez pour saisir l'IP affichée sur l'écran OLED. L'application se connecte via Wi-Fi — pas de Bluetooth requis.",
+      "saveIp": "Enregistrer l'IP",
+      "wsConnected": "WebSocket actif",
+      "wsDisconnected": "Non connecté",
+      "reconnect": "Reconnecter",
+      "readingAccelX": "Axe X",
+      "readingAccelY": "Axe Y",
+      "readingAccelZ": "Axe Z",
+      "rfMessages": "Messages RF",
+      "noRfMessages": "Aucun appareil RF détecté",
+      "messageSection": "Envoyer un message",
+      "messageHint": "Diffusez ce texte depuis votre appareil via Wi-Fi.",
+      "messagePlaceholder": "Saisir un message…",
+      "messageSend": "Envoyer à l'appareil",
+      "messageSent": "Message envoyé à l'appareil",
+      "messageCurrent": "Message actuel sur l'appareil"
+    }
+  }
+}

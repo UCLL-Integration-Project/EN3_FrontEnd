@@ -44,7 +44,14 @@
       "readingZ": "Accel Z",
       "readingRf": "RF Packets",
       "noData": "Waiting for device data…",
-      "fallbackName": "there"
+      "fallbackName": "there",
+      "messageTitle": "Broadcast to class",
+      "messageSubtitle": "Send this text from your device over Wi-Fi.",
+      "messagePlaceholder": "Type a message for your class…",
+      "messageSend": "Broadcast",
+      "messageSent": "Sent to device",
+      "messageCurrent": "On device now",
+      "messageNoDevice": "Connect your device to broadcast"
     }
   },
   "header": {
@@ -321,7 +328,12 @@
       "messagePlaceholder": "Enter a message…",
       "messageSend": "Send to device",
       "messageSent": "Message sent to device",
-      "messageCurrent": "Current message on device"
+      "messageCurrent": "Current message on device",
+      "stale": "Stale",
+      "staleTooltip": "No data in over 2 minutes — reading from {elapsed} ago",
+      "batteryUsb": "USB power",
+      "batteryLow": "Low battery",
+      "batteryVeryLow": "Very low battery"
     }
   }
 }

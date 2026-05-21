@@ -42,7 +42,7 @@ const PREFERENCES: { key: PrefKey; icon: typeof Watch }[] = [
 
 // ── Pager device icon ─────────────────────────────────────────────────────────
 
-function PagerIcon({ size, className }: { size: number; className?: string }) {
+export function PagerIcon({ size, className }: { size: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
@@ -61,10 +61,11 @@ interface HeroProps {
   model: string;
   isConnected: boolean;
   lastReceivedAt: number | null;
+  isStale?: boolean;
   onNameChange?: (name: string) => void;
 }
 
-export function DeviceHeroCard({ model, isConnected, lastReceivedAt, onNameChange }: HeroProps) {
+export function DeviceHeroCard({ model, isConnected, lastReceivedAt, isStale = false, onNameChange }: HeroProps) {
   const t = useTranslations("device");
   const [name, setName] = useState(() => t("defaultName"));
   const [editing, setEditing] = useState(false);
@@ -128,7 +129,7 @@ export function DeviceHeroCard({ model, isConnected, lastReceivedAt, onNameChang
       </div>
 
       <div className="mt-5 flex items-center gap-4 border-t border-white/15 pt-4 text-[12px] font-medium text-white/85">
-        {isConnected ? (
+        {isConnected && !isStale ? (
           <>
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
@@ -138,6 +139,19 @@ export function DeviceHeroCard({ model, isConnected, lastReceivedAt, onNameChang
               <RefreshCw size={13} />
               {lastReceivedAt ? formatElapsed(lastReceivedAt) : "—"}
             </span>
+          </>
+        ) : isStale ? (
+          <>
+            <span className="flex items-center gap-1.5 text-amber-300">
+              <span className="h-2 w-2 rounded-full bg-amber-400" />
+              {t("manage.stale")}
+            </span>
+            {lastReceivedAt && (
+              <span className="ml-auto flex items-center gap-1.5 text-white/50">
+                <RefreshCw size={13} />
+                {formatElapsed(lastReceivedAt)}
+              </span>
+            )}
           </>
         ) : (
           <>
@@ -161,14 +175,17 @@ export function DeviceHeroCard({ model, isConnected, lastReceivedAt, onNameChang
 // ── BatteryCard ───────────────────────────────────────────────────────────────
 
 interface BatteryProps {
-  battery: number | null;
+  battery: number | null;  // 0-100, null = unavailable
+  vcc: number;             // supply voltage in volts, 0 = unavailable
+  isStale: boolean;
+  lastReadingAt: number | null;
   charging?: boolean;
   flash: (msg: string) => void;
   onSyncDone: () => void;
   onIdentify?: () => void;
 }
 
-export function BatteryCard({ battery, charging = false, flash, onSyncDone, onIdentify }: BatteryProps) {
+export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = false, flash, onSyncDone, onIdentify }: BatteryProps) {
   const t = useTranslations("device");
   const [syncing, setSyncing] = useState(false);
   const [identifying, setIdentifying] = useState(false);
@@ -193,31 +210,71 @@ export function BatteryCard({ battery, charging = false, flash, onSyncDone, onId
     }, 2600);
   }
 
+  const hasBattery = battery != null && battery >= 0;
+  const hasVcc = !hasBattery && vcc > 0;
+
+  const batteryColor = hasBattery
+    ? battery! < 10
+      ? "text-red-600"
+      : battery! < 20
+        ? "text-orange-500"
+        : "text-ink-900"
+    : "text-ink-900";
+
+  function formatElapsed(ts: number): string {
+    const sec = Math.floor((Date.now() - ts) / 1000);
+    if (sec < 10) return t("manage.lastSyncJustNow");
+    if (sec < 60) return t("manage.lastSyncSecondsAgo", { n: sec });
+    const min = Math.floor(sec / 60);
+    if (min < 60) return t("manage.lastSyncMinutesAgo", { n: min });
+    return `${Math.floor(min / 60)}h`;
+  }
+
   return (
     <div className="card mt-4">
       <div className="flex items-center justify-between">
         <div>
           <h5>{t("manage.battery")}</h5>
-          <p className="mt-1 text-[22px] font-semibold text-ink-900">
-            {battery != null ? (
+          <p className={`mt-1 text-[22px] font-semibold ${batteryColor}`}>
+            {hasBattery ? (
               <>
                 {battery}
                 <span className="text-[14px] text-ink-400">%</span>
+              </>
+            ) : hasVcc ? (
+              <>
+                {vcc.toFixed(2)}
+                <span className="text-[14px] text-ink-400"> V</span>
               </>
             ) : (
               <span className="text-ink-400">—</span>
             )}
           </p>
           <p className="text-[12px] text-ink-500">
-            {battery != null
-              ? charging
-                ? t("manage.charging")
-                : t("manage.batteryRemaining")
-              : t("manage.batteryUnavailable")}
+            {hasBattery
+              ? battery! < 10
+                ? t("manage.batteryVeryLow")
+                : battery! < 20
+                  ? t("manage.batteryLow")
+                  : charging
+                    ? t("manage.charging")
+                    : t("manage.batteryRemaining")
+              : hasVcc
+                ? t("manage.batteryUsb")
+                : t("manage.batteryUnavailable")}
           </p>
         </div>
-        {battery != null && <BatteryGlyph percent={battery} charging={charging} />}
+        {hasBattery && <BatteryGlyph percent={battery!} charging={charging} />}
       </div>
+
+      {isStale && lastReadingAt && (
+        <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 ring-1 ring-amber-200">
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+          <p className="text-[12px] text-amber-700">
+            {t("manage.staleTooltip", { elapsed: formatElapsed(lastReadingAt) })}
+          </p>
+        </div>
+      )}
 
       <div className="mt-4 flex gap-2.5">
         <button className="chip flex-1 justify-center" onClick={syncNow} disabled={syncing}>

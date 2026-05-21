@@ -44,7 +44,14 @@
       "readingZ": "Accel Z",
       "readingRf": "RF-paketten",
       "noData": "Wachten op apparaatdata…",
-      "fallbackName": "daar"
+      "fallbackName": "daar",
+      "messageTitle": "Uitzenden naar klas",
+      "messageSubtitle": "Stuur deze tekst via je apparaat over Wi-Fi.",
+      "messagePlaceholder": "Typ een bericht voor je klas…",
+      "messageSend": "Uitzenden",
+      "messageSent": "Verzonden naar apparaat",
+      "messageCurrent": "Nu op apparaat",
+      "messageNoDevice": "Verbind je apparaat om uit te zenden"
     }
   },
   "header": {
@@ -321,7 +328,12 @@
       "messagePlaceholder": "Voer een bericht in…",
       "messageSend": "Naar apparaat verzenden",
       "messageSent": "Bericht verzonden naar apparaat",
-      "messageCurrent": "Huidig bericht op apparaat"
+      "messageCurrent": "Huidig bericht op apparaat",
+      "stale": "Verouderd",
+      "staleTooltip": "Geen data in meer dan 2 minuten — meting van {elapsed} geleden",
+      "batteryUsb": "USB-voeding",
+      "batteryLow": "Lage batterij",
+      "batteryVeryLow": "Zeer lage batterij"
     }
   }
 }
