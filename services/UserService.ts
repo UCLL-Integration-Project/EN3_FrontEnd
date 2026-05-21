@@ -60,7 +60,7 @@ export const loginRequest = async (authRequest: AuthenticationRequest): Promise<
 
 export const verifyMfaRequest = async (username: string, code: string): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/mfa/verify`, {
+    const response = await fetch(`${apiUrl}/api/mfa/verify`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, code }),
