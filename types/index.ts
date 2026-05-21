@@ -70,6 +70,16 @@ export type AdminMemberSummary = {
   joinedAt: string; // ISO timestamp from the backend's Instant
 };
 
+export type AdminAction = "SUSPEND" | "REACTIVATE" | "CLEAR_BIO" | "CLEAR_AVATAR";
+
+export type AdminAuditEntry = {
+  id: number;
+  actorDisplayName: string;
+  action: AdminAction;
+  note?: string | null;
+  createdAt: string;
+};
+
 export type AdminMemberDetail = {
   id: number;
   displayName: string;
@@ -80,6 +90,7 @@ export type AdminMemberDetail = {
   status: Status;
   joinedAt: string;
   lastSeenAt?: string | null;
+  recentAudit: AdminAuditEntry[];
 };
 
 /* Spring Data's Page<T> response shape. Keep the fields we actually use. */
