@@ -183,6 +183,16 @@
     "loginLink": "Heb je al een account? Inloggen",
     "success": "Registratie gelukt. Doorsturen..."
   },
+  "StatsPage": {
+    "connections": "Verbindingen",
+    "timeActive": "Actief",
+    "dataShared": "Gedeeld",
+    "refresh": "Vernieuwen",
+    "emptyTitle": "Nog geen activiteit",
+    "emptySubtitle": "Begin met verbinden om je stats hier te zien.",
+    "exploreConnections": "Verken verbindingen",
+    "loadError": "Kon stats niet laden."
+  },
   "device": {
     "defaultName": "Mijn metgezel",
     "common": {

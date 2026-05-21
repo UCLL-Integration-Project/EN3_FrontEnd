@@ -87,3 +87,9 @@ export type UpdateProfileInput = {
   avatarUrl?: string;
   bannerUrl?: string;
 };
+
+export type UserStats = {
+  connections: number;
+  timeActive: number;
+  dataShared: number;
+};
