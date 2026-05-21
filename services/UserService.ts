@@ -1,4 +1,4 @@
-import { AuthenticationRequest, UpdateProfileInput, User, UserResponse } from "@types";
+import { AuthenticationRequest, UpdateProfileInput, User, UserResponse, UserStats } from "@types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL is not defined");
@@ -241,6 +241,21 @@ export const changeWeightRequest = async (newValue: number): Promise<User> => {
       body: JSON.stringify(newValue),
       credentials: "include",
     });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const getStatsRequest = async (): Promise<UserStats | null> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/users/me/stats`, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (response.status === 204) return null;
     await handleResponse(response);
     return response.json();
   } catch (err) {

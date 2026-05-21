@@ -183,6 +183,16 @@
     "loginLink": "Already have an account? Log in",
     "success": "Signup successful. Redirecting..."
   },
+  "StatsPage": {
+    "connections": "Connections",
+    "timeActive": "Time Active",
+    "dataShared": "Data Shared",
+    "refresh": "Refresh",
+    "emptyTitle": "No activity yet",
+    "emptySubtitle": "Start connecting to see your stats here.",
+    "exploreConnections": "Explore connections",
+    "loadError": "Failed to load stats."
+  },
   "device": {
     "defaultName": "My Companion",
     "common": {
