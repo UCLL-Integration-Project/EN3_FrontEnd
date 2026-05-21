@@ -14,6 +14,8 @@ export interface SensorData {
   az: number;
   rfCount: number;
   rfMessages: string[];
+  batteryPct: number;  // 0-100, or -1 when sensor not available
+  vcc: number;         // supply voltage in volts, 0 when not connected
   customMsg: string;
   ts: number;
 }
@@ -103,6 +105,17 @@ export function useDeviceWebSocket(deviceIp: string) {
     }
   }, []);
 
+  const sendCommand = useCallback((cmd: string) => {
+    const state = wsRef.current?.readyState;
+    console.log(`[WS] sendCommand: "${cmd}" readyState=${state} (1=OPEN)`);
+    if (state === WebSocket.OPEN) {
+      wsRef.current!.send(cmd);
+      console.log("[WS] sendCommand: sent");
+    } else {
+      console.warn("[WS] sendCommand: dropped — socket not open");
+    }
+  }, []);
+
   const forceReconnect = useCallback(() => {
     const ip = ipRef.current;
     if (!ip) return;
@@ -115,5 +128,5 @@ export function useDeviceWebSocket(deviceIp: string) {
     openRef.current(ip);
   }, []);
 
-  return { isConnected, sensorData, sendMessage, forceReconnect };
+  return { isConnected, sensorData, sendMessage, sendCommand, forceReconnect };
 }

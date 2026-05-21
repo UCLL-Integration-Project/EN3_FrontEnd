@@ -23,12 +23,12 @@ const handleResponse = async (response: Response): Promise<void> => {
 };
 
 /* ==========================================================================
-   1. AUTHENTICATION DOMAIN (/api/auth)
+   1. AUTHENTICATION DOMAIN (/api/v1/auth)
    ========================================================================== */
 
 export const signupRequest = async (userInput: User): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/auth/signup`, {
+    const response = await fetch(`${apiUrl}/api/v1/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userInput),
@@ -44,7 +44,7 @@ export const signupRequest = async (userInput: User): Promise<User> => {
 
 export const loginRequest = async (authRequest: AuthenticationRequest): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/auth/login`, {
+    const response = await fetch(`${apiUrl}/api/v1/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(authRequest),
@@ -76,7 +76,7 @@ export const verifyMfaRequest = async (username: string, code: string): Promise<
 
 export const logoutRequest = async (): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/auth/logout`, {
+    const response = await fetch(`${apiUrl}/api/v1/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
@@ -88,7 +88,7 @@ export const logoutRequest = async (): Promise<void> => {
 
 export const getMyProfileRequest = async (): Promise<UserResponse> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/me`, {
+    const response = await fetch(`${apiUrl}/api/v1/users/me`, {
       method: "GET",
       credentials: "include",
     });
@@ -102,7 +102,7 @@ export const getMyProfileRequest = async (): Promise<UserResponse> => {
 
 export const updateProfileRequest = async (input: UpdateProfileInput): Promise<UserResponse> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/me`, {
+    const response = await fetch(`${apiUrl}/api/v1/users/me`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
@@ -117,12 +117,12 @@ export const updateProfileRequest = async (input: UpdateProfileInput): Promise<U
 };
 
 /* ==========================================================================
-   3. PASSWORD / ACCOUNT DOMAIN (/api/account)
+   3. PASSWORD / ACCOUNT DOMAIN (/api/v1/account)
    ========================================================================== */
 
 export const changePasswordRequest = async (currentPassword: string, newPassword: string): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/account/password`, {
+    const response = await fetch(`${apiUrl}/api/v1/account/password`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ currentPassword, newPassword }),
@@ -136,12 +136,12 @@ export const changePasswordRequest = async (currentPassword: string, newPassword
 };
 
 /* ==========================================================================
-   4. CONNECTIONS DOMAIN (/api/connections)
+   4. CONNECTIONS DOMAIN (/api/v1/connections)
    ========================================================================== */
 
 export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
   try {
-    const response = await fetch(`${apiUrl}/api/connections`, {
+    const response = await fetch(`${apiUrl}/api/v1/connections`, {
       method: "GET",
       credentials: "include",
     });
@@ -155,7 +155,7 @@ export const getConnectionsRequest = async (): Promise<UserResponse[]> => {
 
 export const addConnectionRequest = async (username: string): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/connections/${encodeURIComponent(username)}`, {
+    const response = await fetch(`${apiUrl}/api/v1/connections/${encodeURIComponent(username)}`, {
       method: "POST",
       credentials: "include",
     });
@@ -168,7 +168,7 @@ export const addConnectionRequest = async (username: string): Promise<void> => {
 
 export const removeConnectionRequest = async (username: string): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/connections/${encodeURIComponent(username)}`, {
+    const response = await fetch(`${apiUrl}/api/v1/connections/${encodeURIComponent(username)}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -183,12 +183,12 @@ export const removeConnectionRequest = async (username: string): Promise<void> =
 export const connectRequest = addConnectionRequest;
 
 /* ==========================================================================
-   5. USER QUERIES DOMAIN (/api/users)
+   5. USER QUERIES DOMAIN (/api/v1/users)
    ========================================================================== */
 
 export const getUserData = async (username: string): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/${encodeURIComponent(username)}`, {
+    const response = await fetch(`${apiUrl}/api/v1/users/${encodeURIComponent(username)}`, {
       method: "GET",
       credentials: "include",
     });
@@ -201,7 +201,7 @@ export const getUserData = async (username: string): Promise<User> => {
 
 export const getActivityRequest = async (username: string): Promise<any[]> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/${encodeURIComponent(username)}/activity`, {
+    const response = await fetch(`${apiUrl}/api/v1/users/${encodeURIComponent(username)}/activity`, {
       method: "GET",
       credentials: "include",
     });
@@ -219,7 +219,7 @@ export const getActivityRequest = async (username: string): Promise<any[]> => {
 
 export const changeHeightRequest = async (newValue: number): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/height`, {
+    const response = await fetch(`${apiUrl}/api/v1/users/height`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newValue),
@@ -235,7 +235,7 @@ export const changeHeightRequest = async (newValue: number): Promise<User> => {
 
 export const changeWeightRequest = async (newValue: number): Promise<User> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/weight`, {
+    const response = await fetch(`${apiUrl}/api/v1/users/weight`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newValue),
@@ -251,7 +251,7 @@ export const changeWeightRequest = async (newValue: number): Promise<User> => {
 
 export const getStatsRequest = async (): Promise<UserStats | null> => {
   try {
-    const response = await fetch(`${apiUrl}/api/users/me/stats`, {
+    const response = await fetch(`${apiUrl}/api/v1/users/me/stats`, {
       method: "GET",
       credentials: "include",
     });

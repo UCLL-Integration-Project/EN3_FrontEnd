@@ -32,18 +32,28 @@
       "greetingEvening": "Goedenavond",
       "companionTitle": "Jouw metgezel",
       "companionConnected": "Verbonden",
+      "companionDisconnected": "Niet verbonden",
+      "companionLastUpdate": "Bijgewerkt om {time}",
       "companionManage": "Tik om te beheren",
       "actionsTitle": "Snelle acties",
       "actionSettings": "Instellingen",
       "actionHelp": "Help & ondersteuning",
-      "activityTitle": "Recente activiteit",
-      "activitySynced": "Metgezel gesynchroniseerd",
-      "activityGoal": "Dagelijkse stapdoel bereikt",
-      "activityFirmware": "Firmware bijgewerkt naar 2.4.0",
-      "timeNow": "Zojuist",
-      "timeMinutes": "{count}m geleden",
-      "timeHours": "{count}u geleden",
-      "fallbackName": "daar"
+      "readingsTitle": "Live metingen",
+      "readingX": "Accel X",
+      "readingY": "Accel Y",
+      "readingZ": "Accel Z",
+      "readingRf": "RF-paketten",
+      "noData": "Wachten op apparaatdata…",
+      "fallbackName": "daar",
+      "messageTitle": "Uitzenden",
+      "messageSubtitle": "Stuur deze tekst via je apparaat over Wi-Fi.",
+      "messagePlaceholder": "Typ een bericht voor je klas…",
+      "messageSend": "Uitzenden",
+      "messageSent": "Verzonden naar apparaat",
+      "messageCurrent": "Nu op apparaat",
+      "messageNoDevice": "Verbind je apparaat om uit te zenden",
+      "rfTitle": "Van apparaten in de buurt",
+      "noRfMessages": "Geen apparaten in de buurt gedetecteerd"
     }
   },
   "header": {
@@ -237,6 +247,7 @@
       "wifiSend": "Apparaat verbinden met Wi-Fi",
       "wifiSkip": "Overslaan voor nu",
       "wifiProvisioning": "Verzenden…",
+      "wifiWaiting": "Wachten tot apparaat verbinding maakt…",
       "wifiError": "Verzenden van inloggegevens mislukt — zorg dat het apparaat in de buurt is en probeer het opnieuw"
     },
     "manage": {
@@ -252,9 +263,13 @@
       "signalStrong": "Sterk",
       "lastSyncRecent": "2 min geleden",
       "lastSyncJustNow": "zojuist",
+      "lastSyncSecondsAgo": "{n}s geleden",
+      "lastSyncMinutesAgo": "{n}m geleden",
+      "signalLive": "Live",
       "battery": "Batterij",
       "charging": "Aan het opladen",
       "batteryRemaining": "≈ 2 dagen resterend",
+      "batteryUnavailable": "Sensor niet beschikbaar",
       "syncNow": "Nu synchroniseren",
       "syncing": "Synchroniseren…",
       "identify": "Identificeren",
@@ -308,6 +323,8 @@
       "disconnected": "Niet verbonden",
       "connection": "Apparaatverbinding",
       "noIp": "Geen IP-adres ingesteld",
+      "noIpBanner": "Voer apparaat-IP in om te verbinden",
+      "noIpBannerHint": "Tik hier en typ het IP-adres op het scherm van het apparaat.",
       "ipHint": "Tik om het IP-adres in te voeren dat op het OLED-scherm van het apparaat staat. De app verbindt via Wi-Fi — geen Bluetooth vereist.",
       "saveIp": "IP opslaan",
       "wsConnected": "WebSocket actief",
@@ -323,7 +340,12 @@
       "messagePlaceholder": "Voer een bericht in…",
       "messageSend": "Naar apparaat verzenden",
       "messageSent": "Bericht verzonden naar apparaat",
-      "messageCurrent": "Huidig bericht op apparaat"
+      "messageCurrent": "Huidig bericht op apparaat",
+      "stale": "Verouderd",
+      "staleTooltip": "Geen data in meer dan 2 minuten — meting van {elapsed} geleden",
+      "batteryUsb": "USB-voeding",
+      "batteryLow": "Lage batterij",
+      "batteryVeryLow": "Zeer lage batterij"
     }
   }
 }

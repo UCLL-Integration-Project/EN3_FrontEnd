@@ -5,14 +5,18 @@ import { useTranslations } from "next-intl";
 import { RefreshCw, Vibrate } from "lucide-react";
 import { BatteryGlyph } from "./DeviceUI";
 
-interface BatteryCardProps {
-  battery: number;
-  charging: boolean;
+interface BatteryProps {
+  battery: number | null;  // 0-100, null = unavailable
+  vcc: number;             // supply voltage in volts, 0 = unavailable
+  isStale: boolean;
+  lastReadingAt: number | null;
+  charging?: boolean;
   flash: (msg: string) => void;
   onSyncDone: () => void;
+  onIdentify?: () => void;
 }
 
-export function BatteryCard({ battery, charging, flash, onSyncDone }: BatteryCardProps) {
+export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = false, flash, onSyncDone, onIdentify }: BatteryProps) {
   const t = useTranslations("device");
   const [syncing, setSyncing] = useState(false);
   const [identifying, setIdentifying] = useState(false);
@@ -30,10 +34,32 @@ export function BatteryCard({ battery, charging, flash, onSyncDone }: BatteryCar
   function identify() {
     if (identifying) return;
     setIdentifying(true);
+    onIdentify?.();
     setTimeout(() => {
       setIdentifying(false);
       flash(t("manage.noteBuzzed"));
     }, 2600);
+  }
+
+  const hasBattery = battery != null && battery >= 0;
+  const hasVcc = !hasBattery && vcc > 0;
+  const isUsbPowered = !hasBattery;
+
+  const batteryColor = hasBattery
+    ? battery! < 10
+      ? "text-red-600"
+      : battery! < 20
+        ? "text-orange-500"
+        : "text-ink-900"
+    : "text-ink-900";
+
+  function formatElapsed(ts: number): string {
+    const sec = Math.floor((Date.now() - ts) / 1000);
+    if (sec < 10) return t("manage.lastSyncJustNow");
+    if (sec < 60) return t("manage.lastSyncSecondsAgo", { n: sec });
+    const min = Math.floor(sec / 60);
+    if (min < 60) return t("manage.lastSyncMinutesAgo", { n: min });
+    return `${Math.floor(min / 60)}h`;
   }
 
   return (
@@ -41,16 +67,44 @@ export function BatteryCard({ battery, charging, flash, onSyncDone }: BatteryCar
       <div className="flex items-center justify-between">
         <div>
           <h5>{t("manage.battery")}</h5>
-          <p className="mt-1 text-[22px] font-semibold text-ink-900">
-            {battery}
-            <span className="text-[14px] text-ink-400">%</span>
+          <p className={`mt-1 text-[22px] font-semibold ${batteryColor}`}>
+            {hasBattery ? (
+              <>
+                {battery}
+                <span className="text-[14px] text-ink-400">%</span>
+              </>
+            ) : hasVcc ? (
+              <>
+                {vcc.toFixed(2)}
+                <span className="text-[14px] text-ink-400"> V</span>
+              </>
+            ) : (
+              <span className="text-ink-400">—</span>
+            )}
           </p>
           <p className="text-[12px] text-ink-500">
-            {charging ? t("manage.charging") : t("manage.batteryRemaining")}
+            {hasBattery
+              ? battery! < 10
+                ? t("manage.batteryVeryLow")
+                : battery! < 20
+                  ? t("manage.batteryLow")
+                  : charging
+                    ? t("manage.charging")
+                    : t("manage.batteryRemaining")
+              : t("manage.batteryUsb")}
           </p>
         </div>
-        <BatteryGlyph percent={battery} charging={charging} />
+        {hasBattery && <BatteryGlyph percent={battery!} charging={charging} />}
       </div>
+
+      {isStale && lastReadingAt && (
+        <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 ring-1 ring-amber-200">
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+          <p className="text-[12px] text-amber-700">
+            {t("manage.staleTooltip", { elapsed: formatElapsed(lastReadingAt) })}
+          </p>
+        </div>
+      )}
 
       <div className="mt-4 flex gap-2.5">
         <button className="chip flex-1 justify-center" onClick={syncNow} disabled={syncing}>

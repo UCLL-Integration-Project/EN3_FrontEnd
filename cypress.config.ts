@@ -37,7 +37,7 @@ export default defineConfig({
 
       on("task", {
         async resetDatabase() {
-          const response = await fetch(`${apiUrl}/test-utils/reset-database`, {
+          const response = await fetch(`${apiUrl}/api/v1/test-utils/reset-database`, {
             method: "POST",
           });
 

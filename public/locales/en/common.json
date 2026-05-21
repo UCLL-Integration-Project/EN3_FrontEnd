@@ -32,18 +32,28 @@
       "greetingEvening": "Good evening",
       "companionTitle": "Your companion",
       "companionConnected": "Connected",
+      "companionDisconnected": "Disconnected",
+      "companionLastUpdate": "Updated {time}",
       "companionManage": "Tap to manage",
       "actionsTitle": "Quick actions",
       "actionSettings": "Settings",
       "actionHelp": "Help & support",
-      "activityTitle": "Recent activity",
-      "activitySynced": "Companion synced",
-      "activityGoal": "Daily step goal reached",
-      "activityFirmware": "Firmware updated to 2.4.0",
-      "timeNow": "Just now",
-      "timeMinutes": "{count}m ago",
-      "timeHours": "{count}h ago",
-      "fallbackName": "there"
+      "readingsTitle": "Live Readings",
+      "readingX": "Accel X",
+      "readingY": "Accel Y",
+      "readingZ": "Accel Z",
+      "readingRf": "RF Packets",
+      "noData": "Waiting for device data…",
+      "fallbackName": "there",
+      "messageTitle": "Broadcast",
+      "messageSubtitle": "Send this text from your device over Wi-Fi.",
+      "messagePlaceholder": "Type a message for your class…",
+      "messageSend": "Broadcast",
+      "messageSent": "Sent to device",
+      "messageCurrent": "On device now",
+      "messageNoDevice": "Connect your device to broadcast",
+      "rfTitle": "From nearby devices",
+      "noRfMessages": "No nearby devices detected"
     }
   },
   "header": {
@@ -237,6 +247,7 @@
       "wifiSend": "Connect device to Wi-Fi",
       "wifiSkip": "Skip for now",
       "wifiProvisioning": "Sending…",
+      "wifiWaiting": "Waiting for device to connect…",
       "wifiError": "Failed to send credentials — make sure the device is nearby and try again"
     },
     "manage": {
@@ -252,9 +263,13 @@
       "signalStrong": "Strong",
       "lastSyncRecent": "2 min ago",
       "lastSyncJustNow": "just now",
+      "lastSyncSecondsAgo": "{n}s ago",
+      "lastSyncMinutesAgo": "{n}m ago",
+      "signalLive": "Live",
       "battery": "Battery",
       "charging": "Charging",
       "batteryRemaining": "≈ 2 days remaining",
+      "batteryUnavailable": "Sensor not available",
       "syncNow": "Sync now",
       "syncing": "Syncing…",
       "identify": "Identify",
@@ -308,6 +323,8 @@
       "disconnected": "Disconnected",
       "connection": "Device connection",
       "noIp": "No IP address set",
+      "noIpBanner": "Enter device IP to connect",
+      "noIpBannerHint": "Tap here, then type the IP shown on the device screen.",
       "ipHint": "Tap to enter the IP shown on the device OLED. The app connects over Wi-Fi — no Bluetooth required.",
       "saveIp": "Save IP",
       "wsConnected": "WebSocket live",
@@ -323,7 +340,12 @@
       "messagePlaceholder": "Enter a message…",
       "messageSend": "Send to device",
       "messageSent": "Message sent to device",
-      "messageCurrent": "Current message on device"
+      "messageCurrent": "Current message on device",
+      "stale": "Stale",
+      "staleTooltip": "No data in over 2 minutes — reading from {elapsed} ago",
+      "batteryUsb": "USB power",
+      "batteryLow": "Low battery",
+      "batteryVeryLow": "Very low battery"
     }
   }
 }
