@@ -330,7 +330,9 @@ interface FirmwareProps {
 
 export function FirmwareCard({ installed, latest, flash }: FirmwareProps) {
   const t = useTranslations("device");
-  const [fw, setFw] = useState<"available" | "installing" | "current">("available");
+  const [fw, setFw] = useState<"available" | "installing" | "current">(
+    installed === latest ? "current" : "available"
+  );
   const [progress, setProgress] = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 

@@ -29,7 +29,7 @@ export default function HomeScreen() {
   const locale = useLocale();
   const router = useRouter();
 
-  const { deviceIp } = useDevice();
+  const { deviceIp, deviceName } = useDevice();
   const { isConnected, sensorData, sendMessage } = useDeviceWebSocket(deviceIp);
 
   const [msgText, setMsgText] = useState("");
@@ -140,7 +140,7 @@ export default function HomeScreen() {
               {t("companionTitle")}
             </p>
             <p className="truncate text-[19px] font-bold tracking-tight text-white">
-              {tDevice("defaultName")}
+              {deviceName || tDevice("defaultName")}
             </p>
           </div>
           <ChevronRight size={20} className="shrink-0 text-white/70" />

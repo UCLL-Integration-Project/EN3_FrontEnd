@@ -45,7 +45,7 @@
       "readingRf": "Paquets RF",
       "noData": "En attente des données de l'appareil…",
       "fallbackName": "vous",
-      "messageTitle": "Diffuser à la classe",
+      "messageTitle": "Diffuser",
       "messageSubtitle": "Envoyez ce texte depuis votre appareil via Wi-Fi.",
       "messagePlaceholder": "Tapez un message pour votre classe…",
       "messageSend": "Diffuser",

@@ -45,7 +45,7 @@
       "readingRf": "RF Packets",
       "noData": "Waiting for device data…",
       "fallbackName": "there",
-      "messageTitle": "Broadcast to class",
+      "messageTitle": "Broadcast",
       "messageSubtitle": "Send this text from your device over Wi-Fi.",
       "messagePlaceholder": "Type a message for your class…",
       "messageSend": "Broadcast",
