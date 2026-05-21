@@ -15,7 +15,7 @@ Cypress.Commands.add("login", (email: string, password: string) => {
 
   cy.request({
     method: "POST",
-    url: `${apiUrl}/api/users/login`,
+    url: `${apiUrl}/api/v1/users/login`,
     body: { email, password },
     failOnStatusCode: true,
   }).then((response) => {
