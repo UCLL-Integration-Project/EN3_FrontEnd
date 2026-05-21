@@ -36,7 +36,7 @@ export const listMembersRequest = async (
   if (params.size !== undefined) qs.set("size", String(params.size));
 
   try {
-    const response = await fetch(`${apiUrl}/api/admin/members?${qs.toString()}`, {
+    const response = await fetch(`${apiUrl}/api/v1/admin/members?${qs.toString()}`, {
       method: "GET",
       credentials: "include",
     });
@@ -50,7 +50,7 @@ export const listMembersRequest = async (
 
 export const getMemberRequest = async (id: number): Promise<AdminMemberDetail> => {
   try {
-    const response = await fetch(`${apiUrl}/api/admin/members/${id}`, {
+    const response = await fetch(`${apiUrl}/api/v1/admin/members/${id}`, {
       method: "GET",
       credentials: "include",
     });
@@ -70,7 +70,7 @@ const moderationActionRequest = async (
   note?: string,
 ): Promise<AdminMemberDetail> => {
   try {
-    const response = await fetch(`${apiUrl}/api/admin/members/${id}/${action}`, {
+    const response = await fetch(`${apiUrl}/api/v1/admin/members/${id}/${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

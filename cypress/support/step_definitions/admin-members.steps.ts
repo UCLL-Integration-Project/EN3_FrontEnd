@@ -1,6 +1,6 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-/* /test-utils/reset-database (dev profile) seeds: Admin User (admin/admin,
+/* /api/v1/test-utils/reset-database (dev profile) seeds: Admin User (admin/admin,
    ADMIN), Jane Doe (janedoe, USER, has a bio) and John Smith (johnsmith,
    USER). */
 Given("the database is reset", () => {
@@ -12,13 +12,13 @@ Given("I am logged in as the admin", () => {
 });
 
 When("I open the admin members page", () => {
-  cy.intercept("GET", "**/api/admin/members*").as("listMembers");
+  cy.intercept("GET", "**/api/v1/admin/members*").as("listMembers");
   cy.visitWithLocale("/admin/members");
   cy.wait("@listMembers");
 });
 
 When("I search the members list for {string}", (q: string) => {
-  cy.intercept("GET", "**/api/admin/members*").as("searchMembers");
+  cy.intercept("GET", "**/api/v1/admin/members*").as("searchMembers");
   cy.get('input[type="search"]').clear().type(q);
   cy.wait("@searchMembers");
 });
@@ -32,7 +32,7 @@ Then("I should not see {string} in the list", (name: string) => {
 });
 
 When("I open the member named {string}", (name: string) => {
-  cy.intercept("GET", "**/api/admin/members/*").as("getMember");
+  cy.intercept("GET", "**/api/v1/admin/members/*").as("getMember");
   cy.contains("li", name).find("a").click();
   cy.wait("@getMember");
 });
@@ -46,7 +46,7 @@ Then("I should see {string} on the detail page", (name: string) => {
 });
 
 When("I go back to the members list", () => {
-  cy.intercept("GET", "**/api/admin/members*").as("listAgain");
+  cy.intercept("GET", "**/api/v1/admin/members*").as("listAgain");
   cy.contains("a", /Back|Terug/).click();
   cy.wait("@listAgain");
 });
@@ -61,7 +61,7 @@ Then("the search should still be {string}", (q: string) => {
 });
 
 When("I suspend the member with note {string}", (note: string) => {
-  cy.intercept("POST", "**/api/admin/members/*/suspend").as("suspend");
+  cy.intercept("POST", "**/api/v1/admin/members/*/suspend").as("suspend");
   // The moderation action button ("Suspend member") opens the confirm sheet.
   cy.contains("button", "Suspend member").click();
   cy.get("textarea").type(note);
