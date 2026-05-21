@@ -8,7 +8,6 @@ import { Globe, Check } from "lucide-react";
 const languages = [
   { value: "en", label: "English", short: "EN", flag: "🇬🇧" },
   { value: "nl", label: "Nederlands", short: "NL", flag: "🇳🇱" },
-  { value: "fr", label: "Français", short: "FR", flag: "🇫🇷" },
 ];
 
 export default function LanguageChip() {
