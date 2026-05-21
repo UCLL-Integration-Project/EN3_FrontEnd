@@ -30,7 +30,7 @@ function writeSessionHint(signedIn: boolean) {
    is typed UserResponse, which includes `password`; that field must never be
    written to localStorage, where any script on the origin could read it and
    it would survive browser restarts. */
-function toSafeUser(profile: UserResponse): User {
+function toSafeUser(profile: UserResponse | any): User {
   return {
     username: profile.username,
     firstName: profile.firstName,
@@ -52,9 +52,18 @@ function readCachedUser(): User | null {
   }
 }
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+type AuthProviderProps = {
+  children: ReactNode;
+  initialUser?: any | null; // Accepts the raw UserResponse from Next.js SSR
+};
+
+export const AuthProvider = ({ children, initialUser }: AuthProviderProps) => {
+  // Sanitize the SSR user if it exists
+  const startingUser = initialUser ? toSafeUser(initialUser) : null;
+
+  // Initialize state using the SSR data if available
+  const [user, setUser] = useState<User | null>(startingUser);
+  const [isLoading, setIsLoading] = useState(!startingUser);
 
   /* Verify the session on mount via /api/users/me.
      The 6s timer is a *fallback* that only unblocks the splash (showing the
@@ -63,6 +72,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
      finally resolves, so a valid signed-in user is never stranded as
      signed-out until a reload. */
   useEffect(() => {
+    // --- SHORT-CIRCUIT FOR SSR NAVIGATIONS ---
+    // If layout.tsx already fetched the user securely via Node.js,
+    // sync the local cache and skip the client-side fetch entirely.
+    if (startingUser) {
+      safeStorage.set(STORAGE_KEY, JSON.stringify(startingUser));
+      writeSessionHint(true);
+      setIsLoading(false);
+      return; 
+    }
+
     let cancelled = false;
     const cached = readCachedUser();
 
@@ -108,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, []);
+  }, [startingUser]);
 
   /* Any API call that returns 401 dispatches `auth:unauthorized`
      (see UserService). Clear local auth state so the guards redirect. */
@@ -141,7 +160,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateUser = (userData: Partial<User>) => {
-    const updated = { ...user, ...userData };
+    const updated = { ...user, ...userData } as User;
     safeStorage.set(STORAGE_KEY, JSON.stringify(updated));
     setUser(updated);
   };

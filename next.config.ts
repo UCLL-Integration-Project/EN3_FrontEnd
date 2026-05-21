@@ -19,6 +19,8 @@ const withSerwist = withSerwistInit({
   // use something else that works, such as "service-worker/index.ts".
   swSrc: "app/sw.ts",
   swDest: "public/sw.js",
+  // Disable the Service Worker in development to prevent HMR WebSocket conflicts
+  disable: process.env.NODE_ENV === "development",
 });
 
 const nextConfig: NextConfig = {

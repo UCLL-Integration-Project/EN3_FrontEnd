@@ -71,5 +71,9 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|manifest.json|sw.ts|.*\\.[^/]*$).*)"],
+  // Broadened the exclusion to the entire `_next` directory instead of specific subfolders.
+  // Added `_vercel` as a standard best practice if you deploy there.
+  matcher: [
+    "/((?!api|_next|_vercel|favicon.ico|manifest.json|sw.ts|\\.well-known|.*\\.[^/]*$).*)",
+  ],
 };
