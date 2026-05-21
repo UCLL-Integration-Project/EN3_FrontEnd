@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  Activity,
   CheckCircle2,
   ChevronRight,
   LifeBuoy,
@@ -69,39 +68,6 @@ export default function HomeScreen() {
         minute: "2-digit",
         second: "2-digit",
       })
-    : null;
-
-  const readings = sensorData
-    ? [
-        {
-          icon: Activity,
-          label: t("readingX"),
-          value: sensorData.ax.toFixed(3),
-          unit: "g",
-          tone: "bg-brand-50 text-brand-600",
-        },
-        {
-          icon: Activity,
-          label: t("readingY"),
-          value: sensorData.ay.toFixed(3),
-          unit: "g",
-          tone: "bg-secondary-50 text-secondary-600",
-        },
-        {
-          icon: Activity,
-          label: t("readingZ"),
-          value: sensorData.az.toFixed(3),
-          unit: "g",
-          tone: "bg-accent-50 text-accent-600",
-        },
-        {
-          icon: Radio,
-          label: t("readingRf"),
-          value: String(sensorData.rfCount),
-          unit: "",
-          tone: "bg-ink-50 text-ink-500",
-        },
-      ]
     : null;
 
   return (
@@ -258,43 +224,6 @@ export default function HomeScreen() {
           </Link>
         ))}
       </div>
-
-      {/* Live sensor readings */}
-      <h5 className="mt-6 px-1">{t("readingsTitle")}</h5>
-      {readings ? (
-        <div className="card mt-3 py-2">
-          {readings.map((r, i) => (
-            <div
-              key={r.label}
-              className={`flex items-center gap-3 py-3 ${
-                i > 0 ? "border-t border-ink-100" : ""
-              }`}
-            >
-              <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${r.tone}`}
-              >
-                <r.icon size={16} strokeWidth={2.25} />
-              </span>
-              <span className="min-w-0 flex-1 text-[14px] font-medium text-ink-900">
-                {r.label}
-              </span>
-              <span className="shrink-0 font-mono text-[14px] font-semibold text-ink-900">
-                {r.value}
-                {r.unit && (
-                  <span className="text-[12px] font-normal text-ink-400">
-                    {" "}
-                    {r.unit}
-                  </span>
-                )}
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="card mt-3">
-          <p className="text-center text-[13px] text-ink-400">{t("noData")}</p>
-        </div>
-      )}
 
       {/* Footer */}
       <div className="mt-auto flex items-center justify-between gap-3 pt-10 pb-[calc(theme(spacing.6)+env(safe-area-inset-bottom))]">
