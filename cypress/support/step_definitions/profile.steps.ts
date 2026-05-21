@@ -4,17 +4,17 @@ Given("I am logged in as {string} with name {string}", (username: string, fullNa
   const [firstName, lastName] = fullName.split(" ");
   const email = `${username}@example.com`;
 
-  cy.intercept("POST", "**/api/users/login", {
+  cy.intercept("POST", "**/api/v1/users/login", {
     statusCode: 200,
     body: { token: "fake-token", username, firstName, lastName, email, age: 30, role: "USER" },
   }).as("loginRequest");
 
-  cy.intercept("GET", "**/api/users/me", {
+  cy.intercept("GET", "**/api/v1/users/me", {
     statusCode: 200,
     body: { id: 1, username, firstName, lastName, email, age: 30, bio: "My test bio", connectionsCount: 10 },
   }).as("getMeRequest");
 
-  cy.intercept("GET", `**/api/users/${username}/activity`, {
+  cy.intercept("GET", `**/api/v1/users/${username}/activity`, {
     statusCode: 200,
     body: [{ id: 1, type: "POST", description: "Updated profile", timestamp: new Date().toISOString() }],
   }).as("getActivityRequest");
@@ -28,12 +28,12 @@ Given("I am logged in as {string} with name {string}", (username: string, fullNa
 
 Given("a user {string} exists with name {string} and bio {string}", (username: string, fullName: string, bio: string) => {
   const [firstName, lastName] = fullName.split(" ");
-  cy.intercept("GET", `**/api/users/${username}`, {
+  cy.intercept("GET", `**/api/v1/users/${username}`, {
     statusCode: 200,
     body: { id: 2, username, firstName, lastName, email: `${username}@example.com`, age: 25, bio, connectionsCount: 5 },
   }).as("getOtherUserRequest");
 
-  cy.intercept("GET", `**/api/users/${username}/activity`, {
+  cy.intercept("GET", `**/api/v1/users/${username}/activity`, {
     statusCode: 200,
     body: [],
   }).as("getOtherActivityRequest");
@@ -68,7 +68,7 @@ Then("I should see the {string} section", (section: string) => {
 
 When("I click the {string} button", (text: string) => {
   if (text === "Connect") {
-    cy.intercept("POST", "**/api/users/*/connect", { statusCode: 200 }).as("connectRequest");
+    cy.intercept("POST", "**/api/v1/users/*/connect", { statusCode: 200 }).as("connectRequest");
   }
   cy.get("button").contains(text).click();
 });
@@ -112,19 +112,19 @@ Then("the connection count should increase", () => {
 });
 
 Given("I have a connection with {string}", (username: string) => {
-  cy.intercept("GET", "**/api/users/me/connections", {
+  cy.intercept("GET", "**/api/v1/users/me/connections", {
     statusCode: 200,
     body: [{ id: 2, username, firstName: "Jane", lastName: "Doe" }],
   }).as("getConnectionsRequest");
   
-  cy.intercept("DELETE", `**/api/users/me/connections/${username}`, {
+  cy.intercept("DELETE", `**/api/v1/users/me/connections/${username}`, {
     statusCode: 200,
   }).as("removeConnectionRequest");
 
   // Mock the profile call to return 10 connections initially, 
   // then 9 connections after removal (simulating backend update)
   let callCount = 0;
-  cy.intercept("GET", "**/api/users/me", (req) => {
+  cy.intercept("GET", "**/api/v1/users/me", (req) => {
     callCount++;
     req.reply({
       statusCode: 200,
