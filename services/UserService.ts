@@ -63,7 +63,7 @@ export const verifyMfaRequest = async (username: string, code: string): Promise<
     const response = await fetch(`${apiUrl}/api/v1/mfa/verify`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, code }),
+      body: JSON.stringify({ username, code }),g
       credentials: "include",
     });
     await handleResponse(response);
