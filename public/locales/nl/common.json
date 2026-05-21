@@ -228,6 +228,7 @@
       "wifiSend": "Apparaat verbinden met Wi-Fi",
       "wifiSkip": "Overslaan voor nu",
       "wifiProvisioning": "Verzenden…",
+      "wifiWaiting": "Wachten tot apparaat verbinding maakt…",
       "wifiError": "Verzenden van inloggegevens mislukt — zorg dat het apparaat in de buurt is en probeer het opnieuw"
     },
     "manage": {
@@ -243,9 +244,13 @@
       "signalStrong": "Sterk",
       "lastSyncRecent": "2 min geleden",
       "lastSyncJustNow": "zojuist",
+      "lastSyncSecondsAgo": "{n}s geleden",
+      "lastSyncMinutesAgo": "{n}m geleden",
+      "signalLive": "Live",
       "battery": "Batterij",
       "charging": "Aan het opladen",
       "batteryRemaining": "≈ 2 dagen resterend",
+      "batteryUnavailable": "Sensor niet beschikbaar",
       "syncNow": "Nu synchroniseren",
       "syncing": "Synchroniseren…",
       "identify": "Identificeren",

@@ -20,6 +20,7 @@ import {
   Trash2,
   Vibrate,
   Watch,
+  WifiOff,
   X,
 } from "lucide-react";
 import { BatteryGlyph, SignalBars, Toggle } from "./DeviceUI";
@@ -43,11 +44,12 @@ const PREFERENCES: { key: PrefKey; icon: typeof Watch }[] = [
 
 interface HeroProps {
   model: string;
-  lastSync: "lastSyncRecent" | "lastSyncJustNow";
+  isConnected: boolean;
+  lastReceivedAt: number | null;
   onNameChange?: (name: string) => void;
 }
 
-export function DeviceHeroCard({ model, lastSync, onNameChange }: HeroProps) {
+export function DeviceHeroCard({ model, isConnected, lastReceivedAt, onNameChange }: HeroProps) {
   const t = useTranslations("device");
   const [name, setName] = useState(() => t("defaultName"));
   const [editing, setEditing] = useState(false);
@@ -58,6 +60,15 @@ export function DeviceHeroCard({ model, lastSync, onNameChange }: HeroProps) {
     setName(next);
     setEditing(false);
     onNameChange?.(next);
+  }
+
+  function formatElapsed(ts: number): string {
+    const sec = Math.floor((Date.now() - ts) / 1000);
+    if (sec < 10) return t("manage.lastSyncJustNow");
+    if (sec < 60) return t("manage.lastSyncSecondsAgo", { n: sec });
+    const min = Math.floor(sec / 60);
+    if (min < 60) return t("manage.lastSyncMinutesAgo", { n: min });
+    return `${Math.floor(min / 60)}h`;
   }
 
   return (
@@ -102,18 +113,31 @@ export function DeviceHeroCard({ model, lastSync, onNameChange }: HeroProps) {
       </div>
 
       <div className="mt-5 flex items-center gap-4 border-t border-white/15 pt-4 text-[12px] font-medium text-white/85">
-        <span className="flex items-center gap-1.5">
-          <BluetoothConnected size={14} />
-          {t("manage.bluetooth")}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <SignalBars level={3} light />
-          {t("manage.signalStrong")}
-        </span>
-        <span className="ml-auto flex items-center gap-1.5 text-white/70">
-          <RefreshCw size={13} />
-          {t(`manage.${lastSync}`)}
-        </span>
+        {isConnected ? (
+          <>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+              {t("manage.signalLive")}
+            </span>
+            <span className="ml-auto flex items-center gap-1.5 text-white/70">
+              <RefreshCw size={13} />
+              {lastReceivedAt ? formatElapsed(lastReceivedAt) : "—"}
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="flex items-center gap-1.5 text-white/60">
+              <WifiOff size={13} />
+              {t("manage.disconnected")}
+            </span>
+            {lastReceivedAt && (
+              <span className="ml-auto flex items-center gap-1.5 text-white/50">
+                <RefreshCw size={13} />
+                {formatElapsed(lastReceivedAt)}
+              </span>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
@@ -122,13 +146,13 @@ export function DeviceHeroCard({ model, lastSync, onNameChange }: HeroProps) {
 // ── BatteryCard ───────────────────────────────────────────────────────────────
 
 interface BatteryProps {
-  battery: number;
-  charging: boolean;
+  battery: number | null;
+  charging?: boolean;
   flash: (msg: string) => void;
   onSyncDone: () => void;
 }
 
-export function BatteryCard({ battery, charging, flash, onSyncDone }: BatteryProps) {
+export function BatteryCard({ battery, charging = false, flash, onSyncDone }: BatteryProps) {
   const t = useTranslations("device");
   const [syncing, setSyncing] = useState(false);
   const [identifying, setIdentifying] = useState(false);
@@ -158,14 +182,24 @@ export function BatteryCard({ battery, charging, flash, onSyncDone }: BatteryPro
         <div>
           <h5>{t("manage.battery")}</h5>
           <p className="mt-1 text-[22px] font-semibold text-ink-900">
-            {battery}
-            <span className="text-[14px] text-ink-400">%</span>
+            {battery != null ? (
+              <>
+                {battery}
+                <span className="text-[14px] text-ink-400">%</span>
+              </>
+            ) : (
+              <span className="text-ink-400">—</span>
+            )}
           </p>
           <p className="text-[12px] text-ink-500">
-            {charging ? t("manage.charging") : t("manage.batteryRemaining")}
+            {battery != null
+              ? charging
+                ? t("manage.charging")
+                : t("manage.batteryRemaining")
+              : t("manage.batteryUnavailable")}
           </p>
         </div>
-        <BatteryGlyph percent={battery} charging={charging} />
+        {battery != null && <BatteryGlyph percent={battery} charging={charging} />}
       </div>
 
       <div className="mt-4 flex gap-2.5">

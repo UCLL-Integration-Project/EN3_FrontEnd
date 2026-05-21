@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -51,11 +51,10 @@ export default function DeviceManager() {
     useDeviceWebSocket(deviceIp);
 
   const [deviceName, setDeviceName] = useState(() => t("defaultName"));
-  const [lastSync, setLastSync] = useState<"lastSyncRecent" | "lastSyncJustNow">(
-    "lastSyncRecent",
-  );
-  const [battery] = useState(72);
-  const [charging] = useState(false);
+  const [lastReceivedAt, setLastReceivedAt] = useState<number | null>(null);
+  useEffect(() => {
+    if (sensorData) setLastReceivedAt(Date.now());
+  }, [sensorData]);
 
   const [editingIp, setEditingIp] = useState(false);
   const [draftIp, setDraftIp] = useState(deviceIp);
@@ -152,15 +151,15 @@ export default function DeviceManager() {
 
       <DeviceHeroCard
         model={DEVICE.model}
-        lastSync={lastSync}
+        isConnected={isConnected}
+        lastReceivedAt={lastReceivedAt}
         onNameChange={setDeviceName}
       />
 
       <BatteryCard
-        battery={battery}
-        charging={charging}
+        battery={null}
         flash={flash}
-        onSyncDone={() => setLastSync("lastSyncJustNow")}
+        onSyncDone={() => {}}
       />
 
       {/* WebSocket connection */}

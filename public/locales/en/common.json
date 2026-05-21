@@ -228,6 +228,7 @@
       "wifiSend": "Connect device to Wi-Fi",
       "wifiSkip": "Skip for now",
       "wifiProvisioning": "Sending…",
+      "wifiWaiting": "Waiting for device to connect…",
       "wifiError": "Failed to send credentials — make sure the device is nearby and try again"
     },
     "manage": {
@@ -243,9 +244,13 @@
       "signalStrong": "Strong",
       "lastSyncRecent": "2 min ago",
       "lastSyncJustNow": "just now",
+      "lastSyncSecondsAgo": "{n}s ago",
+      "lastSyncMinutesAgo": "{n}m ago",
+      "signalLive": "Live",
       "battery": "Battery",
       "charging": "Charging",
       "batteryRemaining": "≈ 2 days remaining",
+      "batteryUnavailable": "Sensor not available",
       "syncNow": "Sync now",
       "syncing": "Syncing…",
       "identify": "Identify",
