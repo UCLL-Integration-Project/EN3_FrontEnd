@@ -27,7 +27,7 @@ Given("I am logged in and have connections with levels:", (dataTable: any) => {
   }).as("getMeRequest");
 
   // Mock connections
-  cy.intercept("GET", "**/api/connections", {
+  cy.intercept("GET", "**/api/v1/connections", {
     statusCode: 200,
     body: connections.map((conn) => ({
       id: Math.random(),
@@ -42,12 +42,12 @@ Given("I am logged in and have connections with levels:", (dataTable: any) => {
     })),
   }).as("getConnectionsRequest");
 
-  cy.intercept("PUT", "**/api/connections/*/level", {
+  cy.intercept("PUT", "**/api/v1/connections/*/level", {
     statusCode: 200,
     body: {},
   }).as("setConnectionLevelRequest");
 
-  cy.intercept("DELETE", "**/api/connections/*", {
+  cy.intercept("DELETE", "**/api/v1/connections/*", {
     statusCode: 200,
     body: {},
   }).as("removeConnectionRequest");
@@ -72,7 +72,7 @@ Given("I am logged in with no connections", () => {
     },
   }).as("getMeRequest");
 
-  cy.intercept("GET", "**/api/connections", {
+  cy.intercept("GET", "**/api/v1/connections", {
     statusCode: 200,
     body: [],
   }).as("getConnectionsRequest");
@@ -90,7 +90,7 @@ When("I click the level button again", () => {
 
 When("I select {string}", (levelName: string) => {
   // Set up intercept BEFORE clicking
-  cy.intercept("PUT", "**/api/connections/*/level", (req) => {
+  cy.intercept("PUT", "**/api/v1/connections/*/level", (req) => {
     req.reply({
       statusCode: 200,
       body: {},

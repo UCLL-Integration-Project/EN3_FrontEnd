@@ -47,7 +47,7 @@ describe("UserService - Connection Levels", () => {
       const result = await UserService.getConnectionsRequest();
 
       expect(result).toEqual(mockConnections);
-      expect(global.fetch).toHaveBeenCalledWith(`${apiUrl}/api/connections`, {
+      expect(global.fetch).toHaveBeenCalledWith(`${apiUrl}/api/v1/connections`, {
         method: "GET",
         credentials: "include"
       });
@@ -79,7 +79,7 @@ describe("UserService - Connection Levels", () => {
       await UserService.setConnectionLevelRequest("user1", "CONTACT");
 
       expect(global.fetch).toHaveBeenCalledWith(
-        `${apiUrl}/api/connections/user1/level`,
+        `${apiUrl}/api/v1/connections/user1/level`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -98,7 +98,7 @@ describe("UserService - Connection Levels", () => {
       await UserService.setConnectionLevelRequest("user2", "FRIEND");
 
       expect(global.fetch).toHaveBeenCalledWith(
-        `${apiUrl}/api/connections/user2/level`,
+        `${apiUrl}/api/v1/connections/user2/level`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -117,7 +117,7 @@ describe("UserService - Connection Levels", () => {
       await UserService.setConnectionLevelRequest("user3", "BEST_FRIEND");
 
       expect(global.fetch).toHaveBeenCalledWith(
-        `${apiUrl}/api/connections/user3/level`,
+        `${apiUrl}/api/v1/connections/user3/level`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -155,7 +155,7 @@ describe("UserService - Connection Levels", () => {
       await UserService.setConnectionLevelRequest("user@example.com", "CONTACT");
 
       expect(global.fetch).toHaveBeenCalledWith(
-        `${apiUrl}/api/connections/user%40example.com/level`,
+        `${apiUrl}/api/v1/connections/user%40example.com/level`,
         expect.any(Object)
       );
     });
@@ -171,7 +171,7 @@ describe("UserService - Connection Levels", () => {
       await UserService.addConnectionRequest("newuser");
 
       expect(global.fetch).toHaveBeenCalledWith(
-        `${apiUrl}/api/connections/newuser`,
+        `${apiUrl}/api/v1/connections/newuser`,
         {
           method: "POST",
           credentials: "include"
@@ -190,7 +190,7 @@ describe("UserService - Connection Levels", () => {
       await UserService.removeConnectionRequest("user1");
 
       expect(global.fetch).toHaveBeenCalledWith(
-        `${apiUrl}/api/connections/user1`,
+        `${apiUrl}/api/v1/connections/user1`,
         {
           method: "DELETE",
           credentials: "include"
