@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import {
   BarChart2,
   ChevronRight,
@@ -14,6 +15,11 @@ import {
   Users,
 } from "lucide-react";
 import useAuth from "@hooks/useAuth";
+import { insightRequest } from "@services/AiService";
+import { safeStorage } from "@context/safeStorage";
+import AiInsightPopup from "@components/ai/AiInsightPopup";
+
+const FOUR_HOURS = 4 * 60 * 60 * 1000;
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
@@ -27,19 +33,37 @@ export default function HomeScreen() {
 
   const displayName = user?.firstName?.trim() || user?.username?.trim() || "";
 
+  const [insight, setInsight] = useState<string | null>(null);
+
+  useEffect(() => {
+    const last = safeStorage.get("cw_last_insight");
+    if (last && Date.now() - Number(last) < FOUR_HOURS) return;
+
+    insightRequest()
+      .then(({ insight: text }) => {
+        if (text) setInsight(text);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleDismissInsight = () => {
+    safeStorage.set("cw_last_insight", String(Date.now()));
+    setInsight(null);
+  };
+
   const navItems = [
-    { icon: User,      label: t("nav.profile"),    href: `/${locale}/profile`,        admin: false },
-    { icon: Users,     label: t("nav.connections"), href: `/${locale}/connections`,    admin: false },
-    { icon: Cpu,       label: t("nav.device"),      href: `/${locale}/device`,         admin: false },
-    { icon: BarChart2, label: t("nav.stats"),       href: `/${locale}/stats`,          admin: false },
-    { icon: Settings,  label: t("nav.settings"),    href: `/${locale}/settings`,       admin: false },
+    { icon: User,      label: t("nav.profile"),     href: `/${locale}/profile`,       admin: false },
+    { icon: Users,     label: t("nav.connections"),  href: `/${locale}/connections`,   admin: false },
+    { icon: Cpu,       label: t("nav.device"),       href: `/${locale}/device`,        admin: false },
+    { icon: BarChart2, label: t("nav.stats"),        href: `/${locale}/stats`,         admin: false },
+    { icon: Settings,  label: t("nav.settings"),     href: `/${locale}/settings`,      admin: false },
     ...(user?.role === "ADMIN"
       ? [{ icon: Shield, label: t("nav.admin"), href: `/${locale}/admin/members`, admin: true }]
       : []),
   ] as { icon: typeof User; label: string; href: string; admin: boolean }[];
 
   return (
-    <section className="flex min-h-full flex-col p-0">
+    <section className="relative flex min-h-full flex-col p-0">
       {/* Brand gradient banner */}
       <div className="bg-brand-gradient px-5 pb-8 pt-[calc(1.25rem+env(safe-area-inset-top))]">
         <p
@@ -97,6 +121,20 @@ export default function HomeScreen() {
           {t("signOut")}
         </button>
       </div>
+
+      {/* AI floating action button */}
+      <Link
+        href={`/${locale}/ai`}
+        aria-label={t("nav.ai")}
+        className="absolute bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-5 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gradient text-[22px] text-white shadow-pop active:scale-95 transition-transform duration-100"
+      >
+        ✦
+      </Link>
+
+      {/* Proactive insight popup */}
+      {insight && (
+        <AiInsightPopup insight={insight} onDismiss={handleDismissInsight} />
+      )}
     </section>
   );
 }
