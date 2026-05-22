@@ -35,6 +35,12 @@ export default function ConnectionsView() {
       .finally(() => setFetched(true));
   }, [isLoading]);
 
+  const formatLevel = (level: ConnectionLevel | undefined): string => {
+    const normalizedLevel = level || "CONTACT";
+    if (normalizedLevel === "BEST_FRIEND") return "Best Friend";
+    return normalizedLevel.charAt(0) + normalizedLevel.slice(1).toLowerCase();
+  };
+
   const handleRemove = async (username: string) => {
     try {
       await removeConnectionRequest(username);
@@ -107,7 +113,7 @@ export default function ConnectionsView() {
                       className="icon-btn text-ink-600 hover:bg-ink-50 active:bg-ink-100 flex items-center gap-1 px-2"
                     >
                       <span className="text-[13px] font-medium">
-                        {connection.level === "BEST_FRIEND" ? "Best Friend" : connection.level.charAt(0) + connection.level.slice(1).toLowerCase()}
+                        {formatLevel(connection.level)}
                       </span>
                       <ChevronDown
                         size={16}
@@ -135,12 +141,12 @@ export default function ConnectionsView() {
                         type="button"
                         onClick={() => handleSetLevel(connection.username, level)}
                         className={`flex-1 px-3 py-2 rounded text-[13px] font-medium transition ${
-                          connection.level === level
+                          (connection.level || "CONTACT") === level
                             ? "bg-brand-600 text-white"
                             : "bg-white text-ink-700 border border-ink-200 hover:bg-ink-50 active:bg-ink-100"
                         }`}
                       >
-                        {level === "BEST_FRIEND" ? "Best Friend" : level.charAt(0) + level.slice(1).toLowerCase()}
+                        {formatLevel(level)}
                       </button>
                     ))}
                   </div>
