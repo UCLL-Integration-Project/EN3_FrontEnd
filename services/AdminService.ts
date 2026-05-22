@@ -5,17 +5,14 @@ if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL is not defined");
 
 const handleResponse = async (response: Response): Promise<void> => {
   if (!response.ok) {
+    let code = "UNKNOWN_ERROR";
     try {
       const body = await response.json();
-      if (body?.errors && Array.isArray(body.errors)) {
-        const code = body.errors[0]?.code ?? "UNKNOWN_ERROR";
-        throw new Error(code);
-      }
-      throw new Error("UNKNOWN_ERROR");
-    } catch (err) {
-      if (err instanceof Error && err.message !== "UNKNOWN_ERROR") throw err;
-      throw new Error("UNKNOWN_ERROR");
+      if (body?.errors?.[0]?.code) code = body.errors[0].code;
+    } catch {
+      // non-JSON body — keep UNKNOWN_ERROR
     }
+    throw new Error(code);
   }
 };
 
@@ -36,7 +33,7 @@ export const listMembersRequest = async (
   if (params.size !== undefined) qs.set("size", String(params.size));
 
   try {
-    const response = await fetch(`${apiUrl}/api/admin/members?${qs.toString()}`, {
+    const response = await fetch(`${apiUrl}/api/v1/admin/members?${qs.toString()}`, {
       method: "GET",
       credentials: "include",
     });
@@ -50,7 +47,7 @@ export const listMembersRequest = async (
 
 export const getMemberRequest = async (id: number): Promise<AdminMemberDetail> => {
   try {
-    const response = await fetch(`${apiUrl}/api/admin/members/${id}`, {
+    const response = await fetch(`${apiUrl}/api/v1/admin/members/${id}`, {
       method: "GET",
       credentials: "include",
     });
@@ -66,11 +63,11 @@ export const getMemberRequest = async (id: number): Promise<AdminMemberDetail> =
    returns the refreshed member detail (status + new audit entry). */
 const moderationActionRequest = async (
   id: number,
-  action: "suspend" | "reactivate" | "clear-bio" | "clear-avatar",
+  action: "suspend" | "reactivate" | "clear-bio" | "clear-avatar" | "flag",
   note?: string,
 ): Promise<AdminMemberDetail> => {
   try {
-    const response = await fetch(`${apiUrl}/api/admin/members/${id}/${action}`, {
+    const response = await fetch(`${apiUrl}/api/v1/admin/members/${id}/${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -95,3 +92,6 @@ export const clearBioRequest = (id: number, note?: string) =>
 
 export const clearAvatarRequest = (id: number, note?: string) =>
   moderationActionRequest(id, "clear-avatar", note);
+
+export const flagMemberRequest = (id: number, note?: string) =>
+  moderationActionRequest(id, "flag", note);

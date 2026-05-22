@@ -104,6 +104,12 @@
           "message": "De foto wordt vervangen door een lege placeholder. Dit kan niet ongedaan worden gemaakt.",
           "confirm": "Foto wissen"
         },
+        "flag": {
+          "label": "Lid markeren",
+          "title": "{name} markeren?",
+          "message": "Dit lid wordt gemarkeerd voor beoordeling. Het account blijft actief.",
+          "confirm": "Markeren"
+        },
         "audit": {
           "title": "Auditlogboek",
           "empty": "Nog geen moderatieacties.",
@@ -111,12 +117,14 @@
             "SUSPEND": "heeft dit lid geschorst",
             "REACTIVATE": "heeft dit lid geheractiveerd",
             "CLEAR_BIO": "heeft de bio gewist",
-            "CLEAR_AVATAR": "heeft de profielfoto gewist"
+            "CLEAR_AVATAR": "heeft de profielfoto gewist",
+            "FLAG": "heeft dit lid gemarkeerd"
           }
         },
         "errors": {
           "ALREADY_SUSPENDED": "Dit lid is al geschorst.",
           "ALREADY_ACTIVE": "Dit lid is al actief.",
+          "ALREADY_FLAGGED": "Dit lid is al gemarkeerd.",
           "CANNOT_MODERATE_SELF": "Je kunt je eigen account niet modereren.",
           "USER_NOT_FOUND": "Dat lid konden we niet vinden.",
           "NETWORK_ERROR": "Kan de server niet bereiken. Probeer opnieuw.",
