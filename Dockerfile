@@ -38,7 +38,8 @@ ENV HOSTNAME=0.0.0.0
 
 # .next/standalone contains server.js + its own minimal node_modules
 COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/standalone ./
-# Overwrite the default server.js with our custom one that handles HTTPS
+# FORCE: Remove the default Next.js HTTP server and replace it with our custom HTTPS-capable one
+RUN rm server.js
 COPY --from=builder --chown=appuser:appgroup /usr/src/app/server.js ./server.js
 
 # Static assets must be copied separately on top of standalone
