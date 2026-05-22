@@ -8,6 +8,7 @@ import useAuth from "@hooks/useAuth";
 import { useLocale, useTranslations } from "use-intl";
 import ProfileForm from "@components/users/ProfileForm";
 import ChangePasswordForm from "@components/users/ChangePasswordForm";
+import AiSettingsCard from "@components/ai/AiSettingsCard";
 import LogoutSection from "@components/users/LogoutSection";
 import BackButton from "@components/BackButton";
 
@@ -47,6 +48,7 @@ export default function UserSettingsForm() {
       <div className="flex flex-col gap-4 pb-8">
         <ProfileForm initialProfile={profile} />
         <ChangePasswordForm />
+        <AiSettingsCard />
         <LogoutSection />
       </div>
     </section>
