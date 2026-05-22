@@ -33,11 +33,13 @@ RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
 # .next/standalone contains server.js + its own minimal node_modules
 COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/standalone ./
+# Overwrite the default server.js with our custom one that handles HTTPS
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/server.js ./server.js
 
 # Static assets must be copied separately on top of standalone
 COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/static ./.next/static
@@ -47,11 +49,12 @@ COPY --from=builder --chown=appuser:appgroup /usr/src/app/public ./public
 
 USER appuser
 
-EXPOSE 3000
+EXPOSE 8080
 
 # Health check — OKD/Kubernetes uses this for readiness/liveness
+# Check both HTTPS and HTTP to be safe, ignore cert errors for internal check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD wget -qO- http://localhost:3000/ || exit 1
+  CMD wget -qO- --no-check-certificate https://localhost:8080/ || wget -qO- http://localhost:8080/ || exit 1
 
 # Run the standalone server directly — no npm needed
 CMD ["node", "server.js"]
