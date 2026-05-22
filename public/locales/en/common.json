@@ -138,6 +138,15 @@
     "subtitle": "Stay connected with your class — anywhere, on the go.",
     "loggedInAs": "Signed in as {name}",
     "signOut": "Sign out",
+    "greeting": "Hi, {name}",
+    "nav": {
+      "profile": "Profile",
+      "connections": "Connections",
+      "device": "Device",
+      "stats": "Stats",
+      "settings": "Settings",
+      "admin": "Admin"
+    },
     "cta": {
       "getStarted": "Get started",
       "haveAccount": "I already have an account"

@@ -138,6 +138,15 @@
     "subtitle": "Blijf in contact met je klas — overal, onderweg.",
     "loggedInAs": "Aangemeld als {name}",
     "signOut": "Uitloggen",
+    "greeting": "Hoi, {name}",
+    "nav": {
+      "profile": "Profiel",
+      "connections": "Connecties",
+      "device": "Apparaat",
+      "stats": "Statistieken",
+      "settings": "Instellingen",
+      "admin": "Beheer"
+    },
     "cta": {
       "getStarted": "Aan de slag",
       "haveAccount": "Ik heb al een account"
