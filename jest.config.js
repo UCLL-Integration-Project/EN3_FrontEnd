@@ -9,7 +9,6 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
-  // Handle module aliases (this is important for your imports like '@components/*')
   moduleNameMapper: {
     '^@components/(.*)$': '<rootDir>/components/$1',
     '^@services/(.*)$': '<rootDir>/services/$1',
@@ -17,6 +16,8 @@ const customJestConfig = {
     '^@styles/(.*)$': '<rootDir>/styles/$1',
     '^@context/(.*)$': '<rootDir>/context/$1',
     '^@hooks/(.*)$': '<rootDir>/hooks/$1',
+    '^use-intl$': '<rootDir>/__mocks__/use-intl.js',
+    '^next-intl$': '<rootDir>/__mocks__/use-intl.js',
   },
 };
 

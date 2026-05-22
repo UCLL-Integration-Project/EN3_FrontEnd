@@ -141,3 +141,9 @@ export type UserStats = {
   timeActive: number;
   dataShared: number;
 };
+
+export type ConnectionLevel = "CONTACT" | "FRIEND" | "BEST_FRIEND";
+
+export type ConnectionDTO = UserResponse & {
+  level: ConnectionLevel;
+};
