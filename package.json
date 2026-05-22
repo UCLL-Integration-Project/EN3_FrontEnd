@@ -35,7 +35,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24",
     "@types/react": "^19",
-    "@types/react-datepicker": "^6.2.0",
+    "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^19",
     "@types/web-bluetooth": "^0.0.21",
     "autoprefixer": "^10.4.27",
