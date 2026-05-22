@@ -181,7 +181,7 @@ export const removeConnectionRequest = async (username: string): Promise<void> =
 
 export const setConnectionLevelRequest = async (username: string, level: ConnectionLevel): Promise<void> => {
   try {
-    const response = await fetch(`${apiUrl}/api/connections/${encodeURIComponent(username)}/level`, {
+    const response = await fetch(`${apiUrl}/api/v1/connections/${encodeURIComponent(username)}/level`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ level }),
