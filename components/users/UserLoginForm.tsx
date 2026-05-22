@@ -4,14 +4,13 @@ import { useState } from "react";
 import { loginRequest } from "@services/UserService";
 import { AuthenticationRequest, StatusMessage } from "@types";
 import useAuth from "@hooks/useAuth";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "use-intl";
 
 export default function UserLoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
   const router = useRouter();
-  const locale = useLocale();
   const { login } = useAuth();
   const t = useTranslations("UserLoginForm");
   const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +46,7 @@ export default function UserLoginForm() {
       const loggedInUser = await loginRequest(authRequest);
       setStatusMessages([{ message: t("success"), type: "success" }]);
       login(loggedInUser);
-      setTimeout(() => router.push(`/dashboard`), 500);
+      setTimeout(() => router.push(`/`), 500);
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["INVALID_CREDENTIALS", "USERNAME_TAKEN", "NETWORK_ERROR"];

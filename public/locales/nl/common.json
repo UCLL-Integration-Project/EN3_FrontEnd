@@ -2,6 +2,9 @@
   "general": {
     "error": "Er is een foutmelding, probeer later opnieuw."
   },
+  "home": {
+    "welcome": "Welkom bij CrossWave"
+  },
   "header": {
     "welcome": "Welkom!",
     "nav": {
@@ -29,24 +32,26 @@
     "success": "Inloggen gelukt. Doorsturen..."
   },
   "UserSignupForm": {
-    "button": "Sign Up",
+    "button": "Registreren",
     "label": {
       "username": "Gebruikersnaam",
       "password": "Wachtwoord",
       "firstName": "Voornaam",
-      "lastName": "Naam",
-      "email": "Email",
+      "lastName": "Achternaam",
+      "email": "E-mail",
       "age": "Leeftijd"
     },
     "validate": {
-      "error": " - Ontbrekent of onjuist"
+      "error": " - Ontbreekt of ongeldig",
+      "weakPassword": " - Te kort (min. 8 tekens)"
     },
     "error": {
       "USERNAME_TAKEN": "Deze gebruikersnaam is al in gebruik.",
-      "EMAIL_TAKEN": "Deze email is al in gebruik.",
+      "EMAIL_TAKEN": "Dit e-mailadres is al in gebruik.",
       "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw.",
       "NETWORK_ERROR": "Kan geen verbinding maken met de server."
     },
-    "success": "Registreren gelukt. Doorsturen..."
+    "loginLink": "Heb je al een account? Inloggen",
+    "success": "Registratie gelukt. Doorsturen..."
   }
 }
