@@ -70,7 +70,7 @@ export type AdminMemberSummary = {
   joinedAt: string; // ISO timestamp from the backend's Instant
 };
 
-export type AdminAction = "SUSPEND" | "REACTIVATE" | "CLEAR_BIO" | "CLEAR_AVATAR";
+export type AdminAction = "SUSPEND" | "REACTIVATE" | "CLEAR_BIO" | "CLEAR_AVATAR" | "FLAG";
 
 export type AdminAuditEntry = {
   id: number;

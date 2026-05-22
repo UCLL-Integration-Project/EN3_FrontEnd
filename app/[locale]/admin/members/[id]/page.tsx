@@ -12,6 +12,7 @@ import {
   reactivateMemberRequest,
   clearBioRequest,
   clearAvatarRequest,
+  flagMemberRequest,
 } from "@services/AdminService";
 import MemberDetailHero from "@components/admin/members/MemberDetailHero";
 import ReadOnlyField from "@components/admin/members/ReadOnlyField";
@@ -32,12 +33,14 @@ const ACTION_KEY: Record<AdminAction, string> = {
   REACTIVATE: "reactivate",
   CLEAR_BIO: "clearBio",
   CLEAR_AVATAR: "clearAvatar",
+  FLAG: "flag",
 };
 const ACTION_FN: Record<AdminAction, (id: number, note?: string) => Promise<AdminMemberDetail>> = {
   SUSPEND: suspendMemberRequest,
   REACTIVATE: reactivateMemberRequest,
   CLEAR_BIO: clearBioRequest,
   CLEAR_AVATAR: clearAvatarRequest,
+  FLAG: flagMemberRequest,
 };
 
 export default function AdminMemberDetailPage() {
@@ -169,7 +172,7 @@ export default function AdminMemberDetailPage() {
               onConfirm={confirmAction}
               loading={actionLoading}
               error={moderationError}
-              destructive={pendingAction !== "REACTIVATE"}
+              destructive={pendingAction === "SUSPEND" || pendingAction === "CLEAR_BIO" || pendingAction === "CLEAR_AVATAR"}
             />
           )}
         </>

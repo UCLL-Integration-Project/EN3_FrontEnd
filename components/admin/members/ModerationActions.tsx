@@ -2,7 +2,7 @@
 
 import { AdminAction, AdminMemberDetail } from "@types";
 import { useTranslations } from "next-intl";
-import { Ban, RotateCcw, FileX, ImageOff } from "lucide-react";
+import { Ban, RotateCcw, FileX, ImageOff, Flag } from "lucide-react";
 
 /* The moderation button block on the detail page. Pure — it reports which
    action was requested via onAction; the page owns confirmation + the API
@@ -42,6 +42,12 @@ export default function ModerationActions({
       label: t("clearAvatar.label"),
       icon: ImageOff,
       off: !member.avatarUrl,
+    },
+    {
+      action: "FLAG",
+      label: t("flag.label"),
+      icon: Flag,
+      off: member.status === "FLAGGED",
     },
   ];
 

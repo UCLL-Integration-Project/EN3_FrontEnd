@@ -104,6 +104,12 @@
           "message": "The picture is replaced with an empty placeholder. This cannot be undone.",
           "confirm": "Clear picture"
         },
+        "flag": {
+          "label": "Flag member",
+          "title": "Flag {name}?",
+          "message": "This member will be marked for review. Their account remains active.",
+          "confirm": "Flag"
+        },
         "audit": {
           "title": "Audit log",
           "empty": "No moderation actions yet.",
@@ -111,12 +117,14 @@
             "SUSPEND": "suspended this member",
             "REACTIVATE": "reactivated this member",
             "CLEAR_BIO": "cleared the bio",
-            "CLEAR_AVATAR": "cleared the profile picture"
+            "CLEAR_AVATAR": "cleared the profile picture",
+            "FLAG": "flagged this member"
           }
         },
         "errors": {
           "ALREADY_SUSPENDED": "This member is already suspended.",
           "ALREADY_ACTIVE": "This member is already active.",
+          "ALREADY_FLAGGED": "This member is already flagged.",
           "CANNOT_MODERATE_SELF": "You can't moderate your own account.",
           "USER_NOT_FOUND": "We couldn't find that member.",
           "NETWORK_ERROR": "Couldn't reach the server. Try again.",
