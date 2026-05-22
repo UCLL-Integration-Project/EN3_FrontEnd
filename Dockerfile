@@ -2,7 +2,7 @@
 # Stage 1 — builder
 # Install ALL deps and build the Next.js standalone bundle
 # ============================================================
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -25,7 +25,7 @@ RUN npm run build
 # Uses the self-contained standalone output — no node_modules
 # needed in the final image, no npm, just node + server.js
 # ============================================================
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 
 # Security: run as non-root
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
@@ -33,11 +33,14 @@ RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
 # .next/standalone contains server.js + its own minimal node_modules
 COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/standalone ./
+# FORCE: Remove the default Next.js HTTP server and replace it with our custom HTTPS-capable one
+RUN rm server.js
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/server.js ./server.js
 
 # Static assets must be copied separately on top of standalone
 COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/static ./.next/static
@@ -47,11 +50,12 @@ COPY --from=builder --chown=appuser:appgroup /usr/src/app/public ./public
 
 USER appuser
 
-EXPOSE 3000
+EXPOSE 8080
 
 # Health check — OKD/Kubernetes uses this for readiness/liveness
+# Check both HTTPS and HTTP to be safe, ignore cert errors for internal check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD wget -qO- http://localhost:3000/ || exit 1
+  CMD wget -qO- --no-check-certificate https://localhost:8080/ || wget -qO- http://localhost:8080/ || exit 1
 
 # Run the standalone server directly — no npm needed
 CMD ["node", "server.js"]

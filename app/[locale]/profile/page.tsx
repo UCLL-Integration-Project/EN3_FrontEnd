@@ -16,7 +16,7 @@ import { Activity } from "@types";
 export default function ProfilePage() {
   const router = useRouter();
   const locale = useLocale();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, updateUser } = useAuth();
   const t = useTranslations("social");
 
   const [isEditing, setIsEditing] = useState(false);

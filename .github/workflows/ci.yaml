@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      
+      - dev
   pull_request:
     branches:
       - main
-    
+      - dev
 
 jobs:
   test:
@@ -30,12 +30,16 @@ jobs:
 
       - name: Run tests
         run: npm test -- --passWithNoTests
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
       - name: Run linter (if configured)
         run: npm run lint --if-present
 
       - name: Build application
         run: npm run build --if-present
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
       - name: Generate SBOM
         run: |

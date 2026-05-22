@@ -9,7 +9,7 @@
       "@context/*": ["./context/*"],
       "@hooks/*": ["./hooks/*"]
     },
-    "types": ["jest", "node", "@serwist/next/typings"],
+    "types": ["jest", "node", "@serwist/next/typings", "web-bluetooth"],
     "lib": ["dom", "dom.iterable", "esnext", "webworker"],
     "allowJs": true,
     "skipLibCheck": true,
