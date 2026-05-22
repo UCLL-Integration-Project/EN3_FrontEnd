@@ -1,115 +1,274 @@
-@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
+@import url("https://fonts.googleapis.com/css2?family=Kokoro&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-h1 {
-  @apply font-extrabold text-3xl my-3;
-}
-h2 {
-  @apply font-bold text-3xl my-3;
-}
-h3 {
-  @apply font-bold text-2xl my-2;
-}
-h4 {
-  @apply font-semibold text-2xl my-2;
-}
-h5 {
-  @apply font-bold text-xl my-1;
-}
-h6 {
-  @apply font-semibold text-xl my-1;
-}
-p {
-  @apply text-black;
-}
-a {
-  @apply text-black;
-}
-label {
-  @apply text-black;
-}
+/* ---------------------------------------------------------------------------
+ * CrossWave — mobile app design system
+ * This product is an APP, not a website. Every primitive below assumes:
+ *   - touch input first (≥44px hit targets)
+ *   - one-handed reach (primary actions sit low)
+ *   - safe-area insets on real devices
+ *   - viewport that resizes (100svh, not 100vh)
+ * ------------------------------------------------------------------------- */
 
-a:hover {
-  @apply text-blue-500;
-}
-a:hover h1,
-a:hover h2,
-a:hover h3,
-a:hover h4,
-a:hover h5,
-a:hover h6,
-a:hover p {
-  @apply text-blue-500;
-}
+@layer base {
+  html,
+  body {
+    @apply h-dvh w-full overflow-hidden bg-ink-gradient text-ink-800 antialiased;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior: none;
+    touch-action: manipulation;
+  }
 
-@layer utilities {
-  .Center {
-    @apply flex items-center justify-center;
+  body {
+    font-feature-settings: "ss01", "cv11";
   }
-  .Wrapper {
-    @apply flex flex-1 min-h-0;
+
+  /* Disable pull-to-refresh chrome inside the shell; native apps don't do it. */
+  body * {
+    -webkit-touch-callout: none;
   }
-  .Gap {
-    @apply gap-3;
+
+  /* Inputs feel native */
+  input,
+  textarea,
+  select,
+  button {
+    @apply font-sans;
+    font-size: 16px; /* prevents iOS zoom on focus */
   }
-  .Padding {
-    @apply gap-3 px-6 py-3;
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-ink-400;
   }
-  .Border {
-    @apply border-2 rounded-md;
-  }
-  .Raised {
-    @apply Border;
-  }
-  .Row {
-    @apply flex flex-row Gap;
-  }
-  .Col {
-    @apply flex flex-col Gap;
-  }
+
+  /* Type system per spec — Kokoro display for h1–h3, sans UI for h4–h6 + body.
+     H5/H6 capped at 13/11px for mobile legibility (spec called for 12/6/10). */
+  h1 { @apply font-display text-[48px] leading-[1.05] tracking-tight text-ink-900; }
+  h2 { @apply font-display text-[36px] leading-[1.1] tracking-tight text-ink-900; }
+  h3 { @apply font-display text-[24px] leading-snug tracking-tight text-ink-900; }
+  h4 { @apply font-sans text-[18px] leading-snug font-semibold text-ink-900; }
+  h5 { @apply font-sans text-[13px] uppercase tracking-wider font-semibold text-ink-700; }
+  h6 { @apply font-sans text-[11px] uppercase tracking-wider font-semibold text-ink-500; }
+  p  { @apply font-sans text-[14px] leading-relaxed text-ink-700; }
+  a  { @apply text-accent-600; }
 }
 
 @layer components {
-  .btn {
-    @apply Center Gap Padding Border cursor-pointer;
+  /* ------------------------------------------------------------------------
+   * App shell — the phone-shaped container.
+   * On a real phone it fills the screen. On desktop it stays a 440px frame,
+   * so designers always see the app at app dimensions.
+   * ---------------------------------------------------------------------- */
+  .app-frame {
+    @apply relative mx-auto flex w-full max-w-app flex-col overflow-hidden bg-white
+           h-dvh sm:h-[calc(100svh-2rem)] sm:my-4 sm:rounded-app sm:shadow-app
+           sm:ring-1 sm:ring-ink-900/10;
   }
-  .btn:hover {
-    @apply border-cyan-100;
+
+  .app-bar {
+    @apply flex h-app-bar shrink-0 items-center justify-between gap-2
+           px-4 pt-safe-t bg-white/85 backdrop-blur-md
+           border-b border-ink-100 z-30;
+  }
+
+  .app-main {
+    @apply relative flex-1 min-h-0 overflow-y-auto overscroll-contain
+           bg-brand-soft;
+  }
+
+  .app-screen {
+    @apply flex min-h-full flex-col px-5 pt-4 pb-0
+           animate-rise;
+  }
+
+  /* Big circular back button — top-left of any sub-screen */
+  .back-btn {
+    @apply tap h-12 w-12 -ml-1 rounded-pill bg-white text-ink-800
+           shadow-card ring-1 ring-ink-100
+           active:scale-[0.95] active:bg-ink-50
+           transition-[transform,background-color] duration-100;
+  }
+
+  /* Sticky bottom action area for primary CTAs */
+  .action-dock {
+    @apply sticky bottom-0 -mx-5 px-5
+           pt-3 pb-[calc(theme(spacing.4)+env(safe-area-inset-bottom))]
+           bg-gradient-to-t from-white via-white to-transparent;
+  }
+
+  /* Chip — small tertiary control. Uses accent teal per spec
+     ("Accent — links, micro-interactions"). Still ≥44px tall. */
+  .chip {
+    @apply tap inline-flex items-center gap-2 rounded-pill px-4 py-2.5
+           text-[13px] font-semibold text-accent-700
+           bg-white ring-1 ring-accent-300 shadow-card
+           active:scale-[0.97] active:bg-accent-50
+           transition-[transform,background-color] duration-100;
+  }
+
+  /* Bottom sheet pieces */
+  .sheet-backdrop {
+    @apply fixed inset-0 bg-ink-900/55 backdrop-blur-sm animate-fade-in;
+  }
+  .sheet-bottom {
+    @apply fixed inset-x-0 bottom-0 mx-auto w-full max-w-app
+           rounded-t-[1.75rem] bg-white shadow-app
+           pt-2 pb-[calc(theme(spacing.4)+env(safe-area-inset-bottom))]
+           animate-sheet-up;
+  }
+  .sheet-grabber {
+    @apply mx-auto mt-1 mb-3 h-1.5 w-10 rounded-full bg-ink-200;
+  }
+  .sheet-row {
+    @apply tap w-full justify-between gap-3 rounded-2xl px-5 py-4
+           text-[16px] font-medium text-ink-900
+           active:bg-ink-100 transition-colors duration-100;
+  }
+  .sheet-row-active {
+    @apply bg-brand-50 text-brand-700;
+  }
+
+  /* ------------------------------------------------------------------------
+   * Touch targets — every interactive element should pass the 44px rule.
+   * ---------------------------------------------------------------------- */
+  .tap {
+    @apply inline-flex min-h-tap min-w-tap items-center justify-center
+           select-none touch-manipulation;
+  }
+
+  .icon-btn {
+    @apply tap h-11 w-11 rounded-pill text-ink-700
+           hover:bg-ink-100 active:bg-ink-200 active:scale-[0.97]
+           transition-[transform,background-color] duration-100;
+  }
+
+  /* ------------------------------------------------------------------------
+   * Buttons — Primary (green) / Secondary (orange) / Ghost (teal outline).
+   * Per spec: 14pt label, solid fills, white text on primary & secondary.
+   * .btn-cta keeps 16px for hero prominence (UX-driven deviation).
+   * ---------------------------------------------------------------------- */
+  .btn {
+    @apply tap rounded-pill px-5 py-3 text-[14px] font-semibold
+           bg-brand-600 text-white shadow-pop
+           active:bg-brand-700 active:scale-[0.98] active:shadow-none
+           transition-[transform,box-shadow,background-color] duration-100
+           disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .btn-secondary {
-    @apply Center Gap Padding Border cursor-pointer;
-  }
-  .btn-secondary:hover {
-    @apply bg-teal-100;
-  }
-
-  .input {
-    @apply flex-1 Padding bg-transparent border-none outline-none focus:outline-none;
-    cursor: inherit;
+    @apply tap rounded-pill px-5 py-3 text-[14px] font-semibold
+           bg-secondary-500 text-white shadow-card
+           active:bg-secondary-600 active:scale-[0.98]
+           transition-[transform,background-color] duration-100
+           disabled:opacity-50 disabled:pointer-events-none;
   }
 
-  .input-wrapper {
-    @apply Wrapper Border cursor-text;
-  }
-  .input-wrapper:hover {
-    @apply bg-teal-100;
+  .btn-ghost {
+    @apply tap rounded-pill px-5 py-3 text-[14px] font-semibold
+           bg-transparent text-accent-600 ring-1 ring-accent-200
+           active:bg-accent-50 active:scale-[0.98]
+           transition-[transform,background-color] duration-100;
   }
 
+  .btn-quiet {
+    @apply tap rounded-pill px-4 py-2 text-[14px] font-medium
+           text-accent-600 hover:bg-accent-50 active:bg-accent-100
+           transition-colors duration-100;
+  }
+
+  .btn-cta {
+    @apply btn w-full py-4 text-[16px];
+  }
+
+  /* Compact app-bar action with optional label below 360px is hidden */
+  .nav-pill {
+    @apply tap gap-1.5 rounded-pill px-3 py-2 text-[12px] font-semibold
+           text-ink-700 hover:bg-ink-100 active:bg-ink-200
+           transition-colors duration-100;
+  }
+
+  /* ------------------------------------------------------------------------
+   * Cards & sheets — 24px padding per spec
+   * ---------------------------------------------------------------------- */
+  .card {
+    @apply rounded-sheet bg-white p-6 shadow-card ring-1 ring-ink-100;
+  }
+
+  .sheet {
+    @apply rounded-sheet bg-white p-6 shadow-card ring-1 ring-ink-100
+           animate-sheet-in;
+  }
+
+  /* ------------------------------------------------------------------------
+   * Form fields — stacked, generous, touch-friendly.
+   * ---------------------------------------------------------------------- */
   .field {
-    @apply Wrapper Col;
-  }
-  .field-header {
-    @apply flex Row gap-1;
-  }
-  .field-error {
-    @apply min-h-6 text-red-500;
+    @apply flex flex-col gap-1.5;
   }
 
-  .form {
-    @apply Raised Padding Col;
+  .field-label {
+    @apply text-[13px] font-medium text-ink-700 px-1;
+  }
+
+  .field-row {
+    @apply flex items-center gap-2;
+  }
+
+  .field-control {
+    @apply flex h-field items-center gap-2 rounded-2xl bg-ink-50 ring-1 ring-ink-200
+           focus-within:ring-2 focus-within:ring-brand-500 focus-within:bg-white
+           transition-[box-shadow,background-color] duration-150
+           px-4 has-[input:disabled]:opacity-60;
+  }
+
+  .field-input {
+    @apply flex-1 min-w-0 bg-transparent text-[16px] text-ink-900
+           outline-none border-0 placeholder:text-ink-400;
+  }
+
+  .field-error {
+    @apply text-[12px] font-medium text-red-600 px-1 min-h-[1rem];
+  }
+
+  /* ------------------------------------------------------------------------
+   * Status messages (toasts-in-page)
+   * ---------------------------------------------------------------------- */
+  .status {
+    @apply flex items-center gap-2 rounded-2xl px-4 py-3 text-[14px] font-medium;
+  }
+  .status-success { @apply bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200; }
+  .status-error   { @apply bg-red-50 text-red-800 ring-1 ring-red-200; }
+
+  /* ------------------------------------------------------------------------
+   * Brand mark
+   * ---------------------------------------------------------------------- */
+  .brand-mark {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-2xl
+           bg-brand-gradient text-white shadow-pop;
+  }
+}
+
+@layer utilities {
+  .pt-safe-t { padding-top: env(safe-area-inset-top); }
+  .pb-safe-b { padding-bottom: env(safe-area-inset-bottom); }
+  .pl-safe-l { padding-left: env(safe-area-inset-left); }
+  .pr-safe-r { padding-right: env(safe-area-inset-right); }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+
+  /* Soft green wash with a hint of teal — primary 60% + accent 10% */
+  .bg-wave {
+    background:
+      radial-gradient(60% 40% at 20% 10%, rgba(74, 160, 85, 0.28), transparent 70%),
+      radial-gradient(50% 35% at 90% 20%, rgba(8, 127, 140, 0.18), transparent 70%),
+      radial-gradient(80% 60% at 50% 100%, rgba(42, 111, 48, 0.16), transparent 70%),
+      #ffffff;
   }
 }

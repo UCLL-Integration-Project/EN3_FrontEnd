@@ -1,7 +1,10 @@
 import { getRequestConfig } from "next-intl/server";
 
+const SUPPORTED_LOCALES = ["en", "nl"];
+
 export default getRequestConfig(async ({ requestLocale }) => {
-  const locale = (await requestLocale) || "";
+  const requested = (await requestLocale) || "en";
+  const locale = SUPPORTED_LOCALES.includes(requested) ? requested : "en";
 
   return {
     messages: (await import(`./public/locales/${locale}/common.json`)).default,
