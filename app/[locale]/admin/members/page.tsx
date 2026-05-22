@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Home } from "lucide-react";
 import { AdminMemberSummary, Page } from "@types";
 import { listMembersRequest } from "@services/AdminService";
 import MemberRow from "@components/admin/members/MemberRow";
@@ -78,7 +78,12 @@ export default function AdminMembersPage() {
   return (
     <section className="app-screen">
       <header className="space-y-3">
-        <h2>{t("title")}</h2>
+        <div className="flex items-center gap-3">
+          <Link href={`/${locale}`} aria-label="Home" className="back-btn flex items-center justify-center">
+            <Home size={18} strokeWidth={2.25} />
+          </Link>
+          <h2 className="flex-1">{t("title")}</h2>
+        </div>
         <MembersSearch value={search} onChange={(v) => setParams({ search: v })} />
         <FilterChips value={status} onChange={(v) => setParams({ status: v })} />
         {!isLoading && data && (

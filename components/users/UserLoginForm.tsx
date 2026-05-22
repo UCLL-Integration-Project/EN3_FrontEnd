@@ -90,7 +90,7 @@ export default function UserLoginForm() {
       const loggedInUser = await verifyMfaRequest(tempUsername, mfaCode);
       setStatusMessages([{ message: t("success"), type: "success" }]);
       login(loggedInUser);
-      setTimeout(() => router.push(`/`), 500);
+      setTimeout(() => router.push(`/${locale}`), 500);
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["MFA_CODE_NOT_FOUND", "MFA_CODE_EXPIRED", "INVALID_MFA_CODE", "NETWORK_ERROR"];
