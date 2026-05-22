@@ -9,6 +9,8 @@ export function useAIContext(): UserAIContext {
   const [context, setContext] = useState<UserAIContext>({});
 
   useEffect(() => {
+    let active = true;
+
     const shareProfile = safeStorage.get("cw_ai_share_profile") === "true";
     const shareStats = safeStorage.get("cw_ai_share_stats") === "true";
     const shareConnections = safeStorage.get("cw_ai_share_connections") === "true";
@@ -50,7 +52,11 @@ export function useAIContext(): UserAIContext {
       );
     }
 
-    Promise.all(fetches).then(() => setContext({ ...built }));
+    Promise.all(fetches).then(() => {
+      if (active) setContext({ ...built });
+    });
+
+    return () => { active = false; };
   }, []);
 
   return context;

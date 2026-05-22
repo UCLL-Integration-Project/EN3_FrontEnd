@@ -31,6 +31,7 @@ export default function AiInsightPopup({ insight, onDismiss }: Props) {
       <div
         role="dialog"
         aria-modal="true"
+        aria-labelledby="ai-insight-eyebrow"
         className="sheet-bottom z-50"
       >
         <div className="sheet-grabber" />
@@ -45,7 +46,7 @@ export default function AiInsightPopup({ insight, onDismiss }: Props) {
             ×
           </button>
           {/* Eyebrow */}
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-brand-600">
+          <p id="ai-insight-eyebrow" className="mb-2 text-[11px] font-bold uppercase tracking-widest text-brand-600">
             ✦ {t("insight.eyebrow")}
           </p>
           {/* Insight text */}

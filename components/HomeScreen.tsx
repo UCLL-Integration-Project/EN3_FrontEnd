@@ -126,7 +126,7 @@ export default function HomeScreen() {
       <Link
         href={`/${locale}/ai`}
         aria-label={t("nav.ai")}
-        className="absolute bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-5 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gradient text-[22px] text-white shadow-pop active:scale-95 transition-transform duration-100"
+        className="absolute bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-5 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gradient text-[22px] text-white shadow-pop active:scale-95 transition-transform duration-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
       >
         ✦
       </Link>

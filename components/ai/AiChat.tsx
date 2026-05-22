@@ -67,8 +67,10 @@ export default function AiChat() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !isLoading && question.trim()) handleSend();
             }}
+            inputMode="text"
             autoComplete="off"
             autoCapitalize="sentences"
+            autoCorrect="off"
           />
           <button
             type="button"
