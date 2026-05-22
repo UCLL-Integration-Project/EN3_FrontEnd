@@ -139,8 +139,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
     };
     window.addEventListener("auth:unauthorized", handleUnauthorized);
-    return () =>
-      window.removeEventListener("auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
   }, []);
 
   const login = (userData: User) => {
@@ -168,9 +167,5 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(updated);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>{children}</AuthContext.Provider>;
 };

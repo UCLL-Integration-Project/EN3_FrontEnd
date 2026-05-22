@@ -36,10 +36,7 @@ export default function Header() {
 
       {/* Middle: User Status */}
       <div className="flex flex-1 justify-center px-2">
-        <button
-          onClick={handleHomePage}
-          className="tap rounded-pill px-3 py-1 active:bg-ink-100"
-        >
+        <button onClick={handleHomePage} className="tap rounded-pill px-3 py-1 active:bg-ink-100">
           <h4 className="truncate text-center">
             {user ? t("loggedInAs", { name: user.firstName ?? "" }) : t("welcome")}
           </h4>
