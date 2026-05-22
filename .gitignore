@@ -40,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Cypress
+cypress/screenshots
+cypress/videos
+cypress/reports
+
+# Serwist
+public/sw*
+public/swe-worker*
