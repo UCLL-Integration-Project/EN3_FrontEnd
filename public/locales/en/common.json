@@ -145,7 +145,8 @@
       "device": "Device",
       "stats": "Stats",
       "settings": "Settings",
-      "admin": "Admin"
+      "admin": "Admin",
+      "ai": "AI Assistant"
     },
     "cta": {
       "getStarted": "Get started",
@@ -179,6 +180,36 @@
       "messageNoDevice": "Connect your device to broadcast",
       "rfTitle": "From nearby devices",
       "noRfMessages": "No nearby devices detected"
+    }
+  },
+  "ai": {
+    "title": "CrossWave AI",
+    "placeholder": "Ask me anything about your data…",
+    "send": "Ask",
+    "loading": "Thinking…",
+    "error": {
+      "NETWORK_ERROR": "Couldn't reach the server. Try again.",
+      "UNKNOWN_ERROR": "Something went wrong. Try again."
+    },
+    "insight": {
+      "eyebrow": "Daily insight",
+      "askMore": "Ask me more →",
+      "dismiss": "Dismiss"
+    },
+    "settings": {
+      "title": "AI data access",
+      "profile": {
+        "label": "Profile & bio",
+        "hint": "Your name, bio and age"
+      },
+      "stats": {
+        "label": "Activity stats",
+        "hint": "Connections, active time and data shared"
+      },
+      "connections": {
+        "label": "Connections list",
+        "hint": "Usernames of your connections"
+      }
     }
   },
   "header": {

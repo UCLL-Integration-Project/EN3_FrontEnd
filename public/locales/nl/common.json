@@ -145,7 +145,8 @@
       "device": "Apparaat",
       "stats": "Statistieken",
       "settings": "Instellingen",
-      "admin": "Beheer"
+      "admin": "Beheer",
+      "ai": "AI-assistent"
     },
     "cta": {
       "getStarted": "Aan de slag",
@@ -179,6 +180,36 @@
       "messageNoDevice": "Verbind je apparaat om uit te zenden",
       "rfTitle": "Van apparaten in de buurt",
       "noRfMessages": "Geen apparaten in de buurt gedetecteerd"
+    }
+  },
+  "ai": {
+    "title": "CrossWave AI",
+    "placeholder": "Stel me een vraag over je gegevens…",
+    "send": "Vraag",
+    "loading": "Denken…",
+    "error": {
+      "NETWORK_ERROR": "Kon de server niet bereiken. Probeer opnieuw.",
+      "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw."
+    },
+    "insight": {
+      "eyebrow": "Dagelijks inzicht",
+      "askMore": "Vraag meer →",
+      "dismiss": "Sluiten"
+    },
+    "settings": {
+      "title": "AI-gegevenstoegang",
+      "profile": {
+        "label": "Profiel & bio",
+        "hint": "Je naam, bio en leeftijd"
+      },
+      "stats": {
+        "label": "Activiteitsstatistieken",
+        "hint": "Verbindingen, actieve tijd en gedeelde gegevens"
+      },
+      "connections": {
+        "label": "Verbindingenlijst",
+        "hint": "Gebruikersnamen van je verbindingen"
+      }
     }
   },
   "header": {

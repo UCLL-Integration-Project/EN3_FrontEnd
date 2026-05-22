@@ -141,3 +141,9 @@ export type UserStats = {
   timeActive: number;
   dataShared: number;
 };
+
+export type UserAIContext = {
+  profile?: { name: string; bio: string; age: number };
+  stats?: { connections: number; timeActive: number; dataShared: number };
+  connections?: { username: string }[];
+};
