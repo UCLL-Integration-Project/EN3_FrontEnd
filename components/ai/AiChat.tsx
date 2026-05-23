@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import ReactMarkdown from "react-markdown";
 import BackButton from "@components/BackButton";
 import { useAIContext } from "@hooks/useAIContext";
 import { chatRequest } from "@services/AiService";
@@ -11,18 +12,21 @@ export default function AiChat() {
   const context = useAIContext();
 
   const [question, setQuestion] = useState("");
+  const [lastQuestion, setLastQuestion] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSend = async () => {
     if (!question.trim() || isLoading) return;
+    const q = question.trim();
+    setLastQuestion(q);
+    setQuestion("");
     setIsLoading(true);
     setError(null);
     try {
-      const result = await chatRequest(question.trim(), context);
+      const result = await chatRequest(q, context);
       setAnswer(result.answer);
-      setQuestion("");
     } catch (err) {
       const code = err instanceof Error ? err.message : "UNKNOWN_ERROR";
       setError(code === "NETWORK_ERROR" ? t("error.NETWORK_ERROR") : t("error.UNKNOWN_ERROR"));
@@ -30,6 +34,8 @@ export default function AiChat() {
       setIsLoading(false);
     }
   };
+
+  const hasContent = lastQuestion || isLoading || answer || error;
 
   return (
     <section className="app-screen flex flex-col p-0">
@@ -40,17 +46,38 @@ export default function AiChat() {
         <div className="w-12" aria-hidden />
       </div>
 
-      {/* Answer area */}
-      <div className="flex-1 overflow-y-auto px-5 py-6">
-        {error && <p className="status-error mb-4">{error}</p>}
+      {/* Content area */}
+      <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-4">
+        {!hasContent && (
+          <p className="text-ink-400 text-sm italic text-center mt-8">{t("placeholder")}</p>
+        )}
+
+        {/* User question bubble */}
+        {lastQuestion && (
+          <div className="flex justify-end">
+            <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-brand-600 px-4 py-2.5">
+              <p className="text-[14px] text-white leading-snug">{lastQuestion}</p>
+            </div>
+          </div>
+        )}
+
+        {/* AI answer */}
         {isLoading && (
-          <p className="text-ink-400 text-sm animate-pulse">{t("loading")}</p>
+          <div className="flex items-center gap-2">
+            <span className="text-brand-600 text-base">✦</span>
+            <p className="text-ink-400 text-sm animate-pulse">{t("loading")}</p>
+          </div>
         )}
+
+        {error && <p className="status-error">{error}</p>}
+
         {!isLoading && answer && (
-          <p className="text-ink-900 text-[15px] leading-relaxed animate-rise">{answer}</p>
-        )}
-        {!isLoading && !answer && !error && (
-          <p className="text-ink-400 text-sm italic">{t("placeholder")}</p>
+          <div className="animate-rise flex gap-2.5">
+            <span className="text-brand-600 text-base mt-0.5 shrink-0">✦</span>
+            <div className="ai-prose flex-1 text-[15px] text-ink-900 leading-relaxed">
+              <ReactMarkdown>{answer}</ReactMarkdown>
+            </div>
+          </div>
         )}
       </div>
 
