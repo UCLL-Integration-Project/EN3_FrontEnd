@@ -14,7 +14,7 @@ Given("I am logged in and have connections with levels:", (dataTable: DataTable)
   const connections: Connection[] = dataTable.hashes();
 
   // Mock auth
-  cy.intercept("GET", "**/api/users/me", {
+  cy.intercept("GET", "**/api/v1/users/me", {
     statusCode: 200,
     body: {
       id: 1,
@@ -60,7 +60,7 @@ Given("I am logged in and have connections with levels:", (dataTable: DataTable)
 
 // Login with no connections
 Given("I am logged in with no connections", () => {
-  cy.intercept("GET", "**/api/users/me", {
+  cy.intercept("GET", "**/api/v1/users/me", {
     statusCode: 200,
     body: {
       id: 1,
