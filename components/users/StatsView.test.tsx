@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import StatsView from "./StatsView";
 import * as UserService from "@services/UserService";
+import { useTranslations } from "use-intl";
 
 jest.mock("use-intl", () => ({
   useTranslations: jest.fn(),
@@ -9,8 +10,6 @@ jest.mock("use-intl", () => ({
 }));
 
 jest.mock("@services/UserService");
-
-const { useTranslations } = require("use-intl");
 
 describe("StatsView", () => {
   beforeEach(() => {

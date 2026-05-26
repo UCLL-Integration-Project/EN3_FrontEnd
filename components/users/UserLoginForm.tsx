@@ -212,7 +212,7 @@ export default function UserLoginForm() {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="icon-btn h-9 w-9 -mr-2"
+              className="icon-btn -mr-2"
             >
               {showPassword ? (
                 <EyeOff size={18} aria-hidden="true" />

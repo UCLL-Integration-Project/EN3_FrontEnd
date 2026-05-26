@@ -49,7 +49,7 @@ export default function HomeScreen() {
   ] as { icon: typeof User; label: string; href: string; admin: boolean }[];
 
   return (
-    <section className="flex min-h-full flex-col p-0">
+    <section className="app-screen p-0">
       {/* Brand gradient banner */}
       <div className="bg-brand-gradient px-5 pb-8 pt-[calc(1.25rem+env(safe-area-inset-top))]">
         <p

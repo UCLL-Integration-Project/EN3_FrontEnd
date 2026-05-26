@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "use-intl";
+import Link from "next/link";
+import { useLocale, useTranslations } from "use-intl";
 import { getStatsRequest } from "@services/UserService";
 import type { UserStats } from "@types";
 import BackButton from "@components/BackButton";
@@ -15,6 +16,7 @@ function formatTimeActive(minutes: number): string {
 
 export default function StatsView() {
   const t = useTranslations("StatsPage");
+  const locale = useLocale();
   const [stats, setStats] = useState<UserStats | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
@@ -55,9 +57,9 @@ export default function StatsView() {
         <div className="self-start pb-2"><BackButton /></div>
         <p className="text-xl font-semibold">{t("emptyTitle")}</p>
         <p className="text-sm text-center">{t("emptySubtitle")}</p>
-        <a href="/en/connections" className="btn btn-cta">
+        <Link href={`/${locale}/connections`} className="btn btn-cta">
           {t("exploreConnections")}
-        </a>
+        </Link>
       </section>
     );
   }

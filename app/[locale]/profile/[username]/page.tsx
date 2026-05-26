@@ -58,7 +58,7 @@ export default function PublicProfilePage() {
           <h1 className="h4">Not Found</h1>
         </header>
         <div className="flex-1 flex items-center justify-center p-10 text-center">
-          <p className="text-ink-400">User "@{username}" does not exist or profile is private.</p>
+          <p className="text-ink-400">User &ldquo;@{username}&rdquo; does not exist or profile is private.</p>
         </div>
       </section>
     );
