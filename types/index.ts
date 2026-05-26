@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export type AuthContextType = {
   user: User | null;
   isLoading: boolean;
@@ -148,22 +150,15 @@ export type UserStats = {
 };
 
 export type StatusTypeRequest = {
-  type: string;
+  statusType: string;
 };
 
 export type StatusTypeResponse = {
   id: number;
-  type: string;
+  statusType: string;
 };
 
 export type StatusRequest = {
-  statusType: StatusTypeResponse;
-  message: string;
-  user: User;
-};
-
-export type UpdateStatusRequest = {
-  id: number;
   statusType: StatusTypeResponse;
   message: string;
 };
@@ -172,7 +167,13 @@ export type StatusResponse = {
   id: number;
   statusType: StatusTypeResponse;
   message: string;
-  user: User;
+};
+
+export type NavItem = {
+  icon: LucideIcon;
+  label: string;
+  href: string;
+  variant?: "default" | "admin";
 };
 
 export type ConnectionLevel = "CONTACT" | "FRIEND" | "BEST_FRIEND";

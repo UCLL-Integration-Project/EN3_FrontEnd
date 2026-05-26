@@ -24,7 +24,70 @@
     "subtitle": "This page is for admins only. If you think this is a mistake, sign in with an admin account.",
     "home": "Back to home"
   },
+  "status": {
+    "select": "Select status",
+    "manageSubtitle": "Edit Status",
+    "empty": "No statuses available",
+    "create": "Create new status",
+    "loading": "Loading statuses...",
+    "post": "Post Status",
+    "placeholder": {
+      "message": "What's on your mind?"
+    },
+    "form": {
+      "selectType": "Select status type",
+      "messageError": "Message cannot be empty",
+      "creating": "Creating..."
+    },
+    "deleteModal": {
+        "title": "Delete Status",
+        "confirm": "Are you sure you want to delete",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      },
+    "errors": {
+      "USER_NOT_FOUND": "User could not be found.",
+      "USER_HAS_NO_STATUSES": "You haven't set any statuses yet.",
+      "NETWORK_ERROR": "Network connection error. Please try again.",
+      "UNKNOWN_ERROR": "An unexpected error occurred."
+    }
+  },
   "admin": {
+    "title": "Admin",
+    "nav": {
+      "members": "Members"
+    },
+    "statusTypes": {
+      "title": "Status Types",
+      "subtitle": "Manage available status categories",
+      "create": "Create status type",
+      "loading": "Loading status types...",
+      "empty": "No status types yet. Create one to get started.",
+      "edit": "Edit",
+      "delete": "Delete",
+      "form": {
+        "createTitle": "Create Status Type",
+        "editTitle": "Edit Status Type",
+        "placeholder": "Type name (e.g., Working, Away)",
+        "save": "Save Changes",
+        "saving": "Saving...",
+        "typeError": "Type name is required"
+      },
+      "deleteModal": {
+        "title": "Delete Status Type",
+        "confirm": "Are you sure you want to delete",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      },
+      "errors": {
+        "USER_NOT_FOUND": "User could not be found.",
+        "INVALID_STATUS_TYPE": "The selected status type is invalid.",
+        "NETWORK_ERROR": "Network connection error. Please try again.",
+        "TYPE_TAKEN": "This type is taken.",
+        "STATUS_TYPE_IN_USE": "This type is still being used.",
+        "UNKNOWN_ERROR": "An unexpected error occurred."
+      }
+    },
     "members": {
       "title": "Members",
       "joined": "Joined",

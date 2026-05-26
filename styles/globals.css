@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Kokoro&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
 
 @tailwind base;
 @tailwind components;
@@ -49,14 +50,30 @@
 
   /* Type system per spec — Kokoro display for h1–h3, sans UI for h4–h6 + body.
      H5/H6 capped at 13/11px for mobile legibility (spec called for 12/6/10). */
-  h1 { @apply font-display text-[48px] leading-[1.05] tracking-tight text-ink-900; }
-  h2 { @apply font-display text-[36px] leading-[1.1] tracking-tight text-ink-900; }
-  h3 { @apply font-display text-[24px] leading-snug tracking-tight text-ink-900; }
-  h4 { @apply font-sans text-[18px] leading-snug font-semibold text-ink-900; }
-  h5 { @apply font-sans text-[13px] uppercase tracking-wider font-semibold text-ink-700; }
-  h6 { @apply font-sans text-[11px] uppercase tracking-wider font-semibold text-ink-500; }
-  p  { @apply font-sans text-[14px] leading-relaxed text-ink-700; }
-  a  { @apply text-accent-600; }
+  h1 {
+    @apply font-display text-[48px] leading-[1.05] tracking-tight text-ink-900;
+  }
+  h2 {
+    @apply font-display text-[36px] leading-[1.1] tracking-tight text-ink-900;
+  }
+  h3 {
+    @apply font-display text-[24px] leading-snug tracking-tight text-ink-900;
+  }
+  h4 {
+    @apply font-sans text-[18px] leading-snug font-semibold text-ink-900;
+  }
+  h5 {
+    @apply font-sans text-[13px] uppercase tracking-wider font-semibold text-ink-700;
+  }
+  h6 {
+    @apply font-sans text-[11px] uppercase tracking-wider font-semibold text-ink-500;
+  }
+  p {
+    @apply font-sans text-[14px] leading-relaxed text-ink-700;
+  }
+  a {
+    @apply text-accent-600;
+  }
 }
 
 @layer components {
@@ -242,8 +259,12 @@
   .status {
     @apply flex items-center gap-2 rounded-2xl px-4 py-3 text-[14px] font-medium;
   }
-  .status-success { @apply bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200; }
-  .status-error   { @apply bg-red-50 text-red-800 ring-1 ring-red-200; }
+  .status-success {
+    @apply bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200;
+  }
+  .status-error {
+    @apply bg-red-50 text-red-800 ring-1 ring-red-200;
+  }
 
   /* ------------------------------------------------------------------------
    * Brand mark
@@ -255,20 +276,44 @@
 }
 
 @layer utilities {
-  .pt-safe-t { padding-top: env(safe-area-inset-top); }
-  .pb-safe-b { padding-bottom: env(safe-area-inset-bottom); }
-  .pl-safe-l { padding-left: env(safe-area-inset-left); }
-  .pr-safe-r { padding-right: env(safe-area-inset-right); }
+  .pt-safe-t {
+    padding-top: env(safe-area-inset-top);
+  }
+  .pb-safe-b {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pl-safe-l {
+    padding-left: env(safe-area-inset-left);
+  }
+  .pr-safe-r {
+    padding-right: env(safe-area-inset-right);
+  }
 
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
 
   /* Soft green wash with a hint of teal — primary 60% + accent 10% */
   .bg-wave {
     background:
-      radial-gradient(60% 40% at 20% 10%, rgba(74, 160, 85, 0.28), transparent 70%),
-      radial-gradient(50% 35% at 90% 20%, rgba(8, 127, 140, 0.18), transparent 70%),
-      radial-gradient(80% 60% at 50% 100%, rgba(42, 111, 48, 0.16), transparent 70%),
+      radial-gradient(
+        60% 40% at 20% 10%,
+        rgba(74, 160, 85, 0.28),
+        transparent 70%
+      ),
+      radial-gradient(
+        50% 35% at 90% 20%,
+        rgba(8, 127, 140, 0.18),
+        transparent 70%
+      ),
+      radial-gradient(
+        80% 60% at 50% 100%,
+        rgba(42, 111, 48, 0.16),
+        transparent 70%
+      ),
       #ffffff;
   }
 }

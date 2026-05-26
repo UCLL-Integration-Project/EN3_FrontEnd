@@ -24,7 +24,70 @@
     "subtitle": "Deze pagina is alleen voor beheerders. Denk je dat dit een vergissing is? Meld je aan met een beheerdersaccount.",
     "home": "Terug naar start"
   },
+  "status": {
+    "select": "Selecteer status",
+    "manageSubtitle": "Status Aanpassen",
+    "empty": "Geen statussen beschikbaar",
+    "create": "Nieuwe status aanmaken",
+    "loading": "Statussen laden...",
+    "post": "Status plaatsen",
+    "placeholder": {
+      "message": "Wat ben je aan het doen?"
+    },
+    "form": {
+      "selectType": "Selecteer statustype",
+      "messageError": "Bericht mag niet leeg zijn",
+      "creating": "Aanmaken..."
+    },
+    "deleteModal": {
+        "title": "Status verwijderen",
+        "confirm": "Weet je zeker dat je dit wilt verwijderen:",
+        "delete": "Verwijderen",
+        "cancel": "Annuleren"
+      },
+    "errors": {
+      "USER_NOT_FOUND": "Gebruiker kon niet worden gevonden.",
+      "USER_HAS_NO_STATUSES": "Je hebt nog geen statussen ingesteld.",
+      "NETWORK_ERROR": "Netwerkfout. Probeer het opnieuw.",
+      "UNKNOWN_ERROR": "Er is een onbekende fout opgetreden."
+    }
+  },
   "admin": {
+    "title": "Beheer",
+    "nav": {
+      "members": "Leden"
+    },
+    "statusTypes": {
+      "title": "Statustypen",
+      "subtitle": "Beheer beschikbare statuscategorieën",
+      "create": "Statustype aanmaken",
+      "loading": "Statustypen laden...",
+      "empty": "Nog geen statustypen. Maak er een aan om te beginnen.",
+      "edit": "Bewerken",
+      "delete": "Verwijderen",
+      "form": {
+        "createTitle": "Statustype aanmaken",
+        "editTitle": "Statustype bewerken",
+        "placeholder": "Typenaam (bijv. Aan het werk, Afwezig)",
+        "save": "Wijzigingen opslaan",
+        "saving": "Opslaan...",
+        "typeError": "Typenaam is verplicht"
+      },
+      "deleteModal": {
+        "title": "Statustype verwijderen",
+        "confirm": "Weet je zeker dat je dit wilt verwijderen:",
+        "delete": "Verwijderen",
+        "cancel": "Annuleren"
+      },
+      "errors": {
+        "USER_NOT_FOUND": "Gebruiker kon niet worden gevonden.",
+        "INVALID_STATUS_TYPE": "Het geselecteerde statustype is ongeldig.",
+        "NETWORK_ERROR": "Netwerkfout. Probeer het opnieuw.",
+        "TYPE_TAKEN": "Dit type is al in gebruik.",
+        "STATUS_TYPE_IN_USE": "Dit type is nog altijd in gebruik.",
+        "UNKNOWN_ERROR": "Er is een onbekende fout opgetreden."
+      }
+    },
     "members": {
       "title": "Leden",
       "joined": "Lid sinds",
