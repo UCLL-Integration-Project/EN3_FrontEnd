@@ -12,7 +12,7 @@ Active development happens on the `dev` branch (`main` holds the README; `produc
 - **i18n** via `next-intl` (`i18n.ts`, messages in `public/locales/{en,nl}/common.json`)
 - **Tailwind CSS** (v3) — design tokens and primitives in `tailwind.config.js` + `styles/globals.css`
 - UI helpers from `@headlessui/react`, theming via `next-themes`
-- Data fetching with **SWR**; **web-push** dependency reserved for push notifications
+- Data fetching with **SWR**; push notifications via the Serwist service worker (`app/sw.ts`) + the `usePushNotifications` hook. Set `NEXT_PUBLIC_VAPID_PUBLIC_KEY` in `.env.local` — leave it empty to disable the UI gracefully
 - Auth state in a **React context** (`context/AuthContext.tsx`, `hooks/useAuth.tsx`)
 - Tests: **Jest** (`jest.config.js`) for units; **Cypress + Cucumber** (`cypress/`) for e2e
 - ESLint (`eslint.config.mjs`); **Docker** (`Dockerfile`, standalone build → `node server.js`); CI/CD in `.github/workflows/`

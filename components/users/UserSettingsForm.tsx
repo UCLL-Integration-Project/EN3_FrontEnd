@@ -4,6 +4,7 @@ import { useTranslations } from "use-intl";
 import AppBar from "@components/AppBar";
 import ChangePasswordForm from "@components/users/ChangePasswordForm";
 import LogoutSection from "@components/users/LogoutSection";
+import NotificationsSection from "@components/users/NotificationsSection";
 import LanguageChip from "@components/language";
 
 /* Settings = preferences + security + sign-out. Profile editing lives on
@@ -24,6 +25,8 @@ export default function UserSettingsForm() {
           <p className="mb-4 text-[13px] text-ink-500">{ts("languageBody")}</p>
           <LanguageChip />
         </div>
+
+        <NotificationsSection />
 
         <ChangePasswordForm />
 

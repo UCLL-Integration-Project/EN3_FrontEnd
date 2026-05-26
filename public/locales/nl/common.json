@@ -233,6 +233,18 @@
     "languageTitle": "Taal",
     "languageBody": "Kies de taal voor de app-interface."
   },
+  "notifications": {
+    "title": "Meldingen",
+    "body": "Krijg een seintje als er iets op CrossWave je aandacht nodig heeft.",
+    "turnOn": "Meldingen inschakelen",
+    "turnOff": "Meldingen uitschakelen",
+    "denied": "Meldingen zijn geblokkeerd. Schakel ze in voor deze app via je browser- of apparaatinstellingen en kom dan terug.",
+    "unsupported": "Deze browser ondersteunt geen pushmeldingen.",
+    "errorGeneric": "Er ging iets mis. Probeer het opnieuw.",
+    "errorMissingKey": "Pushmeldingen zijn niet geconfigureerd. Zet NEXT_PUBLIC_VAPID_PUBLIC_KEY in .env.local en herstart de dev-server.",
+    "errorNetwork": "Kan de backend niet bereiken. Draait die wel?",
+    "errorServer": "De backend wees het abonnement af. Het endpoint /api/v1/notifications/subscribe is nog niet geïmplementeerd (work package #8028)."
+  },
   "UserSettingsForm": {
     "title": "Instellingen",
     "profileTitle": "Profiel",
