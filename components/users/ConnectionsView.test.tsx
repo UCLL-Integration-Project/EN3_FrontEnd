@@ -4,14 +4,14 @@ import { useRouter } from "next/navigation";
 import useAuth from "@hooks/useAuth";
 import * as UserService from "@services/UserService";
 import ConnectionsView from "./ConnectionsView";
-import { ConnectionDTO, ConnectionLevel } from "@types";
+import { ConnectionDTO } from "@types";
 
 jest.mock("next/navigation");
 jest.mock("@hooks/useAuth");
 jest.mock("@services/UserService");
 jest.mock("use-intl", () => ({
   useLocale: () => "en",
-  useTranslations: (namespace: string) => (key: string, params?: any) => {
+  useTranslations: () => (key: string, params?: Record<string, string>) => {
     const translations: Record<string, string> = {
       "title": "Connections",
       "listTitle": "My connections",
@@ -247,15 +247,6 @@ describe("ConnectionsView", () => {
     });
   });
 
-  it("redirects to login if user is not authenticated", () => {
-    (useAuth as jest.Mock).mockReturnValue({
-      user: null,
-      isLoading: false,
-      updateUser: mockUpdateUser
-    });
-
-    render(<ConnectionsView />);
-
-    expect(mockPush).toHaveBeenCalledWith("/en/login");
-  });
+  // Authentication redirect is now handled by AuthGuard at the page level
+  // (app/[locale]/connections/page.tsx), not inside ConnectionsView.
 });

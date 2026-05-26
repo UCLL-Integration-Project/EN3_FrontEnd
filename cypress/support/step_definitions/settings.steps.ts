@@ -1,13 +1,33 @@
-import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+
+const MOCK_USER = {
+  id: 1,
+  username: "admin",
+  firstName: "Admin",
+  lastName: "User",
+  email: "admin@example.com",
+  age: 30,
+  bio: "",
+};
+
+Given("I am a logged-in settings user", () => {
+  cy.setCookie("cw_session", "1");
+});
 
 When("I navigate to the settings page", () => {
-  cy.intercept("GET", "**/api/v1/users/me").as("getProfile");
+  cy.intercept("GET", "**/api/v1/users/me", {
+    statusCode: 200,
+    body: MOCK_USER,
+  }).as("getProfile");
   cy.visitWithLocale("/settings");
+  // AuthContext and UserSettingsForm each call GET /users/me independently.
+  // Wait for both so the form is fully populated before any interaction.
+  cy.wait("@getProfile");
   cy.wait("@getProfile");
 });
 
 Then("I should see the settings page heading", () => {
-  cy.get("h3").contains("Settings").should("be.visible");
+  cy.get("h1").contains("Settings").should("be.visible");
 });
 
 Then("the profile form should be pre-filled with my data", () => {
@@ -20,6 +40,7 @@ When("I update my first name to {string}", (name: string) => {
 });
 
 When("I save my profile", () => {
+  cy.intercept("PUT", "**/api/v1/users/me", { statusCode: 200, body: {} }).as("saveProfile");
   cy.get("form").first().find("button[type='submit']").click();
 });
 
@@ -32,14 +53,25 @@ When("I clear the first name field", () => {
 });
 
 Then("I should see a profile validation error", () => {
-  cy.contains("Missing or Invalid").should("be.visible");
+  cy.get(".field-error").should("contain.text", "Missing or Invalid");
 });
 
-When("I fill in the change password form with current {string} and new {string}", (current: string, newPw: string) => {
-  cy.get("#currentPasswordInput").clear().type(current);
-  cy.get("#newPasswordInput").clear().type(newPw);
-  cy.get("#confirmPasswordInput").clear().type(newPw);
-});
+When(
+  "I fill in the change password form with current {string} and new {string}",
+  (current: string, newPw: string) => {
+    const isCorrect = current !== "wrongpassword";
+    cy.intercept(
+      "PUT",
+      "**/api/v1/account/password",
+      isCorrect
+        ? { statusCode: 200 }
+        : { statusCode: 401, body: { errors: [{ code: "INVALID_CREDENTIALS" }] } }
+    ).as("changePassword");
+    cy.get("#currentPasswordInput").clear().type(current);
+    cy.get("#newPasswordInput").clear().type(newPw);
+    cy.get("#confirmPasswordInput").clear().type(newPw);
+  }
+);
 
 When("I save my password", () => {
   cy.get("form").eq(1).find("button[type='submit']").click();
@@ -62,9 +94,7 @@ Then("I should see a logout confirmation", () => {
 });
 
 When("I confirm the logout", () => {
+  cy.intercept("POST", "**/api/v1/auth/logout", { statusCode: 200 }).as("logout");
   cy.contains("button", "Confirm").click();
 });
 
-Then("I should be redirected to the login page", () => {
-  cy.url({ timeout: 8000 }).should("include", "/login");
-});

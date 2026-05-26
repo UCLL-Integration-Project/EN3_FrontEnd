@@ -4,7 +4,6 @@ const { createServer: createHttpServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
 const fs = require('fs');
-const path = require('path');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev, dir: __dirname });

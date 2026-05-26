@@ -5,7 +5,7 @@ import { Waves } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import LanguageChip from "@components/language";
 import HomeScreen from "@components/HomeScreen";
-import { DeviceGuard, AuthSplash } from "@components/auth/RouteGuard";
+import { AuthSplash } from "@components/auth/RouteGuard";
 
 export default function TitleScreen() {
   const { user, isLoading } = useAuth();
@@ -15,14 +15,10 @@ export default function TitleScreen() {
   // Wait for the session check before choosing landing vs. home.
   if (isLoading) return <AuthSplash />;
 
-  // Signed in: the home screen needs a linked device, so gate it.
-  if (user) {
-    return (
-      <DeviceGuard>
-        <HomeScreen />
-      </DeviceGuard>
-    );
-  }
+  // Signed in: drop straight into the home dashboard. HomeScreen handles
+  // the "no device linked" case inline (soft-gate); the app stays usable
+  // for profile/connections/stats even without paired hardware.
+  if (user) return <HomeScreen />;
 
   return (
     <section className="app-screen bg-wave">

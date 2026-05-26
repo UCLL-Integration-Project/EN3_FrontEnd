@@ -5,8 +5,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminMemberSummary, Page } from "@types";
 import { listMembersRequest } from "@services/AdminService";
+import AppBar from "@components/AppBar";
 import MemberRow from "@components/admin/members/MemberRow";
 import FilterChips, {
   StatusFilter,
@@ -91,66 +93,52 @@ export default function AdminMembersPage() {
   }, [search, status, page]);
 
   return (
-    <section className="app-screen">
-      <header className="space-y-3">
-        <div className="flex items-center gap-3">
-          <Link
-            href={`/admin`}
-            aria-label="Home"
-            className="back-btn flex items-center justify-center"
-          >
-            <ArrowLeft size={18} strokeWidth={2.25} />
-          </Link>
-          <h2 className="flex-1">{t("title")}</h2>
-        </div>
-        <MembersSearch
-          value={search}
-          onChange={(v) => setParams({ search: v })}
-        />
-        <FilterChips
-          value={status}
-          onChange={(v) => setParams({ status: v })}
-        />
+    <section className="app-screen p-0">
+      <AppBar title={t("title")} backHref={`/${locale}`} />
+
+      <div className="px-5 pt-4 space-y-3">
+        <MembersSearch value={search} onChange={(v) => setParams({ search: v })} />
+        <FilterChips value={status} onChange={(v) => setParams({ status: v })} />
         {!isLoading && data && (
           <p className="text-xs text-ink-500">
             {t("results.count", { count: total })}
           </p>
         )}
-      </header>
+      </div>
 
-      {error && (
-        <p role="alert" className="status-error mt-4">
-          {t.has(`errors.${error}`)
-            ? t(`errors.${error}` as never)
-            : t("errors.UNKNOWN_ERROR")}
-        </p>
-      )}
+      <div className="px-5 pb-8">
+        {error && (
+          <p role="alert" className="status-error mt-4">
+            {t.has(`errors.${error}`) ? t(`errors.${error}` as never) : t("errors.UNKNOWN_ERROR")}
+          </p>
+        )}
 
-      {isEmpty && (
-        <div className="mt-8 text-center">
-          <h3>{t("empty.title")}</h3>
-          <p className="mt-1 text-sm text-ink-500">{t("empty.subtitle")}</p>
-        </div>
-      )}
+        {isEmpty && (
+          <div className="mt-8 text-center">
+            <h3>{t("empty.title")}</h3>
+            <p className="mt-1 text-sm text-ink-500">{t("empty.subtitle")}</p>
+          </div>
+        )}
 
-      {data && !data.empty && (
-        <ul className="mt-4 space-y-2">
-          {data.content.map((m) => (
-            <li key={m.id}>
-              <Link
-                href={`/admin/members/${m.id}${ret ? `?ret=${encodeURIComponent(ret)}` : ""}`}
-                className="block no-underline"
-              >
-                <MemberRow member={m} />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+        {data && !data.empty && (
+          <ul className="mt-4 space-y-2">
+            {data.content.map((m) => (
+              <li key={m.id}>
+                <Link
+                  href={`/${locale}/admin/members/${m.id}${ret ? `?ret=${encodeURIComponent(ret)}` : ""}`}
+                  className="block no-underline"
+                >
+                  <MemberRow member={m} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {data && data.totalPages > 1 && (
         <nav
-          className="action-dock flex items-center justify-between"
+          className="action-dock flex items-center justify-between px-5"
           aria-label={t("pagination.ariaLabel")}
         >
           <button

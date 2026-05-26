@@ -33,7 +33,7 @@ export default function FilterChips({
             className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 transition ${
               active
                 ? "bg-ink-900 text-white ring-ink-900"
-                : "bg-white text-ink-600 ring-ink-200 hover:ring-ink-400"
+                : "bg-white text-ink-600 ring-ink-200 hover:ring-ink-400 active:ring-ink-500"
             }`}
           >
             {t(opt.key)}

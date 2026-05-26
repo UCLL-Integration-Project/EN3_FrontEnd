@@ -1,5 +1,5 @@
 import { After } from "@badeball/cypress-cucumber-preprocessor";
 
-After(() => {
+After({ tags: "@needs-db" }, () => {
   cy.task("resetDatabase");
 });

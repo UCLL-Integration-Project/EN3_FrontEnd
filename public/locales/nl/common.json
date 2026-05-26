@@ -203,6 +203,7 @@
     "signOut": "Uitloggen",
     "greeting": "Hoi, {name}",
     "nav": {
+      "home": "Start",
       "profile": "Profiel",
       "connections": "Connecties",
       "device": "Apparaat",
@@ -241,7 +242,9 @@
       "messageCurrent": "Nu op apparaat",
       "messageNoDevice": "Verbind je apparaat om uit te zenden",
       "rfTitle": "Van apparaten in de buurt",
-      "noRfMessages": "Geen apparaten in de buurt gedetecteerd"
+      "noRfMessages": "Geen apparaten in de buurt gedetecteerd",
+      "pairTitle": "Koppel je CrossWave",
+      "pairSubtitle": "Verbind een companion om uit te zenden en live signalen te zien."
     }
   },
   "header": {
@@ -289,6 +292,10 @@
     "button_verify": "Code Verifiëren",
     "signupLink": "Nieuw hier? Maak een account"
   },
+  "settings": {
+    "languageTitle": "Taal",
+    "languageBody": "Kies de taal voor de app-interface."
+  },
   "UserSettingsForm": {
     "title": "Instellingen",
     "profileTitle": "Profiel",
@@ -331,6 +338,9 @@
     "addButton": "Toevoegen",
     "listTitle": "Mijn connecties",
     "empty": "Je hebt nog geen connecties.",
+    "emptyHint": "Wanneer je verbinding maakt met iemand, verschijnen ze hier.",
+    "removed": "{name} verwijderd.",
+    "levelChanged": "{name} is nu {level}.",
     "removeAriaLabel": "Verwijder connectie met {name}",
     "changeLevelAriaLabel": "Wijzig verbindingsniveau met {name}",
     "error": {
@@ -356,7 +366,12 @@
     "accountDetails": "Accountgegevens",
     "bioPlaceholder": "Vertel ons iets over jezelf...",
     "avatarUrl": "Avatar URL",
-    "bannerUrl": "Banner URL"
+    "bannerUrl": "Banner URL",
+    "loadError": "Kon dit profiel niet laden. Trek omlaag om opnieuw te proberen.",
+    "connectSuccess": "Je bent nu verbonden met {name}.",
+    "connectError": "Kon de verbindingsaanvraag niet verzenden. Probeer opnieuw.",
+    "notFoundTitle": "Niet gevonden",
+    "notFoundBody": "Gebruiker \"@{username}\" bestaat niet of het profiel is privé."
   },
   "UserSignupForm": {
     "title": "Maak je account",

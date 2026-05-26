@@ -203,6 +203,7 @@
     "signOut": "Sign out",
     "greeting": "Hi, {name}",
     "nav": {
+      "home": "Home",
       "profile": "Profile",
       "connections": "Connections",
       "device": "Device",
@@ -241,7 +242,9 @@
       "messageCurrent": "On device now",
       "messageNoDevice": "Connect your device to broadcast",
       "rfTitle": "From nearby devices",
-      "noRfMessages": "No nearby devices detected"
+      "noRfMessages": "No nearby devices detected",
+      "pairTitle": "Pair your CrossWave",
+      "pairSubtitle": "Connect a companion to broadcast and see live signals."
     }
   },
   "header": {
@@ -289,6 +292,10 @@
     "button_verify": "Verify Code",
     "signupLink": "New here? Create an account"
   },
+  "settings": {
+    "languageTitle": "Language",
+    "languageBody": "Choose the language for the app interface."
+  },
   "UserSettingsForm": {
     "title": "Settings",
     "profileTitle": "Profile",
@@ -331,6 +338,9 @@
     "addButton": "Add",
     "listTitle": "My connections",
     "empty": "You have no connections yet.",
+    "emptyHint": "When you connect with someone, they'll show up here.",
+    "removed": "Removed {name}.",
+    "levelChanged": "{name} is now {level}.",
     "removeAriaLabel": "Remove connection with {name}",
     "changeLevelAriaLabel": "Change connection level with {name}",
     "error": {
@@ -356,7 +366,12 @@
     "accountDetails": "Account Details",
     "bioPlaceholder": "Tell us about yourself...",
     "avatarUrl": "Avatar URL",
-    "bannerUrl": "Banner URL"
+    "bannerUrl": "Banner URL",
+    "loadError": "Couldn't load this profile. Pull down to retry.",
+    "connectSuccess": "You're now connected with {name}.",
+    "connectError": "Couldn't send the connection request. Try again.",
+    "notFoundTitle": "Not found",
+    "notFoundBody": "User \"@{username}\" doesn't exist or their profile is private."
   },
   "UserSignupForm": {
     "title": "Create your account",
