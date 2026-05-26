@@ -2,27 +2,38 @@ import type { NextConfig } from "next";
 import { spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import withSerwistInit from "@serwist/next";
+import createNextIntlPlugin from "next-intl/plugin";
 
-const withNextIntl = require("next-intl/plugin")("./i18n.ts");
+const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
-// This is optional!
-// A revision helps Serwist version a precached page. This
-// avoids outdated precached responses being used. Using
-// `git rev-parse HEAD` might not the most efficient way
-// of determining a revision, however. You may prefer to use
-// the hashes of every extra file you precache.
+// A revision helps Serwist version precached pages so stale entries
+// don't survive a deploy. `git rev-parse HEAD` is convenient; swap for
+// per-file hashes if precision matters.
 const revision = spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf-8" }).stdout?.trim() || crypto.randomUUID();
 
 const withSerwist = withSerwistInit({
   additionalPrecacheEntries: [{ url: "/~offline", revision }],
-  // Note: This is only an example. If you use Pages Router,
-  // use something else that works, such as "service-worker/index.ts".
   swSrc: "app/sw.ts",
   swDest: "public/sw.js",
 });
 
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+];
+
 const nextConfig: NextConfig = {
   output: "standalone",
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: securityHeaders,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(withSerwist(nextConfig));
