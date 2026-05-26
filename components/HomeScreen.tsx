@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -8,15 +9,24 @@ import {
   ChevronRight,
   Cpu,
   LogOut,
+  Radio,
+  Send,
   Settings,
   Shield,
   User,
   Users,
 } from "lucide-react";
 import useAuth from "@hooks/useAuth";
+import { useDevice } from "@context/DeviceContext";
+import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
+  const { deviceLinked, deviceIp } = useDevice();
+  const { sensorData, sendMessage } = useDeviceWebSocket(deviceLinked ? deviceIp : "");
+
+  const [draft, setDraft] = useState("");
+  const [sentConfirm, setSentConfirm] = useState(false);
   const t = useTranslations("home");
   const locale = useLocale();
   const router = useRouter();
@@ -82,6 +92,68 @@ export default function HomeScreen() {
           </Link>
         ))}
       </div>
+
+      {/* Broadcast + RF tiles — only when a device is linked */}
+      {deviceLinked && (
+        <div className="px-5 pb-2">
+          {/* Broadcast */}
+          <h5 className="mb-2 px-1">{t("dashboard.messageTitle")}</h5>
+          <div className="card">
+            <p className="text-[12px] text-ink-500">{t("dashboard.messageSubtitle")}</p>
+            {!deviceIp ? (
+              <p className="mt-2 text-[12px] text-ink-400">{t("dashboard.messageNoDevice")}</p>
+            ) : (
+              <>
+                <textarea
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder={t("dashboard.messagePlaceholder")}
+                  rows={2}
+                  className="mt-2 w-full resize-none rounded-xl bg-ink-50 px-3 py-2 text-[13px] text-ink-900 outline-none ring-1 ring-ink-200 placeholder:text-ink-400 focus:ring-brand-400"
+                />
+                <button
+                  disabled={!draft.trim()}
+                  onClick={() => {
+                    sendMessage(draft.trim());
+                    setDraft("");
+                    setSentConfirm(true);
+                    setTimeout(() => setSentConfirm(false), 3500);
+                  }}
+                  className="btn-primary mt-2 w-full disabled:opacity-40"
+                >
+                  <Send size={14} strokeWidth={2.25} />
+                  {t("dashboard.messageSend")}
+                </button>
+                {sentConfirm && (
+                  <p className="mt-1.5 text-center text-[12px] text-emerald-600">
+                    {t("dashboard.messageSent")}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* RF messages from nearby devices */}
+          <h5 className="mb-2 mt-5 px-1">{t("dashboard.rfTitle")}</h5>
+          <div className="card">
+            {!sensorData || sensorData.rfMessages.length === 0 ? (
+              <div className="flex items-center gap-3 py-1">
+                <Radio size={18} className="shrink-0 text-ink-300" strokeWidth={2} />
+                <p className="text-[13px] text-ink-400">{t("dashboard.noRfMessages")}</p>
+              </div>
+            ) : (
+              <ul className="space-y-2">
+                {sensorData.rfMessages.map((msg, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <Radio size={14} className="mt-0.5 shrink-0 text-brand-400" strokeWidth={2} />
+                    <span className="text-[13px] text-ink-800">{msg}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Sign out */}
       <div className="mt-auto px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6">
