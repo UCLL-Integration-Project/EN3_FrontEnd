@@ -43,7 +43,6 @@ export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = f
 
   const hasBattery = battery != null && battery >= 0;
   const hasVcc = !hasBattery && vcc > 0;
-  const isUsbPowered = !hasBattery;
 
   const batteryColor = hasBattery
     ? battery! < 10

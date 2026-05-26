@@ -107,10 +107,14 @@ export function useDeviceWebSocket(deviceIp: string) {
 
   const sendCommand = useCallback((cmd: string) => {
     const state = wsRef.current?.readyState;
-    console.log(`[WS] sendCommand: "${cmd}" readyState=${state} (1=OPEN)`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[WS] sendCommand: "${cmd}" readyState=${state} (1=OPEN)`);
+    }
     if (state === WebSocket.OPEN) {
       wsRef.current!.send(cmd);
-      console.log("[WS] sendCommand: sent");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[WS] sendCommand: sent");
+      }
     } else {
       console.warn("[WS] sendCommand: dropped — socket not open");
     }
