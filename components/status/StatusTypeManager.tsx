@@ -17,7 +17,9 @@ export default function StatusTypeManager() {
   const [error, setError] = useState<string | null>(null);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingType, setEditingType] = useState<StatusTypeResponse | null>(null);
+  const [editingType, setEditingType] = useState<StatusTypeResponse | null>(
+    null,
+  );
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const t = useTranslations("admin.statusTypes");
@@ -76,13 +78,18 @@ export default function StatusTypeManager() {
         onActionClick={() => setShowCreateForm((prev) => !prev)}
       >
         <div className="flex flex-col justify-center min-h-[52px] px-1">
-          <p className="text-[13px] font-medium text-ink-500">{t("subtitle")}</p>
+          <p className="text-[13px] font-medium text-ink-500">
+            {t("subtitle")}
+          </p>
         </div>
       </PanelActionRow>
 
       {showCreateForm && (
         <div className="mt-3 animate-sheet-in">
-          <StatusTypeForm onSubmit={handleCreate} onCancel={() => setShowCreateForm(false)} />
+          <StatusTypeForm
+            onSubmit={handleCreate}
+            onCancel={() => setShowCreateForm(false)}
+          />
         </div>
       )}
 
@@ -105,8 +112,12 @@ export default function StatusTypeManager() {
               ) : (
                 <div className="card flex items-center justify-between gap-3 bg-white p-4 shadow-card ring-1 ring-ink-100 rounded-xl">
                   <div className="flex-1">
-                    <p className="text-[14px] font-medium text-ink-900">{type.statusType}</p>
-                    <p className="text-[11px] uppercase tracking-wide text-ink-400 mt-0.5">ID: {type.id}</p>
+                    <p className="text-[14px] font-medium text-ink-900">
+                      {type.statusType}
+                    </p>
+                    <p className="text-[11px] uppercase tracking-wide text-ink-400 mt-0.5">
+                      ID: {type.id}
+                    </p>
                   </div>
 
                   <div className="flex items-center gap-1">

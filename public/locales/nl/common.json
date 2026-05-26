@@ -40,11 +40,11 @@
       "creating": "Aanmaken..."
     },
     "deleteModal": {
-        "title": "Status verwijderen",
-        "confirm": "Weet je zeker dat je dit wilt verwijderen:",
-        "delete": "Verwijderen",
-        "cancel": "Annuleren"
-      },
+      "title": "Status verwijderen",
+      "confirm": "Weet je zeker dat je dit wilt verwijderen:",
+      "delete": "Verwijderen",
+      "cancel": "Annuleren"
+    },
     "errors": {
       "USER_NOT_FOUND": "Gebruiker kon niet worden gevonden.",
       "USER_HAS_NO_STATUSES": "Je hebt nog geen statussen ingesteld.",
@@ -235,7 +235,6 @@
       "noData": "Wachten op apparaatdata…",
       "fallbackName": "daar",
       "messageTitle": "Uitzenden",
-      "messageSubtitle": "Stuur deze tekst via je apparaat over Wi-Fi.",
       "messagePlaceholder": "Typ een bericht voor je klas…",
       "messageSend": "Uitzenden",
       "messageSent": "Verzonden naar apparaat",

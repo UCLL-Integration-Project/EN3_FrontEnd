@@ -51,7 +51,7 @@ export default function StatusForm({
 
     try {
       let result: StatusResponse;
-      
+
       // Fixed: Conditionally route requests based on state configuration
       if (isEditing && status) {
         result = await statusService.updateStatus(status.id, {

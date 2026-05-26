@@ -40,11 +40,11 @@
       "creating": "Creating..."
     },
     "deleteModal": {
-        "title": "Delete Status",
-        "confirm": "Are you sure you want to delete",
-        "delete": "Delete",
-        "cancel": "Cancel"
-      },
+      "title": "Delete Status",
+      "confirm": "Are you sure you want to delete",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
     "errors": {
       "USER_NOT_FOUND": "User could not be found.",
       "USER_HAS_NO_STATUSES": "You haven't set any statuses yet.",
@@ -235,7 +235,6 @@
       "noData": "Waiting for device data…",
       "fallbackName": "there",
       "messageTitle": "Broadcast",
-      "messageSubtitle": "Send this text from your device over Wi-Fi.",
       "messagePlaceholder": "Type a message for your class…",
       "messageSend": "Broadcast",
       "messageSent": "Sent to device",

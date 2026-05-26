@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminMemberSummary, Page } from "@types";
 import { listMembersRequest } from "@services/AdminService";
 import AppBar from "@components/AppBar";
@@ -94,11 +93,17 @@ export default function AdminMembersPage() {
 
   return (
     <section className="app-screen p-0">
-      <AppBar title={t("title")} backHref={`/${locale}`} />
+      <AppBar title={t("title")} backHref={`/admin`} />
 
       <div className="px-5 pt-4 space-y-3">
-        <MembersSearch value={search} onChange={(v) => setParams({ search: v })} />
-        <FilterChips value={status} onChange={(v) => setParams({ status: v })} />
+        <MembersSearch
+          value={search}
+          onChange={(v) => setParams({ search: v })}
+        />
+        <FilterChips
+          value={status}
+          onChange={(v) => setParams({ status: v })}
+        />
         {!isLoading && data && (
           <p className="text-xs text-ink-500">
             {t("results.count", { count: total })}
@@ -109,7 +114,9 @@ export default function AdminMembersPage() {
       <div className="px-5 pb-8">
         {error && (
           <p role="alert" className="status-error mt-4">
-            {t.has(`errors.${error}`) ? t(`errors.${error}` as never) : t("errors.UNKNOWN_ERROR")}
+            {t.has(`errors.${error}`)
+              ? t(`errors.${error}` as never)
+              : t("errors.UNKNOWN_ERROR")}
           </p>
         )}
 
@@ -125,7 +132,7 @@ export default function AdminMembersPage() {
             {data.content.map((m) => (
               <li key={m.id}>
                 <Link
-                  href={`/${locale}/admin/members/${m.id}${ret ? `?ret=${encodeURIComponent(ret)}` : ""}`}
+                  href={`/admin/members/${m.id}${ret ? `?ret=${encodeURIComponent(ret)}` : ""}`}
                   className="block no-underline"
                 >
                   <MemberRow member={m} />

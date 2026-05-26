@@ -42,13 +42,7 @@ export default function SharedPanel({
   }
 
   return (
-    <div className="px-5 pb-2">
-      {/* Unified Section Header Label */}
-      <h5 className="mb-2 px-1 text-[14px] font-medium text-ink-700">
-        {title}
-      </h5>
-
-      {/* Inline Section Error Alert */}
+    <>
       {error && !showErrorAsCard && (
         <div className="mb-3 rounded-xl bg-red-50 px-4 py-3 text-[13px] text-red-700 animate-sheet-in">
           {error}
@@ -56,6 +50,6 @@ export default function SharedPanel({
       )}
 
       {children}
-    </div>
+    </>
   );
 }

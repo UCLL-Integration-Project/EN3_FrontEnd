@@ -17,6 +17,7 @@ import {
 import useAuth from "@hooks/useAuth";
 import { useDevice } from "@context/DeviceContext";
 import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
+import MultiStatus from "./status/MultiStatus";
 
 /* Home dashboard.
  *
@@ -83,7 +84,12 @@ export default function HomeScreen() {
                 {t("dashboard.pairSubtitle")}
               </p>
             </div>
-            <ChevronRight size={18} className="text-secondary-500" strokeWidth={2.5} aria-hidden />
+            <ChevronRight
+              size={18}
+              className="text-secondary-500"
+              strokeWidth={2.5}
+              aria-hidden
+            />
           </Link>
         ) : (
           <Link
@@ -100,87 +106,107 @@ export default function HomeScreen() {
               <p className="flex items-center gap-1.5 text-[12px] text-ink-500">
                 {isConnected ? (
                   <>
-                    <Wifi size={12} strokeWidth={2.5} className="text-emerald-500" aria-hidden />
+                    <Wifi
+                      size={12}
+                      strokeWidth={2.5}
+                      className="text-emerald-500"
+                      aria-hidden
+                    />
                     <span>{t("dashboard.companionConnected")}</span>
                   </>
                 ) : (
                   <>
-                    <WifiOff size={12} strokeWidth={2.5} className="text-ink-400" aria-hidden />
+                    <WifiOff
+                      size={12}
+                      strokeWidth={2.5}
+                      className="text-ink-400"
+                      aria-hidden
+                    />
                     <span>{t("dashboard.companionDisconnected")}</span>
                   </>
                 )}
               </p>
             </div>
-            <ChevronRight size={18} className="text-ink-300" strokeWidth={2.5} aria-hidden />
+            <ChevronRight
+              size={18}
+              className="text-ink-300"
+              strokeWidth={2.5}
+              aria-hidden
+            />
           </Link>
         )}
 
         {/* Broadcast + RF — only when device linked */}
-        {deviceLinked && (
-          <>
-            <div>
-              <h5 className="mb-2 px-1">{t("dashboard.messageTitle")}</h5>
+        {/* {deviceLinked && ( */}
+        <>
+          <div>
+            <h5 className="mb-2 px-1">{t("dashboard.messageTitle")}</h5>
+            {!deviceIp ? (
               <div className="card">
-                <p className="text-[12px] text-ink-500">{t("dashboard.messageSubtitle")}</p>
-                {!deviceIp ? (
-                  <p className="mt-2 text-[12px] text-ink-400">
-                    {t("dashboard.messageNoDevice")}
-                  </p>
-                ) : (
-                  <>
-                    <textarea
-                      value={draft}
-                      onChange={(e) => setDraft(e.target.value)}
-                      placeholder={t("dashboard.messagePlaceholder")}
-                      rows={2}
-                      className="mt-2 w-full resize-none rounded-xl bg-ink-50 px-3 py-2 text-[14px] text-ink-900 outline-none ring-1 ring-ink-200 placeholder:text-ink-400 focus:ring-brand-400"
-                    />
-                    <button
-                      type="button"
-                      disabled={!draft.trim()}
-                      onClick={() => {
-                        sendMessage(draft.trim());
-                        setDraft("");
-                        setSentConfirm(true);
-                        setTimeout(() => setSentConfirm(false), 3500);
-                      }}
-                      className="btn mt-3 w-full disabled:opacity-40"
-                    >
-                      <Send size={14} strokeWidth={2.25} />
-                      {t("dashboard.messageSend")}
-                    </button>
-                    {sentConfirm && (
-                      <p className="mt-1.5 text-center text-[12px] text-emerald-600">
-                        {t("dashboard.messageSent")}
-                      </p>
-                    )}
-                  </>
-                )}
+                <p className="mt-2 text-[12px] text-ink-400">
+                  {t("dashboard.messageNoDevice")}
+                </p>
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {/* Replaced textarea with MultiStatus custom component */}
+                <MultiStatus onStatusSelected={setSelectedStatusMessage} />
 
-            <div>
-              <h5 className="mb-2 px-1">{t("dashboard.rfTitle")}</h5>
-              <div className="card">
-                {!sensorData || sensorData.rfMessages.length === 0 ? (
-                  <div className="flex items-center gap-3 py-1">
-                    <Radio size={18} className="shrink-0 text-ink-300" strokeWidth={2} />
-                    <p className="text-[13px] text-ink-400">{t("dashboard.noRfMessages")}</p>
-                  </div>
-                ) : (
-                  <ul className="space-y-2">
-                    {sensorData.rfMessages.map((msg, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <Radio size={14} className="mt-0.5 shrink-0 text-brand-400" strokeWidth={2} />
-                        <span className="text-[13px] text-ink-800">{msg}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <button
+                  type="button"
+                  disabled={!selectedStatusMessage.trim()}
+                  onClick={() => {
+                    sendMessage(selectedStatusMessage.trim());
+                    setSentConfirm(true);
+                    setTimeout(() => setSentConfirm(false), 3500);
+                  }}
+                  className="btn w-full disabled:opacity-40"
+                >
+                  <Send size={14} strokeWidth={2.25} />
+                  {t("dashboard.messageSend")}
+                </button>
+
+                {sentConfirm && (
+                  <p className="text-center text-[12px] text-emerald-600">
+                    {t("dashboard.messageSent")}
+                  </p>
                 )}
               </div>
+            )}
+          </div>
+
+          <div>
+            <h5 className="mb-2 px-1">{t("dashboard.rfTitle")}</h5>
+            <div className="card">
+              {!sensorData || sensorData.rfMessages.length === 0 ? (
+                <div className="flex items-center gap-3 py-1">
+                  <Radio
+                    size={18}
+                    className="shrink-0 text-ink-300"
+                    strokeWidth={2}
+                  />
+                  <p className="text-[13px] text-ink-400">
+                    {t("dashboard.noRfMessages")}
+                  </p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {sensorData.rfMessages.map((msg, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Radio
+                        size={14}
+                        className="mt-0.5 shrink-0 text-brand-400"
+                        strokeWidth={2}
+                      />
+                      <span className="text-[13px] text-ink-800">{msg}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          </>
-        )}
+          </div>
+        </>
+        {/* )} */}
 
         {/* Secondary entries — settings + admin live here, not on the tab bar */}
         <div className="flex flex-col gap-2">
@@ -194,12 +220,17 @@ export default function HomeScreen() {
             <span className="flex-1 text-[14px] font-semibold text-ink-900">
               {t("nav.settings")}
             </span>
-            <ChevronRight size={16} className="text-ink-300" strokeWidth={2.5} aria-hidden />
+            <ChevronRight
+              size={16}
+              className="text-ink-300"
+              strokeWidth={2.5}
+              aria-hidden
+            />
           </Link>
 
           {user?.role === "ADMIN" && (
             <Link
-              href={`/${locale}/admin/members`}
+              href={`/${locale}/admin`}
               className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-card ring-1 ring-ink-100 transition-transform duration-100 active:scale-[0.98] no-underline"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-secondary-50 text-secondary-600">
@@ -208,7 +239,12 @@ export default function HomeScreen() {
               <span className="flex-1 text-[14px] font-semibold text-secondary-700">
                 {t("nav.admin")}
               </span>
-              <ChevronRight size={16} className="text-ink-300" strokeWidth={2.5} aria-hidden />
+              <ChevronRight
+                size={16}
+                className="text-ink-300"
+                strokeWidth={2.5}
+                aria-hidden
+              />
             </Link>
           )}
         </div>
