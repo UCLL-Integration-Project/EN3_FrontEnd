@@ -1,7 +1,7 @@
 Feature: User settings page
 
   Background:
-    Given I am logged in as "admin@example.com" with password "admin"
+    Given I am a logged-in settings user
 
   Scenario: Authenticated user can navigate to settings
     When I navigate to the settings page
