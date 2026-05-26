@@ -269,6 +269,7 @@
     "listTitle": "Mijn connecties",
     "empty": "Je hebt nog geen connecties.",
     "removeAriaLabel": "Verwijder connectie met {name}",
+    "changeLevelAriaLabel": "Wijzig verbindingsniveau met {name}",
     "error": {
       "USER_NOT_FOUND": "Geen gebruiker gevonden met die gebruikersnaam.",
       "ALREADY_CONNECTED": "Je bent al verbonden met deze gebruiker.",

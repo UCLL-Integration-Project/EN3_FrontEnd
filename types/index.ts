@@ -174,3 +174,9 @@ export type StatusResponse = {
   message: string;
   user: User;
 };
+
+export type ConnectionLevel = "CONTACT" | "FRIEND" | "BEST_FRIEND";
+
+export type ConnectionDTO = UserResponse & {
+  level: ConnectionLevel;
+};
