@@ -18,7 +18,7 @@ export default function UserSettingsForm() {
   const { user, isLoading } = useAuth();
   const t = useTranslations("UserSettingsForm");
 
-  const [profile, setProfile] = useState<UpdateProfileInput>({ firstName: "", lastName: "", email: "" });
+  const [profile, setProfile] = useState<UpdateProfileInput>({ firstName: "", lastName: "", email: "", username: "", age: 0 });
 
   useEffect(() => {
     if (isLoading) return;
@@ -32,6 +32,8 @@ export default function UserSettingsForm() {
           firstName: data.firstName ?? "",
           lastName: data.lastName ?? "",
           email: data.email ?? "",
+          username: data.username ?? "",
+          age: data.age ?? 0,
         });
       })
       .catch(() => {});

@@ -147,3 +147,9 @@ export type UserAIContext = {
   stats?: UserStats;
   connections?: { username: string }[];
 };
+  
+export type ConnectionLevel = "CONTACT" | "FRIEND" | "BEST_FRIEND";
+
+export type ConnectionDTO = UserResponse & {
+  level: ConnectionLevel;
+};

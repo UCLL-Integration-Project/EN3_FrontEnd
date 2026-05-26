@@ -5,6 +5,7 @@ import * as UserService from "@services/UserService";
 
 jest.mock("use-intl", () => ({
   useTranslations: jest.fn(),
+  useLocale: jest.fn(() => "en"),
 }));
 
 jest.mock("@services/UserService");
