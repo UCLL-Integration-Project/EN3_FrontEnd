@@ -6,7 +6,7 @@ import { loginRequest, verifyMfaRequest } from "@services/UserService";
 import { AuthenticationRequest, StatusMessage } from "@types";
 import useAuth from "@hooks/useAuth";
 import { useLocale, useTranslations } from "use-intl";
-import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ShieldCheck } from "lucide-react";
 import BackButton from "@components/BackButton";
 import { sanitizeReturnPath } from "@components/auth/returnUrl";
 
@@ -105,9 +105,14 @@ export default function UserLoginForm() {
     return (
       <section className="app-screen">
         <div className="pb-2">
-           <button onClick={() => setIsMfaRequired(false)} className="icon-btn h-10 w-10">
-              <AlertCircle size={24} />
-           </button>
+          <button
+            type="button"
+            onClick={() => setIsMfaRequired(false)}
+            aria-label="Back"
+            className="back-btn"
+          >
+            <ArrowLeft size={22} strokeWidth={2.25} />
+          </button>
         </div>
         <header className="flex flex-col gap-1 pt-2 pb-5">
           <h1>Verification</h1>

@@ -1,5 +1,10 @@
 import StatsView from "@components/users/StatsView";
+import { AuthGuard } from "@components/auth/RouteGuard";
 
 export default function StatsPage() {
-  return <StatsView />;
+  return (
+    <AuthGuard>
+      <StatsView />
+    </AuthGuard>
+  );
 }

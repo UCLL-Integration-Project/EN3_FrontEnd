@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@context/AuthContext";
 import { DeviceProvider } from "@context/DeviceContext";
+import TabBarShell from "@components/TabBarShell";
 import "@styles/globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -70,6 +71,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
             <DeviceProvider>
               <div className="app-frame">
                 <main className="app-main no-scrollbar">{children}</main>
+                <TabBarShell />
               </div>
             </DeviceProvider>
           </AuthProvider>
