@@ -1,39 +1,61 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import useAuth from "@hooks/useAuth";
 import { useLocale, useTranslations } from "use-intl";
-import { getConnectionsRequest, removeConnectionRequest, setConnectionLevelRequest } from "@services/UserService";
+import {
+  getConnectionsRequest,
+  removeConnectionRequest,
+  setConnectionLevelRequest,
+} from "@services/UserService";
 import { ConnectionDTO, ConnectionLevel } from "@types";
-import BackButton from "@components/BackButton";
-import { Users, UserMinus, AlertCircle, ChevronDown } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  ChevronDown,
+  Users,
+  UserMinus,
+} from "lucide-react";
+import AppBar from "@components/AppBar";
 
 export default function ConnectionsView() {
-  const router = useRouter();
   const locale = useLocale();
-  const { user, isLoading, updateUser } = useAuth();
+  const { updateUser } = useAuth();
   const t = useTranslations("ConnectionsPage");
 
   const [connections, setConnections] = useState<ConnectionDTO[]>([]);
   const [fetched, setFetched] = useState(false);
   const [error, setError] = useState("");
   const [expandedLevel, setExpandedLevel] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (isLoading) return;
-    if (!user) {
-      router.push(`/${locale}/login`);
-      return;
-    }
+    let cancelled = false;
     getConnectionsRequest()
       .then((data) => {
+        if (cancelled) return;
         setConnections(data);
         updateUser({ connectionsCount: data.length });
       })
-      .catch(() => setError(t("error.UNKNOWN_ERROR")))
-      .finally(() => setFetched(true));
-  }, [isLoading]);
+      .catch(() => {
+        if (!cancelled) setError(t("error.UNKNOWN_ERROR"));
+      })
+      .finally(() => {
+        if (!cancelled) setFetched(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function flash(message: string) {
+    setToast(message);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 2500);
+  }
 
   const formatLevel = (level: ConnectionLevel | undefined): string => {
     const normalizedLevel = level || "CONTACT";
@@ -47,6 +69,7 @@ export default function ConnectionsView() {
       const updatedList = connections.filter((c) => c.username !== username);
       setConnections(updatedList);
       updateUser({ connectionsCount: updatedList.length });
+      flash(t("removed", { name: username }));
     } catch {
       setError(t("error.UNKNOWN_ERROR"));
     }
@@ -56,29 +79,33 @@ export default function ConnectionsView() {
     try {
       await setConnectionLevelRequest(username, level);
       const updatedList = connections.map((c) =>
-        c.username === username ? { ...c, level } : c
+        c.username === username ? { ...c, level } : c,
       );
       setConnections(updatedList);
       setExpandedLevel(null);
+      flash(t("levelChanged", { name: username, level: formatLevel(level) }));
     } catch {
       setError(t("error.UNKNOWN_ERROR"));
     }
   };
 
   return (
-    <section className="app-screen">
-      <div className="pb-2">
-        <BackButton />
-      </div>
-      <header className="flex flex-col gap-1 pt-2 pb-5">
-        <h1>{t("title")}</h1>
-      </header>
+    <section className="app-screen p-0">
+      <AppBar title={t("title")} showBack={false} />
 
-      <div className="flex flex-col gap-4 pb-8">
+      <div className="flex flex-col gap-4 px-5 py-5 pb-8">
+        {toast && (
+          <div role="status" className="status status-success animate-sheet-in">
+            <CheckCircle2 size={18} aria-hidden="true" />
+            <span>{toast}</span>
+          </div>
+        )}
+
         {fetched && !error && connections.length === 0 && (
           <div className="card flex flex-col items-center gap-3 py-10 text-center">
             <Users size={40} className="text-ink-300" aria-hidden="true" />
             <p>{t("empty")}</p>
+            <p className="text-[12px] text-ink-400">{t("emptyHint")}</p>
           </div>
         )}
 
@@ -88,29 +115,36 @@ export default function ConnectionsView() {
             {connections.map((connection, i) => (
               <div key={connection.id}>
                 <div
-                  className={`flex items-center gap-3 py-3 ${i > 0 ? "border-t border-ink-100" : ""}`}
+                  className={`flex items-center gap-3 py-3 ${
+                    i > 0 ? "border-t border-ink-100" : ""
+                  }`}
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100">
-                    <span className="text-[15px] font-semibold text-brand-600">
-                      {connection.firstName?.[0]?.toUpperCase() ?? "?"}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[15px] font-medium text-ink-900 truncate">
-                      {connection.firstName} {connection.lastName}
-                    </p>
-                    <p className="text-[13px] text-ink-500">@{connection.username}</p>
-                  </div>
+                  <Link
+                    href={`/${locale}/profile/${connection.username}`}
+                    className="flex flex-1 items-center gap-3 min-w-0 no-underline active:opacity-70"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100">
+                      <span className="text-[15px] font-semibold text-brand-600">
+                        {connection.firstName?.[0]?.toUpperCase() ?? "?"}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[15px] font-medium text-ink-900 truncate">
+                        {connection.firstName} {connection.lastName}
+                      </p>
+                      <p className="text-[13px] text-ink-500">@{connection.username}</p>
+                    </div>
+                  </Link>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() =>
                         setExpandedLevel(
-                          expandedLevel === connection.username ? null : connection.username
+                          expandedLevel === connection.username ? null : connection.username,
                         )
                       }
                       aria-label={t("changeLevelAriaLabel", { name: connection.username })}
-                      className="icon-btn text-ink-600 hover:bg-ink-50 active:bg-ink-100 flex items-center gap-1 px-2"
+                      className="icon-btn text-ink-600 flex items-center gap-1 px-2"
                     >
                       <span className="text-[13px] font-medium">
                         {formatLevel(connection.level)}
@@ -127,7 +161,7 @@ export default function ConnectionsView() {
                       type="button"
                       onClick={() => handleRemove(connection.username)}
                       aria-label={t("removeAriaLabel", { name: connection.username })}
-                      className="icon-btn text-red-600 hover:bg-red-50 active:bg-red-100"
+                      className="icon-btn text-red-600 active:bg-red-100"
                     >
                       <UserMinus size={20} aria-hidden="true" />
                     </button>
@@ -143,7 +177,7 @@ export default function ConnectionsView() {
                         className={`flex-1 px-3 py-2 rounded text-[13px] font-medium transition ${
                           (connection.level || "CONTACT") === level
                             ? "bg-brand-600 text-white"
-                            : "bg-white text-ink-700 border border-ink-200 hover:bg-ink-50 active:bg-ink-100"
+                            : "bg-white text-ink-700 border border-ink-200 active:bg-ink-100"
                         }`}
                       >
                         {formatLevel(level)}
@@ -157,7 +191,7 @@ export default function ConnectionsView() {
         )}
 
         {error && (
-          <div className="status status-error">
+          <div role="alert" className="status status-error">
             <AlertCircle size={18} aria-hidden="true" />
             <span>{error}</span>
           </div>

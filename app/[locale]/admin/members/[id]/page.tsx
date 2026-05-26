@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
 import { AdminAction, AdminMemberDetail } from "@types";
 import {
   getMemberRequest,
@@ -14,6 +12,7 @@ import {
   clearAvatarRequest,
   flagMemberRequest,
 } from "@services/AdminService";
+import AppBar from "@components/AppBar";
 import MemberDetailHero from "@components/admin/members/MemberDetailHero";
 import ReadOnlyField from "@components/admin/members/ReadOnlyField";
 import ModerationActions from "@components/admin/members/ModerationActions";
@@ -122,19 +121,10 @@ export default function AdminMemberDetailPage() {
   const actionKey = pendingAction ? ACTION_KEY[pendingAction] : null;
 
   return (
-    <section className="app-screen">
-      <header className="flex items-center gap-2">
-        <Link
-          href={backHref}
-          className="btn-ghost inline-flex items-center gap-1"
-          aria-label={t("back")}
-        >
-          <ChevronLeft size={16} strokeWidth={2.25} aria-hidden />
-          {t("back")}
-        </Link>
-        <h2 className="ml-auto">{t("title")}</h2>
-      </header>
+    <section className="app-screen p-0">
+      <AppBar title={t("title")} backHref={backHref} />
 
+      <div className="px-5 pt-4 pb-8">
       {error && (
         <p role="alert" className="status-error mt-4">
           {t.has(`errors.${error}`) ? t(`errors.${error}` as never) : t("errors.UNKNOWN_ERROR")}
@@ -181,6 +171,7 @@ export default function AdminMemberDetailPage() {
       {isLoading && !data && !error && (
         <p className="mt-4 text-sm text-ink-500">…</p>
       )}
+      </div>
     </section>
   );
 }

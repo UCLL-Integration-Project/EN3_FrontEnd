@@ -247,15 +247,6 @@ describe("ConnectionsView", () => {
     });
   });
 
-  it("redirects to login if user is not authenticated", () => {
-    (useAuth as jest.Mock).mockReturnValue({
-      user: null,
-      isLoading: false,
-      updateUser: mockUpdateUser
-    });
-
-    render(<ConnectionsView />);
-
-    expect(mockPush).toHaveBeenCalledWith("/en/login");
-  });
+  // Authentication redirect is now handled by AuthGuard at the page level
+  // (app/[locale]/connections/page.tsx), not inside ConnectionsView.
 });
