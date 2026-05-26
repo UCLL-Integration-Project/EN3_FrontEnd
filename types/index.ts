@@ -58,7 +58,7 @@ export function toGrantedAuthority(role: Role): string {
   return `ROLE_${role}`;
 }
 
-export type Status = "ACTIVE" | "FLAGGED" | "SUSPENDED";
+export type ModerationStatus = "ACTIVE" | "FLAGGED" | "SUSPENDED";
 
 export type AdminMemberSummary = {
   id: number;
@@ -66,11 +66,16 @@ export type AdminMemberSummary = {
   handle: string;
   email: string;
   avatarUrl?: string | null;
-  status: Status;
+  status: ModerationStatus;
   joinedAt: string; // ISO timestamp from the backend's Instant
 };
 
-export type AdminAction = "SUSPEND" | "REACTIVATE" | "CLEAR_BIO" | "CLEAR_AVATAR" | "FLAG";
+export type AdminAction =
+  | "SUSPEND"
+  | "REACTIVATE"
+  | "CLEAR_BIO"
+  | "CLEAR_AVATAR"
+  | "FLAG";
 
 export type AdminAuditEntry = {
   id: number;
@@ -87,7 +92,7 @@ export type AdminMemberDetail = {
   email: string;
   bio?: string | null;
   avatarUrl?: string | null;
-  status: Status;
+  status: ModerationStatus;
   joinedAt: string;
   lastSeenAt?: string | null;
   recentAudit: AdminAuditEntry[];
@@ -140,4 +145,32 @@ export type UserStats = {
   connections: number;
   timeActive: number;
   dataShared: number;
+};
+
+export type StatusTypeRequest = {
+  type: string;
+};
+
+export type StatusTypeResponse = {
+  id: number;
+  type: string;
+};
+
+export type StatusRequest = {
+  statusType: StatusTypeResponse;
+  message: string;
+  user: User;
+};
+
+export type UpdateStatusRequest = {
+  id: number;
+  statusType: StatusTypeResponse;
+  message: string;
+};
+
+export type StatusResponse = {
+  id: number;
+  statusType: StatusTypeResponse;
+  message: string;
+  user: User;
 };

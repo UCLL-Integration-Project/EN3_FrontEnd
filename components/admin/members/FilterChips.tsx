@@ -1,9 +1,9 @@
 "use client";
 
-import { Status } from "@types";
+import { ModerationStatus } from "@types";
 import { useTranslations } from "next-intl";
 
-export type StatusFilter = Status | "ALL";
+export type StatusFilter = ModerationStatus | "ALL";
 
 const OPTIONS: { value: StatusFilter; key: "all" | "active" | "flagged" | "suspended" }[] = [
   { value: "ALL", key: "all" },
