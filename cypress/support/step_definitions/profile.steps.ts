@@ -58,7 +58,7 @@ Then("I should see the {string} section with my bio", (section: string) => {
 });
 
 Then("I should see the {string} section", (section: string) => {
-  cy.get("h5").contains(section).should("be.visible");
+  cy.get("h5").contains(section).scrollIntoView().should("be.visible");
 });
 
 When("I click the {string} button", (text: string) => {

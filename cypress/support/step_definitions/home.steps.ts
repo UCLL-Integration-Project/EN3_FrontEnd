@@ -50,10 +50,6 @@ Then("I should see the home screen navigation items", () => {
   cy.contains("Settings").should("exist");
 });
 
-Then("I should see the sign-out button", () => {
-  cy.contains("Sign out").should("exist");
-});
-
 Then("I should see the admin navigation item", () => {
   cy.contains("Admin").should("exist");
 });

@@ -133,7 +133,7 @@ When("I go back to the members list", () => {
   cy.intercept("GET", "**/api/v1/admin/members*", (req) => {
     req.reply({ statusCode: 200, body: filteredPage(req.url) });
   }).as("listAgain");
-  cy.contains("a", /Back|Terug/).click();
+  cy.get(".back-btn").click();
   cy.wait("@listAgain");
 });
 
