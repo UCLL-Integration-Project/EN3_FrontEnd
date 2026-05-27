@@ -1,0 +1,20 @@
+# .trivyignore
+# Use this file to ignore specific vulnerabilities (CVEs) found by Trivy.
+# Add one CVE ID per line, optionally with a comment starting with #.
+# Documentation: https://aquasecurity.github.io/trivy/latest/docs/configuration/filtering/#trivyignore
+
+# The following CVEs are ignored because they reside within the bundled 'npm' tool 
+# in the node:20-alpine base image. Since this project uses Next.js 'standalone' 
+# output and runs via 'node server.js', the npm binary is not used in the 
+# production runtime and these vulnerabilities do not pose a risk to the deployed app.
+CVE-2024-21538
+CVE-2025-64756
+CVE-2026-26996
+CVE-2026-27903
+CVE-2026-27904
+CVE-2026-23745
+CVE-2026-23950
+CVE-2026-24842
+CVE-2026-26960
+CVE-2026-29786
+CVE-2026-31802
