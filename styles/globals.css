@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Kokoro&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -47,7 +45,7 @@
     @apply text-ink-400;
   }
 
-  /* Type system per spec — Kokoro display for h1–h3, sans UI for h4–h6 + body.
+  /* Type system per spec — Georgia display for h1–h3, sans UI for h4–h6 + body.
      H5/H6 capped at 13/11px for mobile legibility (spec called for 12/6/10). */
   h1 { @apply font-display text-[48px] leading-[1.05] tracking-tight text-ink-900; }
   h2 { @apply font-display text-[36px] leading-[1.1] tracking-tight text-ink-900; }
@@ -235,6 +233,21 @@
   .field-error {
     @apply text-[12px] font-medium text-red-600 px-1 min-h-[1rem];
   }
+
+  /* AI chat markdown output */
+  .ai-prose h1, .ai-prose h2, .ai-prose h3 {
+    @apply font-semibold text-ink-900 mt-3 mb-1;
+  }
+  .ai-prose h1 { @apply text-[17px]; }
+  .ai-prose h2 { @apply text-[15px]; }
+  .ai-prose h3 { @apply text-[14px]; }
+  .ai-prose p { @apply mb-2 last:mb-0; }
+  .ai-prose strong { @apply font-semibold text-ink-900; }
+  .ai-prose em { @apply italic; }
+  .ai-prose ul { @apply list-disc pl-5 mb-2 space-y-0.5; }
+  .ai-prose ol { @apply list-decimal pl-5 mb-2 space-y-0.5; }
+  .ai-prose li { @apply text-[14px]; }
+  .ai-prose code { @apply bg-ink-100 rounded px-1 text-[13px] font-mono; }
 
   /* ------------------------------------------------------------------------
    * Status messages (toasts-in-page)

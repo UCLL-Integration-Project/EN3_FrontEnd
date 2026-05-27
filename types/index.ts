@@ -142,6 +142,12 @@ export type UserStats = {
   dataShared: number;
 };
 
+export type UserAIContext = {
+  profile?: { name: string; bio: string; age: number };
+  stats?: UserStats;
+  connections?: { username: string }[];
+};
+  
 export type ConnectionLevel = "CONTACT" | "FRIEND" | "BEST_FRIEND";
 
 export type ConnectionDTO = UserResponse & {

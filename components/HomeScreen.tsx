@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -17,6 +17,11 @@ import {
 import useAuth from "@hooks/useAuth";
 import { useDevice } from "@context/DeviceContext";
 import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
+import { insightRequest } from "@services/AiService";
+import { safeStorage } from "@context/safeStorage";
+import AiInsightPopup from "@components/ai/AiInsightPopup";
+
+const FOUR_HOURS = 4 * 60 * 60 * 1000;
 
 /* Home dashboard.
  *
@@ -36,6 +41,7 @@ export default function HomeScreen() {
 
   const [draft, setDraft] = useState("");
   const [sentConfirm, setSentConfirm] = useState(false);
+  const [insight, setInsight] = useState<string | null>(null);
   const t = useTranslations("home");
   const locale = useLocale();
 
@@ -45,6 +51,22 @@ export default function HomeScreen() {
 
   const displayName = user?.firstName?.trim() || user?.username?.trim() || "";
   const resolvedDeviceName = deviceName || t("dashboard.companionTitle");
+
+  useEffect(() => {
+    const last = safeStorage.get("cw_last_insight");
+    if (last && Date.now() - Number(last) < FOUR_HOURS) return;
+
+    insightRequest()
+      .then(({ insight: text }) => {
+        if (text) setInsight(text);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleDismissInsight = () => {
+    safeStorage.set("cw_last_insight", String(Date.now()));
+    setInsight(null);
+  };
 
   return (
     <section className="app-screen p-0">
@@ -209,6 +231,11 @@ export default function HomeScreen() {
           )}
         </div>
       </div>
+
+      {/* Proactive insight popup */}
+      {insight && (
+        <AiInsightPopup insight={insight} onDismiss={handleDismissInsight} />
+      )}
     </section>
   );
 }
