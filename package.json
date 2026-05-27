@@ -42,7 +42,7 @@
     "@types/react-dom": "^19",
     "@types/web-bluetooth": "^0.0.21",
     "autoprefixer": "^10.4.27",
-    "cypress": "^15.14.2",
+    "cypress": "^15.16.0",
     "dotenv": "^17.4.2",
     "esbuild": "^0.28.0",
     "eslint": "^9",
