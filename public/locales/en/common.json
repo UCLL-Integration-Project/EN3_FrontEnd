@@ -377,6 +377,10 @@
     "exploreConnections": "Explore connections",
     "loadError": "Failed to load stats."
   },
+  "offline": {
+    "title": "You're offline",
+    "body": "Check your connection and try again."
+  },
   "device": {
     "defaultName": "My Companion",
     "common": {

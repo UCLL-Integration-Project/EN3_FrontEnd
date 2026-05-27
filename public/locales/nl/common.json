@@ -377,6 +377,10 @@
     "exploreConnections": "Verken verbindingen",
     "loadError": "Kon stats niet laden."
   },
+  "offline": {
+    "title": "Je bent offline",
+    "body": "Controleer je verbinding en probeer het opnieuw."
+  },
   "device": {
     "defaultName": "Mijn metgezel",
     "common": {
