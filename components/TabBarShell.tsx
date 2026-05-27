@@ -27,6 +27,7 @@ export default function TabBarShell() {
     `${root}/connections`,
     `${root}/stats`,
     `${root}/profile`,
+    `${root}/ai`,
   ]);
 
   if (!tabbed.has(normalized)) return null;

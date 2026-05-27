@@ -72,12 +72,7 @@ export type AdminMemberSummary = {
   joinedAt: string; // ISO timestamp from the backend's Instant
 };
 
-export type AdminAction =
-  | "SUSPEND"
-  | "REACTIVATE"
-  | "CLEAR_BIO"
-  | "CLEAR_AVATAR"
-  | "FLAG";
+export type AdminAction = "SUSPEND" | "REACTIVATE" | "CLEAR_BIO" | "CLEAR_AVATAR" | "FLAG";
 
 export type AdminAuditEntry = {
   id: number;
@@ -174,6 +169,12 @@ export type NavItem = {
   label: string;
   href: string;
   variant?: "default" | "admin";
+};
+
+export type UserAIContext = {
+  profile?: { name: string; bio: string; age: number };
+  stats?: UserStats;
+  connections?: { username: string }[];
 };
 
 export type ConnectionLevel = "CONTACT" | "FRIEND" | "BEST_FRIEND";

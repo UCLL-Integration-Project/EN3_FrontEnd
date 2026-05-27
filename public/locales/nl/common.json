@@ -209,7 +209,8 @@
       "device": "Apparaat",
       "stats": "Statistieken",
       "settings": "Instellingen",
-      "admin": "Beheer"
+      "admin": "Beheer",
+      "ai": "AI-assistent"
     },
     "cta": {
       "getStarted": "Aan de slag",
@@ -244,6 +245,36 @@
       "noRfMessages": "Geen apparaten in de buurt gedetecteerd",
       "pairTitle": "Koppel je CrossWave",
       "pairSubtitle": "Verbind een companion om uit te zenden en live signalen te zien."
+    }
+  },
+  "ai": {
+    "title": "CrossWave AI",
+    "placeholder": "Stel me een vraag over je gegevens…",
+    "send": "Vraag",
+    "loading": "Denken…",
+    "error": {
+      "NETWORK_ERROR": "Kon de server niet bereiken. Probeer opnieuw.",
+      "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw."
+    },
+    "insight": {
+      "eyebrow": "Dagelijks inzicht",
+      "askMore": "Vraag meer →",
+      "dismiss": "Sluiten"
+    },
+    "settings": {
+      "title": "AI-gegevenstoegang",
+      "profile": {
+        "label": "Profiel & bio",
+        "hint": "Je naam, bio en leeftijd"
+      },
+      "stats": {
+        "label": "Activiteitsstatistieken",
+        "hint": "Verbindingen, actieve tijd en gedeelde gegevens"
+      },
+      "connections": {
+        "label": "Verbindingenlijst",
+        "hint": "Gebruikersnamen van je verbindingen"
+      }
     }
   },
   "header": {
@@ -398,6 +429,7 @@
     "success": "Registratie gelukt. Doorsturen..."
   },
   "StatsPage": {
+    "title": "Statistieken",
     "connections": "Verbindingen",
     "timeActive": "Actief",
     "dataShared": "Gedeeld",
@@ -406,6 +438,10 @@
     "emptySubtitle": "Begin met verbinden om je stats hier te zien.",
     "exploreConnections": "Verken verbindingen",
     "loadError": "Kon stats niet laden."
+  },
+  "offline": {
+    "title": "Je bent offline",
+    "body": "Controleer je verbinding en probeer het opnieuw."
   },
   "device": {
     "defaultName": "Mijn metgezel",
