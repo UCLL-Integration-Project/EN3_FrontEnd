@@ -20,7 +20,7 @@
     "@anthropic-ai/sdk": "^0.98.0",
     "@headlessui/react": "^2.2.10",
     "@serwist/next": "^9.5.11",
-    "intl-messageformat": "^11.1.2",
+    "intl-messageformat": "^11.2.7",
     "lucide-react": "^1.16.0",
     "next": "^16.2.1",
     "next-intl": "^4.8.3",
