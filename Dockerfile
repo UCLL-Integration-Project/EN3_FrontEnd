@@ -21,9 +21,8 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN npm run build
 
 # ============================================================
-# Stage 2 — runner  (final, smallest image)
-# Uses the self-contained standalone output — no node_modules
-# needed in the final image, no npm, just node + server.js
+# Stage 2 — runner  (final image)
+# Uses standard Next.js build output to support custom server.js
 # ============================================================
 FROM node:20-alpine AS runner
 
@@ -36,17 +35,13 @@ ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
-# .next/standalone contains server.js + its own minimal node_modules
-COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/standalone ./
-# FORCE: Remove the default Next.js HTTP server and replace it with our custom HTTPS-capable one
-RUN rm server.js
-COPY --from=builder --chown=appuser:appgroup /usr/src/app/server.js ./server.js
-
-# Static assets must be copied separately on top of standalone
-COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next/static ./.next/static
-
-# Public folder (images, fonts, etc.)
+# Copy necessary project files and dependencies
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/next.config.ts ./
 COPY --from=builder --chown=appuser:appgroup /usr/src/app/public ./public
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/.next ./.next
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/package.json ./package.json
+COPY --from=builder --chown=appuser:appgroup /usr/src/app/server.js ./server.js
 
 USER appuser
 
@@ -55,7 +50,7 @@ EXPOSE 8080
 # Health check — OKD/Kubernetes uses this for readiness/liveness
 # Check both HTTPS and HTTP to be safe, ignore cert errors for internal check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD wget -qO- --no-check-certificate https://localhost:8080/ || wget -qO- http://localhost:8080/ || exit 1
+  CMD wget -qO- --no-check-certificate https://localhost:8080/ || wget -qO- http://localhost:8080/ || exit 1        
 
-# Run the standalone server directly — no npm needed
+# Run the custom server
 CMD ["node", "server.js"]
