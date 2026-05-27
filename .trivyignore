@@ -1,0 +1,4 @@
+# .trivyignore
+# Use this file to ignore specific vulnerabilities (CVEs) found by Trivy.
+# Add one CVE ID per line, optionally with a comment starting with #.
+# Documentation: https://aquasecurity.github.io/trivy/latest/docs/configuration/filtering/#trivyignore
