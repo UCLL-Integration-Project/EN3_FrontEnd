@@ -79,9 +79,8 @@ module.exports = {
           "Arial",
           "sans-serif",
         ],
-        // Display — Kokoro (serif) for h1–h3 only
+        // Display — Georgia serif for h1–h3
         display: [
-          '"Kokoro"',
           "Georgia",
           '"Times New Roman"',
           "serif",
