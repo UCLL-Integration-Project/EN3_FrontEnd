@@ -439,6 +439,17 @@
     "exploreConnections": "Explore connections",
     "loadError": "Failed to load stats."
   },
+  "privacy": {
+    "title": "Data sharing",
+    "shareActivity": {
+      "label": "Share activity",
+      "hint": "Let visitors see your recent activity"
+    },
+    "shareConnectionCount": {
+      "label": "Share connection count",
+      "hint": "Let visitors see how many connections you have"
+    }
+  },
   "offline": {
     "title": "You're offline",
     "body": "Check your connection and try again."

@@ -439,6 +439,17 @@
     "exploreConnections": "Verken verbindingen",
     "loadError": "Kon stats niet laden."
   },
+  "privacy": {
+    "title": "Gegevens delen",
+    "shareActivity": {
+      "label": "Activiteit delen",
+      "hint": "Laat bezoekers je recente activiteit zien"
+    },
+    "shareConnectionCount": {
+      "label": "Aantal connecties delen",
+      "hint": "Laat bezoekers zien hoeveel connecties je hebt"
+    }
+  },
   "offline": {
     "title": "Je bent offline",
     "body": "Controleer je verbinding en probeer het opnieuw."

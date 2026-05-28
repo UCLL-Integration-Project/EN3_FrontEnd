@@ -124,20 +124,24 @@ export default function ProfileHeader({
           <p className="text-ink-500">@{user.username}</p>
 
           <div className="mt-4 flex gap-6 border-y border-ink-50 py-3">
-            <div className="flex flex-col">
-              <span className="font-bold text-ink-900">
-                {(user.connectionsCount || 0) + (isConnected ? 1 : 0)}
-              </span>
-              <span className="text-[12px] text-ink-500 uppercase tracking-wider">
-                {t("connections")}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-ink-900">{activityCount}</span>
-              <span className="text-[12px] text-ink-500 uppercase tracking-wider">
-                {t("activity")}
-              </span>
-            </div>
+            {user.connectionsCount != null && (
+              <div className="flex flex-col">
+                <span className="font-bold text-ink-900">
+                  {user.connectionsCount + (isConnected ? 1 : 0)}
+                </span>
+                <span className="text-[12px] text-ink-500 uppercase tracking-wider">
+                  {t("connections")}
+                </span>
+              </div>
+            )}
+            {(isOwnProfile || user.shareActivity !== false) && (
+              <div className="flex flex-col">
+                <span className="font-bold text-ink-900">{activityCount}</span>
+                <span className="text-[12px] text-ink-500 uppercase tracking-wider">
+                  {t("activity")}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
