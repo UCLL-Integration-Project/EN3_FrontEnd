@@ -60,10 +60,21 @@ export default function HomeScreen() {
     <section className="app-screen p-0">
       {/* Brand gradient greeting */}
       <div className="bg-brand-gradient px-5 pb-7 pt-[calc(1.25rem+env(safe-area-inset-top))]">
-        <p className="text-[11px] font-medium uppercase tracking-widest text-white/65" suppressHydrationWarning>
-          {t(`dashboard.${greetingKey}`)}
-        </p>
-        <p className="mt-1 text-[26px] font-extrabold tracking-tight text-white">{displayName}</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-widest text-white/65" suppressHydrationWarning>
+              {t(`dashboard.${greetingKey}`)}
+            </p>
+            <p className="mt-1 text-[26px] font-extrabold tracking-tight text-white">{displayName}</p>
+          </div>
+          <Link
+            href={`/${locale}/settings`}
+            aria-label={t("nav.settings")}
+            className="icon-btn -mr-1 mt-0.5 text-white/80 active:text-white"
+          >
+            <Settings size={22} strokeWidth={2} aria-hidden="true" />
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-col gap-5 px-5 pb-6 pt-5">
@@ -168,20 +179,9 @@ export default function HomeScreen() {
         </>
         {/* )} */}
 
-        {/* Secondary entries — settings + admin live here, not on the tab bar */}
-        <div className="flex flex-col gap-2">
-          <Link
-            href={`/${locale}/settings`}
-            className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-card ring-1 ring-ink-100 transition-transform duration-100 active:scale-[0.98] no-underline"
-          >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-ink-50 text-ink-600">
-              <Settings size={18} strokeWidth={2.25} aria-hidden />
-            </span>
-            <span className="flex-1 text-[14px] font-semibold text-ink-900">{t("nav.settings")}</span>
-            <ChevronRight size={16} className="text-ink-300" strokeWidth={2.5} aria-hidden />
-          </Link>
-
-          {user?.role === "ADMIN" && (
+        {/* Admin panel entry — only rendered for admin accounts */}
+        {user?.role === "ADMIN" && (
+          <div className="flex flex-col gap-2">
             <Link
               href={`/${locale}/admin`}
               className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-card ring-1 ring-ink-100 transition-transform duration-100 active:scale-[0.98] no-underline"
@@ -192,8 +192,8 @@ export default function HomeScreen() {
               <span className="flex-1 text-[14px] font-semibold text-secondary-700">{t("nav.admin")}</span>
               <ChevronRight size={16} className="text-ink-300" strokeWidth={2.5} aria-hidden />
             </Link>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Proactive insight popup */}
