@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { Bluetooth, ChevronRight, Cpu, Radio, Send, Settings, Shield, Wifi, WifiOff } from "lucide-react";
+import { Bluetooth, ChevronLeft, ChevronRight, Cpu, Radio, Send, Settings, Shield, Wifi, WifiOff } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import { useDevice } from "@context/DeviceContext";
 import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
@@ -11,6 +11,7 @@ import MultiStatus from "./status/MultiStatus";
 import { insightRequest } from "@services/AiService";
 import { safeStorage } from "@context/safeStorage";
 import AiInsightPopup from "@components/ai/AiInsightPopup";
+import BambooAvatar from "@components/ai/BambooAvatar";
 
 const FOUR_HOURS = 4 * 60 * 60 * 1000;
 
@@ -31,6 +32,9 @@ export default function HomeScreen() {
   const [selectedStatusMessage, setSelectedStatusMessage] = useState("");
   const [sentConfirm, setSentConfirm] = useState(false);
   const [insight, setInsight] = useState<string | null>(null);
+  const [insightVisible, setInsightVisible] = useState(false);
+  const [isPersonalized, setIsPersonalized] = useState(false);
+  const [isInsightLoading, setIsInsightLoading] = useState(false);
   const t = useTranslations("home");
   const locale = useLocale();
 
@@ -44,16 +48,26 @@ export default function HomeScreen() {
     const last = safeStorage.get("cw_last_insight");
     if (last && Date.now() - Number(last) < FOUR_HOURS) return;
 
+    setIsInsightLoading(true);
     insightRequest()
-      .then(({ insight: text }) => {
-        if (text) setInsight(text);
+      .then(({ insight: text, isPersonalized: personal }) => {
+        if (text) {
+          setIsPersonalized(personal);
+          setInsight(text);
+          setInsightVisible(true);
+        } else {
+          safeStorage.set("cw_last_insight", String(Date.now()));
+        }
       })
-      .catch(() => {});
+      .catch(() => {
+        safeStorage.set("cw_last_insight", String(Date.now()));
+      })
+      .finally(() => setIsInsightLoading(false));
   }, []);
 
   const handleDismissInsight = () => {
     safeStorage.set("cw_last_insight", String(Date.now()));
-    setInsight(null);
+    setInsightVisible(false);
   };
 
   return (
@@ -197,7 +211,22 @@ export default function HomeScreen() {
       </div>
 
       {/* Proactive insight popup */}
-      {insight && <AiInsightPopup insight={insight} onDismiss={handleDismissInsight} />}
+      {insightVisible && insight && (
+        <AiInsightPopup insight={insight} isPersonalized={isPersonalized} onDismiss={handleDismissInsight} />
+      )}
+
+      {/* Peek tab — re-opens the insight after dismissal */}
+      {insight && !insightVisible && (
+        <button
+          type="button"
+          onClick={() => setInsightVisible(true)}
+          aria-label="View daily insight"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-0.5 rounded-l-xl bg-white py-3 pl-2 pr-1 shadow-md ring-1 ring-ink-100"
+        >
+          <BambooAvatar size={20} />
+          <ChevronLeft size={14} className="text-brand-500" strokeWidth={2.5} />
+        </button>
+      )}
     </section>
   );
 }

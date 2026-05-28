@@ -1,3 +1,5 @@
+"use client";
+
 import DeviceManager from "@components/device/DeviceManager";
 import { AuthGuard, DeviceGuard } from "@components/auth/RouteGuard";
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { BarChart2, Home, User, Users } from "lucide-react";
+import BambooAvatar from "@components/ai/BambooAvatar";
 import type { LucideIcon } from "lucide-react";
 
 /* Bottom tab bar — the app's primary navigation.
@@ -77,7 +78,7 @@ export default function TabBar() {
               aiActive ? "bg-brand-700" : "bg-brand-gradient"
             }`}
           >
-            ✦
+            <BambooAvatar size={28} className="brightness-0 invert" />
           </Link>
         </li>
 

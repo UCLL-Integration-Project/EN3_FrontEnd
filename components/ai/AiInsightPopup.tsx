@@ -3,13 +3,15 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
+import BambooAvatar from "@components/ai/BambooAvatar";
 
 type Props = {
   insight: string;
+  isPersonalized: boolean;
   onDismiss: () => void;
 };
 
-export default function AiInsightPopup({ insight, onDismiss }: Props) {
+export default function AiInsightPopup({ insight, isPersonalized, onDismiss }: Props) {
   const t = useTranslations("ai");
   const locale = useLocale();
   const router = useRouter();
@@ -47,10 +49,12 @@ export default function AiInsightPopup({ insight, onDismiss }: Props) {
           </button>
           {/* Eyebrow */}
           <p id="ai-insight-eyebrow" className="mb-2 text-[11px] font-bold uppercase tracking-widest text-brand-600">
-            ✦ {t("insight.eyebrow")}
+            <BambooAvatar size={14} className="mr-1.5 inline-block align-middle" />
+            {t(isPersonalized ? "insight.eyebrow" : "insight.eyebrow_fact")}
           </p>
           {/* Insight text */}
-          <p className="mb-5 text-[15px] leading-relaxed text-ink-900">{insight}</p>
+          <p className="mb-4 text-[15px] leading-relaxed text-ink-900">{insight}</p>
+          <p className="mb-4 text-[11px] text-ink-400">— Bamboo</p>
           {/* Ask more */}
           <button type="button" onClick={handleAskMore} className="btn-ghost">
             {t("insight.askMore")}
