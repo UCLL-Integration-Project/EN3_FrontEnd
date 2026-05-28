@@ -1,24 +1,17 @@
-import { AuthenticationRequest, PrivacyInput, UpdateProfileInput, User, UserResponse, UserStats, ConnectionDTO, ConnectionLevel } from "@types";
+import { Activity, AuthenticationRequest, PrivacyInput, UpdateProfileInput, User, UserResponse, UserStats, ConnectionDTO, ConnectionLevel } from "@types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL is not defined");
 
 const handleResponse = async (response: Response): Promise<void> => {
   if (!response.ok) {
-    try {
-      const body = await response.json();
-
-      if (body?.errors && Array.isArray(body.errors)) {
-        const specificError = body.errors.find((e: any) => e.code === "EMAIL_TAKEN");
-        const code = specificError ? specificError.code : (body.errors[0]?.code ?? "UNKNOWN_ERROR");
-        throw new Error(code);
-      }
-
-      throw new Error("UNKNOWN_ERROR");
-    } catch (err) {
-      if (err instanceof Error && err.message !== "UNKNOWN_ERROR") throw err;
-      throw new Error("UNKNOWN_ERROR");
+    const body = await response.json().catch(() => null);
+    if (body?.errors && Array.isArray(body.errors)) {
+      const specific = (body.errors as { code?: string }[]).find((e) => e.code === "EMAIL_TAKEN");
+      const code = specific?.code ?? (body.errors[0] as { code?: string })?.code ?? "UNKNOWN_ERROR";
+      throw new Error(code);
     }
+    throw new Error("UNKNOWN_ERROR");
   }
 };
 
@@ -230,7 +223,7 @@ export const getUserData = async (username: string): Promise<User> => {
   }
 };
 
-export const getActivityRequest = async (username: string): Promise<any[]> => {
+export const getActivityRequest = async (username: string): Promise<Activity[]> => {
   try {
     const response = await fetch(`${apiUrl}/api/v1/users/${encodeURIComponent(username)}/activity`, {
       method: "GET",
@@ -244,41 +237,6 @@ export const getActivityRequest = async (username: string): Promise<any[]> => {
   }
 };
 
-/* ==========================================================================
-   MISC PROFILES EXTENSIONS (Legacy tracking endpoints)
-   ========================================================================== */
-
-export const changeHeightRequest = async (newValue: number): Promise<User> => {
-  try {
-    const response = await fetch(`${apiUrl}/api/v1/users/height`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newValue),
-      credentials: "include",
-    });
-    await handleResponse(response);
-    return response.json();
-  } catch (err) {
-    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
-    throw err;
-  }
-};
-
-export const changeWeightRequest = async (newValue: number): Promise<User> => {
-  try {
-    const response = await fetch(`${apiUrl}/api/v1/users/weight`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newValue),
-      credentials: "include",
-    });
-    await handleResponse(response);
-    return response.json();
-  } catch (err) {
-    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
-    throw err;
-  }
-};
 
 export const getStatsRequest = async (): Promise<UserStats | null> => {
   try {
