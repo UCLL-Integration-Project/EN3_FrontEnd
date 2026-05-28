@@ -1,4 +1,4 @@
-import { Activity, AuthenticationRequest, ConnectionDTO, ConnectionLevel, UpdateProfileInput, User, UserResponse, UserStats } from "@types";
+import { Activity, AuthenticationRequest, PrivacyInput, UpdateProfileInput, User, UserResponse, UserStats, ConnectionDTO, ConnectionLevel } from "@types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 if (!apiUrl) throw new Error("NEXT_PUBLIC_API_URL is not defined");
@@ -96,6 +96,22 @@ export const getMyProfileRequest = async (): Promise<UserResponse> => {
 export const updateProfileRequest = async (input: UpdateProfileInput): Promise<UserResponse> => {
   try {
     const response = await fetch(`${apiUrl}/api/v1/users/me`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+      credentials: "include",
+    });
+    await handleResponse(response);
+    return response.json();
+  } catch (err) {
+    if (err instanceof TypeError) throw new Error("NETWORK_ERROR");
+    throw err;
+  }
+};
+
+export const updatePrivacyRequest = async (input: PrivacyInput): Promise<UserResponse> => {
+  try {
+    const response = await fetch(`${apiUrl}/api/v1/users/me/privacy`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),

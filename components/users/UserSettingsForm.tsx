@@ -3,6 +3,7 @@
 import { useTranslations } from "use-intl";
 import AppBar from "@components/AppBar";
 import ChangePasswordForm from "@components/users/ChangePasswordForm";
+import PrivacySettingsCard from "@components/users/PrivacySettingsCard";
 import AiSettingsCard from "@components/ai/AiSettingsCard";
 import LogoutSection from "@components/users/LogoutSection";
 import LanguageChip from "@components/language";
@@ -27,6 +28,8 @@ export default function UserSettingsForm() {
         </div>
 
         <ChangePasswordForm />
+
+        <PrivacySettingsCard />
 
         <AiSettingsCard />
 

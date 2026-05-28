@@ -47,7 +47,7 @@ Then("I should see the {string} link", (text: string) => {
 Then("I should see the home screen navigation items", () => {
   cy.contains("Profile").should("exist");
   cy.contains("Connections").should("exist");
-  cy.contains("Settings").should("exist");
+  cy.get('[aria-label="Settings"]').should("exist");
 });
 
 Then("I should see the admin navigation item", () => {

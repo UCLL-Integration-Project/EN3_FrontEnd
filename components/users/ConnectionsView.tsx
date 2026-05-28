@@ -3,24 +3,13 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import useAuth from "@hooks/useAuth";
-import { useLocale, useTranslations } from "use-intl";
-import {
-  getConnectionsRequest,
-  removeConnectionRequest,
-  setConnectionLevelRequest,
-} from "@services/UserService";
+import { useTranslations } from "use-intl";
+import { getConnectionsRequest, removeConnectionRequest, setConnectionLevelRequest } from "@services/UserService";
 import { ConnectionDTO, ConnectionLevel } from "@types";
-import {
-  AlertCircle,
-  CheckCircle2,
-  ChevronDown,
-  Users,
-  UserMinus,
-} from "lucide-react";
+import { AlertCircle, CheckCircle2, ChevronDown, Users, UserMinus } from "lucide-react";
 import AppBar from "@components/AppBar";
 
 export default function ConnectionsView() {
-  const locale = useLocale();
   const { updateUser } = useAuth();
   const t = useTranslations("ConnectionsPage");
 
@@ -78,9 +67,7 @@ export default function ConnectionsView() {
   const handleSetLevel = async (username: string, level: ConnectionLevel) => {
     try {
       await setConnectionLevelRequest(username, level);
-      const updatedList = connections.map((c) =>
-        c.username === username ? { ...c, level } : c,
-      );
+      const updatedList = connections.map((c) => (c.username === username ? { ...c, level } : c));
       setConnections(updatedList);
       setExpandedLevel(null);
       flash(t("levelChanged", { name: username, level: formatLevel(level) }));
@@ -114,19 +101,24 @@ export default function ConnectionsView() {
             <h5 className="mb-3">{t("listTitle")}</h5>
             {connections.map((connection, i) => (
               <div key={connection.id}>
-                <div
-                  className={`flex items-center gap-3 py-3 ${
-                    i > 0 ? "border-t border-ink-100" : ""
-                  }`}
-                >
+                <div className={`flex items-center gap-3 py-3 ${i > 0 ? "border-t border-ink-100" : ""}`}>
                   <Link
-                    href={`/${locale}/profile/${connection.username}`}
+                    href={`/profile/${connection.username}`}
                     className="flex flex-1 items-center gap-3 min-w-0 no-underline active:opacity-70"
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100">
-                      <span className="text-[15px] font-semibold text-brand-600">
-                        {connection.firstName?.[0]?.toUpperCase() ?? "?"}
-                      </span>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 overflow-hidden">
+                      {connection.avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={connection.avatarUrl}
+                          alt={connection.firstName ?? connection.username}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-[15px] font-semibold text-brand-600">
+                          {connection.firstName?.[0]?.toUpperCase() ?? "?"}
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[15px] font-medium text-ink-900 truncate">
@@ -139,22 +131,16 @@ export default function ConnectionsView() {
                     <button
                       type="button"
                       onClick={() =>
-                        setExpandedLevel(
-                          expandedLevel === connection.username ? null : connection.username,
-                        )
+                        setExpandedLevel(expandedLevel === connection.username ? null : connection.username)
                       }
                       aria-label={t("changeLevelAriaLabel", { name: connection.username })}
                       className="icon-btn text-ink-600 flex items-center gap-1 px-2"
                     >
-                      <span className="text-[13px] font-medium">
-                        {formatLevel(connection.level)}
-                      </span>
+                      <span className="text-[13px] font-medium">{formatLevel(connection.level)}</span>
                       <ChevronDown
                         size={16}
                         aria-hidden="true"
-                        className={`transition-transform ${
-                          expandedLevel === connection.username ? "rotate-180" : ""
-                        }`}
+                        className={`transition-transform ${expandedLevel === connection.username ? "rotate-180" : ""}`}
                       />
                     </button>
                     <button

@@ -402,6 +402,7 @@
     "activity": "Activity",
     "noActivity": "No recent activity to show.",
     "editProfile": "Edit Profile",
+    "doneEditing": "Done",
     "editProfileDetails": "Edit Profile Details",
     "connect": "Connect",
     "connected": "Connected",
@@ -447,12 +448,25 @@
     "title": "Stats",
     "connections": "Connections",
     "timeActive": "Time Active",
+    "timeActiveHint": "since joining",
     "dataShared": "Data Shared",
+    "dataSharedHint": "activities logged",
     "refresh": "Refresh",
     "emptyTitle": "No activity yet",
     "emptySubtitle": "Start connecting to see your stats here.",
     "exploreConnections": "Explore connections",
     "loadError": "Failed to load stats."
+  },
+  "privacy": {
+    "title": "Data sharing",
+    "shareActivity": {
+      "label": "Share activity",
+      "hint": "Let visitors see your recent activity"
+    },
+    "shareConnectionCount": {
+      "label": "Share connection count",
+      "hint": "Let visitors see how many connections you have"
+    }
   },
   "offline": {
     "title": "You're offline",

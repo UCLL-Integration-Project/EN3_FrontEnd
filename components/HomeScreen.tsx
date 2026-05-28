@@ -36,7 +36,6 @@ export default function HomeScreen() {
   const [isPersonalized, setIsPersonalized] = useState(false);
   const [isInsightLoading, setIsInsightLoading] = useState(false);
   const t = useTranslations("home");
-  const locale = useLocale();
 
   const hour = new Date().getHours();
   const greetingKey = hour < 12 ? "greetingMorning" : hour < 18 ? "greetingAfternoon" : "greetingEvening";
@@ -82,7 +81,7 @@ export default function HomeScreen() {
             <p className="mt-1 text-[26px] font-extrabold tracking-tight text-white">{displayName}</p>
           </div>
           <Link
-            href={`/${locale}/settings`}
+            href={"/settings"}
             aria-label={t("nav.settings")}
             className="icon-btn -mr-1 mt-0.5 text-white/80 active:text-white"
           >
@@ -95,7 +94,7 @@ export default function HomeScreen() {
         {/* Companion device card — pairing CTA when not linked */}
         {!deviceLinked ? (
           <Link
-            href={`/${locale}/device/setup`}
+            href={"/device/setup"}
             className="animate-rise group flex items-center gap-4 rounded-sheet bg-secondary-50 px-4 py-4 shadow-card ring-1 ring-secondary-200 transition-transform duration-100 active:scale-[0.98] no-underline"
           >
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-secondary-500 text-white shadow-pop">
@@ -109,7 +108,7 @@ export default function HomeScreen() {
           </Link>
         ) : (
           <Link
-            href={`/${locale}/device`}
+            href="/device"
             className="animate-rise flex items-center gap-4 rounded-sheet bg-white px-4 py-4 shadow-card ring-1 ring-ink-100 transition-transform duration-100 active:scale-[0.98] no-underline"
           >
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
@@ -197,7 +196,7 @@ export default function HomeScreen() {
         {user?.role === "ADMIN" && (
           <div className="flex flex-col gap-2">
             <Link
-              href={`/${locale}/admin`}
+              href={"/admin"}
               className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-card ring-1 ring-ink-100 transition-transform duration-100 active:scale-[0.98] no-underline"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-secondary-50 text-secondary-600">
