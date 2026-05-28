@@ -42,6 +42,13 @@ Feature: Connection Levels Management
     Then "Alice Smith" should no longer be in the connections list
     And I should see 2 connections remaining
 
+  Scenario: Confirmation names the connection and can be cancelled
+    When I open the remove dialog for "Alice Smith"
+    Then I should see a confirmation naming "Alice Smith"
+    When I cancel the removal
+    Then "Alice Smith" should still be in the connections list
+    And I should see 3 connections
+
   Scenario: Empty connections list
     Given I am logged in with no connections
     Then I should see "You have no connections yet."

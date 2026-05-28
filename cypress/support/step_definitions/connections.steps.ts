@@ -112,7 +112,32 @@ When("I click the remove button for {string}", (fullName: string) => {
       cy.get("button[aria-label*='Remove']").click();
     });
 
+  // The remove icon now opens a confirmation dialog; confirm it.
+  cy.get("[role='dialog']").contains("button", "Remove connection").click();
   cy.wait("@removeConnectionRequest");
+});
+
+When("I open the remove dialog for {string}", (fullName: string) => {
+  const [firstName] = fullName.split(" ");
+  cy.contains(firstName)
+    .parent()
+    .parent()
+    .within(() => {
+      cy.get("button[aria-label*='Remove']").click();
+    });
+});
+
+When("I cancel the removal", () => {
+  cy.get("[role='dialog']").contains("button", "Cancel").click();
+});
+
+Then("I should see a confirmation naming {string}", (fullName: string) => {
+  cy.get("[role='dialog']").should("contain", fullName);
+});
+
+Then("{string} should still be in the connections list", (fullName: string) => {
+  const [firstName] = fullName.split(" ");
+  cy.contains(firstName).should("exist");
 });
 
 Then("I should see {int} connections", (count: number) => {

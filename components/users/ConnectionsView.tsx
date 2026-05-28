@@ -18,6 +18,9 @@ import {
   UserMinus,
 } from "lucide-react";
 import AppBar from "@components/AppBar";
+import RemoveConnectionSheet from "./RemoveConnectionSheet";
+
+const KNOWN_ERROR_CODES = ["NETWORK_ERROR", "USER_NOT_FOUND"] as const;
 
 export default function ConnectionsView() {
   const locale = useLocale();
@@ -30,6 +33,9 @@ export default function ConnectionsView() {
   const [expandedLevel, setExpandedLevel] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [pendingRemoval, setPendingRemoval] = useState<ConnectionDTO | null>(null);
+  const [removing, setRemoving] = useState(false);
+  const [removeError, setRemoveError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,15 +69,43 @@ export default function ConnectionsView() {
     return normalizedLevel.charAt(0) + normalizedLevel.slice(1).toLowerCase();
   };
 
-  const handleRemove = async (username: string) => {
+  const translateError = (err: unknown): string => {
+    const code = err instanceof Error ? err.message : "";
+    const known = (KNOWN_ERROR_CODES as readonly string[]).includes(code);
+    return t(`error.${known ? code : "UNKNOWN_ERROR"}`);
+  };
+
+  const requestRemove = (connection: ConnectionDTO) => {
+    setRemoveError(null);
+    setPendingRemoval(connection);
+  };
+
+  const cancelRemove = () => {
+    if (removing) return;
+    setPendingRemoval(null);
+    setRemoveError(null);
+  };
+
+  const confirmRemove = async () => {
+    if (!pendingRemoval) return;
+    const connection = pendingRemoval;
+    setRemoving(true);
+    setRemoveError(null);
     try {
-      await removeConnectionRequest(username);
-      const updatedList = connections.filter((c) => c.username !== username);
+      await removeConnectionRequest(connection.username);
+      const updatedList = connections.filter((c) => c.username !== connection.username);
       setConnections(updatedList);
       updateUser({ connectionsCount: updatedList.length });
-      flash(t("removed", { name: username }));
-    } catch {
-      setError(t("error.UNKNOWN_ERROR"));
+      setPendingRemoval(null);
+      flash(
+        t("removed", {
+          name: `${connection.firstName} ${connection.lastName}`.trim(),
+        }),
+      );
+    } catch (err) {
+      setRemoveError(translateError(err));
+    } finally {
+      setRemoving(false);
     }
   };
 
@@ -159,9 +193,9 @@ export default function ConnectionsView() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleRemove(connection.username)}
+                      onClick={() => requestRemove(connection)}
                       aria-label={t("removeAriaLabel", { name: connection.username })}
-                      className="icon-btn text-red-600 active:bg-red-100"
+                      className="icon-btn text-ink-400 active:bg-red-50 active:text-red-600"
                     >
                       <UserMinus size={20} aria-hidden="true" />
                     </button>
@@ -197,6 +231,16 @@ export default function ConnectionsView() {
           </div>
         )}
       </div>
+
+      {pendingRemoval && (
+        <RemoveConnectionSheet
+          connection={pendingRemoval}
+          loading={removing}
+          error={removeError}
+          onConfirm={confirmRemove}
+          onDismiss={cancelRemove}
+        />
+      )}
     </section>
   );
 }

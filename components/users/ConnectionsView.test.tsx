@@ -18,6 +18,14 @@ jest.mock("use-intl", () => ({
       "empty": "You have no connections yet.",
       "removeAriaLabel": `Remove connection with ${params?.name || "user"}`,
       "changeLevelAriaLabel": `Change connection level with ${params?.name || "user"}`,
+      "removed": `Removed ${params?.name || "user"} from your connections.`,
+      "confirmRemoveTitle": `Remove ${params?.name || "user"}?`,
+      "confirmRemoveBody": `You'll no longer be connected with ${params?.name || "user"} (@${params?.username || ""}).`,
+      "confirmRemoveConfirm": "Remove connection",
+      "confirmRemoveCancel": "Cancel",
+      "removing": "Removing...",
+      "closeAriaLabel": "Close",
+      "error.NETWORK_ERROR": "Unable to connect to the server.",
       "error.UNKNOWN_ERROR": "Something went wrong. Please try again."
     };
     return translations[key] || key;
@@ -206,7 +214,36 @@ describe("ConnectionsView", () => {
     });
   });
 
-  it("removes connection when remove button is clicked", async () => {
+  const openRemoveDialog = (username: string) => {
+    const removeButton = screen
+      .getAllByRole("button")
+      .find(
+        (btn) =>
+          btn.getAttribute("aria-label") === `Remove connection with ${username}`,
+      );
+    fireEvent.click(removeButton!);
+  };
+
+  it("opens a confirmation dialog naming the connection before removing", async () => {
+    (UserService.getConnectionsRequest as jest.Mock).mockResolvedValue(mockConnections);
+
+    render(<ConnectionsView />);
+
+    await waitFor(() => {
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+    });
+
+    openRemoveDialog("user1");
+
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+      expect(screen.getByText("Remove John Doe?")).toBeInTheDocument();
+    });
+    // The API must not be called until the user confirms.
+    expect(UserService.removeConnectionRequest).not.toHaveBeenCalled();
+  });
+
+  it("removes the connection and shows feedback after confirming", async () => {
     (UserService.getConnectionsRequest as jest.Mock).mockResolvedValue(mockConnections);
     (UserService.removeConnectionRequest as jest.Mock).mockResolvedValue(undefined);
 
@@ -216,15 +253,64 @@ describe("ConnectionsView", () => {
       expect(screen.getByText("John Doe")).toBeInTheDocument();
     });
 
-    const removeButtons = screen.getAllByRole("button").filter(btn =>
-      btn.getAttribute("aria-label")?.includes("Remove connection")
-    );
+    openRemoveDialog("user1");
 
-    fireEvent.click(removeButtons[0]);
+    const confirmButton = await screen.findByRole("button", { name: "Remove connection" });
+    fireEvent.click(confirmButton);
 
     await waitFor(() => {
       expect(UserService.removeConnectionRequest).toHaveBeenCalledWith("user1");
     });
+
+    await waitFor(() => {
+      expect(screen.getByText("Removed John Doe from your connections.")).toBeInTheDocument();
+      expect(screen.queryByText("John Doe")).not.toBeInTheDocument();
+    });
+  });
+
+  it("keeps the connection when the dialog is cancelled", async () => {
+    (UserService.getConnectionsRequest as jest.Mock).mockResolvedValue(mockConnections);
+
+    render(<ConnectionsView />);
+
+    await waitFor(() => {
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+    });
+
+    openRemoveDialog("user1");
+
+    const cancelButton = await screen.findByRole("button", { name: "Cancel" });
+    fireEvent.click(cancelButton);
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+    expect(UserService.removeConnectionRequest).not.toHaveBeenCalled();
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+  });
+
+  it("shows an error and keeps the connection when removal fails", async () => {
+    (UserService.getConnectionsRequest as jest.Mock).mockResolvedValue(mockConnections);
+    (UserService.removeConnectionRequest as jest.Mock).mockRejectedValue(
+      new Error("NETWORK_ERROR"),
+    );
+
+    render(<ConnectionsView />);
+
+    await waitFor(() => {
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+    });
+
+    openRemoveDialog("user1");
+
+    const confirmButton = await screen.findByRole("button", { name: "Remove connection" });
+    fireEvent.click(confirmButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("Unable to connect to the server.")).toBeInTheDocument();
+    });
+    // The connection stays in the list because removal failed.
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
   });
 
   it("handles errors gracefully", async () => {

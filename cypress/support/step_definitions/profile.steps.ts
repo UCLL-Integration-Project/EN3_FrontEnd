@@ -136,6 +136,8 @@ Given("I have a connection with {string}", (username: string) => {
 
 When("I remove the connection with {string}", (username: string) => {
   cy.get(`button[aria-label^='Remove connection'][aria-label*='${username}']`).click();
+  // Confirm the removal in the dialog that now appears.
+  cy.get("[role='dialog']").contains("button", "Remove connection").click();
   cy.wait("@removeConnectionRequest");
 });
 
