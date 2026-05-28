@@ -398,6 +398,11 @@
     "bioPlaceholder": "Tell us about yourself...",
     "avatarUrl": "Avatar URL",
     "bannerUrl": "Banner URL",
+    "location": "Location",
+    "locationPlaceholder": "City, Country",
+    "website": "Website",
+    "interests": "Interests",
+    "interestsPlaceholder": "e.g. football, cooking, music",
     "loadError": "Couldn't load this profile. Pull down to retry.",
     "connectSuccess": "You're now connected with {name}.",
     "connectError": "Couldn't send the connection request. Try again.",
@@ -451,6 +456,10 @@
     "shareConnectionCount": {
       "label": "Share connection count",
       "hint": "Let visitors see how many connections you have"
+    },
+    "shareExtendedProfile": {
+      "label": "Share extended profile",
+      "hint": "Let visitors see your location, website, and interests"
     }
   },
   "offline": {

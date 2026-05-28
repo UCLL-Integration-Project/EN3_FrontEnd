@@ -33,6 +33,10 @@ export type User = {
   connectionsCount?: number;
   shareActivity?: boolean;
   shareConnectionCount?: boolean;
+  shareExtendedProfile?: boolean;
+  location?: string;
+  website?: string;
+  interests?: string;
 };
 
 export type UserResponse = {
@@ -50,6 +54,10 @@ export type UserResponse = {
   role?: Role;
   shareActivity?: boolean | null;
   shareConnectionCount?: boolean | null;
+  shareExtendedProfile?: boolean | null;
+  location?: string | null;
+  website?: string | null;
+  interests?: string | null;
 };
 
 export type AuthenticationRequest = {
@@ -140,6 +148,9 @@ export type UpdateProfileInput = {
   bio?: string;
   avatarUrl?: string;
   bannerUrl?: string;
+  location?: string;
+  website?: string;
+  interests?: string;
 };
 
 export type UserStats = {
@@ -190,4 +201,5 @@ export type ConnectionDTO = UserResponse & {
 export type PrivacyInput = {
   shareActivity: boolean;
   shareConnectionCount: boolean;
+  shareExtendedProfile: boolean;
 };

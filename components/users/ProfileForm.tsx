@@ -34,6 +34,10 @@ export default function ProfileForm({ initialProfile, onSuccess, onCancel, onSav
     if (!profile.username.trim()) errs.username = t("validate.error");
     if (profile.age === undefined || profile.age <= 0) errs.age = t("validate.error");
     if (profile.bio && profile.bio.length > 200) errs.bio = "Bio is too long (max 200 chars)";
+    if (profile.location && profile.location.length > 100) errs.location = "Location is too long (max 100 chars)";
+    if (profile.website && !/^https?:\/\/.+/.test(profile.website)) errs.website = "Must start with https:// or http://";
+    if (profile.website && profile.website.length > 255) errs.website = "Website URL is too long (max 255 chars)";
+    if (profile.interests && profile.interests.length > 300) errs.interests = "Interests is too long (max 300 chars)";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -46,15 +50,18 @@ export default function ProfileForm({ initialProfile, onSuccess, onCancel, onSav
 
     try {
       const updated = await updateProfileRequest(profile);
-      updateUser({ 
-        firstName: updated.firstName, 
-        lastName: updated.lastName, 
+      updateUser({
+        firstName: updated.firstName,
+        lastName: updated.lastName,
         email: updated.email,
         username: updated.username,
         age: updated.age,
         bio: updated.bio,
         avatarUrl: updated.avatarUrl,
-        bannerUrl: updated.bannerUrl
+        bannerUrl: updated.bannerUrl,
+        location: updated.location ?? undefined,
+        website: updated.website ?? undefined,
+        interests: updated.interests ?? undefined,
       });
       setStatus([{ message: t("profileSuccess"), type: "success" }]);
       if (onSaved) {
@@ -67,6 +74,9 @@ export default function ProfileForm({ initialProfile, onSuccess, onCancel, onSav
           bio: updated.bio ?? "",
           avatarUrl: updated.avatarUrl ?? "",
           bannerUrl: updated.bannerUrl ?? "",
+          location: updated.location ?? "",
+          website: updated.website ?? "",
+          interests: updated.interests ?? "",
         });
       }
       if (onSuccess) {
@@ -126,6 +136,55 @@ export default function ProfileForm({ initialProfile, onSuccess, onCancel, onSav
               placeholder="https://..."
             />
           </div>
+        </div>
+
+        <div className="field">
+          <label htmlFor="locationInput" className="field-label">{ts("location")}</label>
+          <div className="field-control">
+            <input
+              id="locationInput"
+              type="text"
+              value={profile.location || ""}
+              onChange={(e) => setProfile((p) => ({ ...p, location: e.target.value }))}
+              className="field-input"
+              placeholder={ts("locationPlaceholder")}
+              autoCorrect="off"
+            />
+          </div>
+          <div className="field-error">{errors.location || ""}</div>
+        </div>
+
+        <div className="field">
+          <label htmlFor="websiteInput" className="field-label">{ts("website")}</label>
+          <div className="field-control">
+            <input
+              id="websiteInput"
+              type="url"
+              value={profile.website || ""}
+              onChange={(e) => setProfile((p) => ({ ...p, website: e.target.value }))}
+              className="field-input"
+              placeholder="https://..."
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
+            />
+          </div>
+          <div className="field-error">{errors.website || ""}</div>
+        </div>
+
+        <div className="field">
+          <label htmlFor="interestsInput" className="field-label">{ts("interests")}</label>
+          <div className="field-control h-auto py-3">
+            <textarea
+              id="interestsInput"
+              rows={2}
+              value={profile.interests || ""}
+              onChange={(e) => setProfile((p) => ({ ...p, interests: e.target.value }))}
+              className="field-input resize-none"
+              placeholder={ts("interestsPlaceholder")}
+            />
+          </div>
+          <div className="field-error">{errors.interests || ""}</div>
         </div>
 
         <hr className="my-2 border-ink-100" />

@@ -18,7 +18,7 @@ describe("PrivacySettingsCard", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useAuth as jest.Mock).mockReturnValue({
-      user: { shareActivity: false, shareConnectionCount: false },
+      user: { shareActivity: false, shareConnectionCount: false, shareExtendedProfile: true },
       updateUser: mockUpdateUser,
     });
     (useTranslations as jest.Mock).mockImplementation(() => (key: string) => {
@@ -28,6 +28,8 @@ describe("PrivacySettingsCard", () => {
         "shareActivity.hint": "Let visitors see your recent activity",
         "shareConnectionCount.label": "Share connection count",
         "shareConnectionCount.hint": "Let visitors see how many connections you have",
+        "shareExtendedProfile.label": "Share extended profile",
+        "shareExtendedProfile.hint": "Let visitors see your location, website, and interests",
       };
       return translations[key] ?? key;
     });
@@ -38,11 +40,12 @@ describe("PrivacySettingsCard", () => {
 
     expect(screen.getByTestId("share-activity-toggle")).not.toBeChecked();
     expect(screen.getByTestId("share-connection-count-toggle")).not.toBeChecked();
+    expect(screen.getByTestId("share-extended-profile-toggle")).toBeChecked();
   });
 
   it("renders checked when user has preferences enabled", () => {
     (useAuth as jest.Mock).mockReturnValue({
-      user: { shareActivity: true, shareConnectionCount: true },
+      user: { shareActivity: true, shareConnectionCount: true, shareExtendedProfile: true },
       updateUser: mockUpdateUser,
     });
 
@@ -50,6 +53,7 @@ describe("PrivacySettingsCard", () => {
 
     expect(screen.getByTestId("share-activity-toggle")).toBeChecked();
     expect(screen.getByTestId("share-connection-count-toggle")).toBeChecked();
+    expect(screen.getByTestId("share-extended-profile-toggle")).toBeChecked();
   });
 
   it("calls updatePrivacyRequest with correct payload when share activity is toggled", async () => {
@@ -63,12 +67,14 @@ describe("PrivacySettingsCard", () => {
       expect(updatePrivacyRequest).toHaveBeenCalledWith({
         shareActivity: true,
         shareConnectionCount: false,
+        shareExtendedProfile: true,
       });
     });
 
     expect(mockUpdateUser).toHaveBeenCalledWith({
       shareActivity: true,
       shareConnectionCount: false,
+      shareExtendedProfile: true,
     });
   });
 

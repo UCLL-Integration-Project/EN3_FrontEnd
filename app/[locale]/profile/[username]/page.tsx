@@ -10,6 +10,7 @@ import AppBar from "@components/AppBar";
 import ProfileHeader from "@components/users/ProfileHeader";
 import ActivityList from "@components/users/ActivityList";
 import { AuthSplash } from "@components/auth/RouteGuard";
+import { ExternalLink, MapPin } from "lucide-react";
 
 export default function PublicProfilePage() {
   const params = useParams();
@@ -70,12 +71,36 @@ export default function PublicProfilePage() {
 
       <div className="px-5 pb-8">
         <div className="flex flex-col gap-6 animate-rise">
-          <div className="card">
-            <h5 className="mb-2">{t("about")}</h5>
+          <div className="card flex flex-col gap-3">
+            <h5>{t("about")}</h5>
             <p className={targetUser.bio ? "text-ink-900" : "text-ink-400 italic"}>
               {targetUser.bio || t("noBio")}
             </p>
+            {targetUser.location && (
+              <div className="flex items-center gap-2 text-ink-500">
+                <MapPin size={14} aria-hidden="true" />
+                <span className="text-sm">{targetUser.location}</span>
+              </div>
+            )}
+            {targetUser.website && (
+              <a
+                href={targetUser.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-brand-600 no-underline text-sm"
+              >
+                <ExternalLink size={14} aria-hidden="true" />
+                <span className="truncate">{targetUser.website.replace(/^https?:\/\//, "")}</span>
+              </a>
+            )}
           </div>
+
+          {targetUser.interests && (
+            <div className="card">
+              <h5 className="mb-2">{t("interests")}</h5>
+              <p className="text-ink-900">{targetUser.interests}</p>
+            </div>
+          )}
 
           <ActivityList activities={activities} />
         </div>

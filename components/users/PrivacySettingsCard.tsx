@@ -42,28 +42,40 @@ export default function PrivacySettingsCard() {
   const [shareConnectionCount, setShareConnectionCount] = useState(
     () => user?.shareConnectionCount ?? false
   );
+  const [shareExtendedProfile, setShareExtendedProfile] = useState(
+    () => user?.shareExtendedProfile ?? true
+  );
 
   const handleChange = async (
-    field: "shareActivity" | "shareConnectionCount",
+    field: "shareActivity" | "shareConnectionCount" | "shareExtendedProfile",
     value: boolean
   ) => {
     const newShareActivity = field === "shareActivity" ? value : shareActivity;
     const newShareConnectionCount =
       field === "shareConnectionCount" ? value : shareConnectionCount;
+    const newShareExtendedProfile =
+      field === "shareExtendedProfile" ? value : shareExtendedProfile;
 
     if (field === "shareActivity") setShareActivity(value);
-    else setShareConnectionCount(value);
+    else if (field === "shareConnectionCount") setShareConnectionCount(value);
+    else setShareExtendedProfile(value);
 
     setSaving(true);
     try {
       await updatePrivacyRequest({
         shareActivity: newShareActivity,
         shareConnectionCount: newShareConnectionCount,
+        shareExtendedProfile: newShareExtendedProfile,
       });
-      updateUser({ shareActivity: newShareActivity, shareConnectionCount: newShareConnectionCount });
+      updateUser({
+        shareActivity: newShareActivity,
+        shareConnectionCount: newShareConnectionCount,
+        shareExtendedProfile: newShareExtendedProfile,
+      });
     } catch {
       if (field === "shareActivity") setShareActivity(!value);
-      else setShareConnectionCount(!value);
+      else if (field === "shareConnectionCount") setShareConnectionCount(!value);
+      else setShareExtendedProfile(!value);
     } finally {
       setSaving(false);
     }
@@ -87,6 +99,14 @@ export default function PrivacySettingsCard() {
         checked={shareConnectionCount}
         disabled={saving}
         onChange={(v) => handleChange("shareConnectionCount", v)}
+      />
+      <ToggleRow
+        testId="share-extended-profile-toggle"
+        label={t("shareExtendedProfile.label")}
+        hint={t("shareExtendedProfile.hint")}
+        checked={shareExtendedProfile}
+        disabled={saving}
+        onChange={(v) => handleChange("shareExtendedProfile", v)}
       />
     </div>
   );

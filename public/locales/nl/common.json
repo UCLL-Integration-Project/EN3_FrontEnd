@@ -398,6 +398,11 @@
     "bioPlaceholder": "Vertel ons iets over jezelf...",
     "avatarUrl": "Avatar URL",
     "bannerUrl": "Banner URL",
+    "location": "Locatie",
+    "locationPlaceholder": "Stad, Land",
+    "website": "Website",
+    "interests": "Interesses",
+    "interestsPlaceholder": "bijv. voetbal, koken, muziek",
     "loadError": "Kon dit profiel niet laden. Trek omlaag om opnieuw te proberen.",
     "connectSuccess": "Je bent nu verbonden met {name}.",
     "connectError": "Kon de verbindingsaanvraag niet verzenden. Probeer opnieuw.",
@@ -451,6 +456,10 @@
     "shareConnectionCount": {
       "label": "Aantal connecties delen",
       "hint": "Laat bezoekers zien hoeveel connecties je hebt"
+    },
+    "shareExtendedProfile": {
+      "label": "Uitgebreid profiel delen",
+      "hint": "Laat bezoekers je locatie, website en interesses zien"
     }
   },
   "offline": {

@@ -55,6 +55,10 @@ function toSafeUser(profile: UserResponse): User {
     role: profile.role,
     shareActivity: profile.shareActivity ?? false,
     shareConnectionCount: profile.shareConnectionCount ?? false,
+    shareExtendedProfile: profile.shareExtendedProfile ?? true,
+    location: profile.location ?? undefined,
+    website: profile.website ?? undefined,
+    interests: profile.interests ?? undefined,
   };
 }
 

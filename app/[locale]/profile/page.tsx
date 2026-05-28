@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getMyProfileRequest, getActivityRequest } from "@services/UserService";
 import { Activity, UpdateProfileInput } from "@types";
+import { ExternalLink, MapPin } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import { useTranslations } from "use-intl";
 import ProfileForm from "@components/users/ProfileForm";
@@ -27,6 +28,9 @@ function OwnProfile() {
     bio: "",
     avatarUrl: "",
     bannerUrl: "",
+    location: "",
+    website: "",
+    interests: "",
   });
 
   useEffect(() => {
@@ -43,11 +47,17 @@ function OwnProfile() {
           bio: data.bio ?? "",
           avatarUrl: data.avatarUrl ?? "",
           bannerUrl: data.bannerUrl ?? "",
+          location: data.location ?? "",
+          website: data.website ?? "",
+          interests: data.interests ?? "",
         });
         updateUser({
           ...(data.connectionsCount != null && { connectionsCount: data.connectionsCount }),
           avatarUrl: data.avatarUrl ?? undefined,
           bannerUrl: data.bannerUrl ?? undefined,
+          location: data.location ?? undefined,
+          website: data.website ?? undefined,
+          interests: data.interests ?? undefined,
         });
         if (data.username) {
           getActivityRequest(data.username).then((res) => {
@@ -95,12 +105,36 @@ function OwnProfile() {
           </div>
         ) : (
           <div className="flex flex-col gap-6 animate-rise">
-            <div className="card">
-              <h5 className="mb-2">{t("about")}</h5>
+            <div className="card flex flex-col gap-3">
+              <h5>{t("about")}</h5>
               <p className={profile.bio ? "text-ink-900" : "text-ink-400 italic"}>
                 {profile.bio || t("noBioSelf")}
               </p>
+              {profile.location && (
+                <div className="flex items-center gap-2 text-ink-500">
+                  <MapPin size={14} aria-hidden="true" />
+                  <span className="text-sm">{profile.location}</span>
+                </div>
+              )}
+              {profile.website && (
+                <a
+                  href={profile.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-brand-600 no-underline text-sm"
+                >
+                  <ExternalLink size={14} aria-hidden="true" />
+                  <span className="truncate">{profile.website.replace(/^https?:\/\//, "")}</span>
+                </a>
+              )}
             </div>
+
+            {profile.interests && (
+              <div className="card">
+                <h5 className="mb-2">{t("interests")}</h5>
+                <p className="text-ink-900">{profile.interests}</p>
+              </div>
+            )}
 
             <ActivityList activities={activities} />
           </div>
