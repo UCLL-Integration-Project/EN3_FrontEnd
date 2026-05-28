@@ -3,6 +3,7 @@
 import { useTranslations } from "use-intl";
 import AppBar from "@components/AppBar";
 import ChangePasswordForm from "@components/users/ChangePasswordForm";
+import AiSettingsCard from "@components/ai/AiSettingsCard";
 import LogoutSection from "@components/users/LogoutSection";
 import NotificationsSection from "@components/users/NotificationsSection";
 import LanguageChip from "@components/language";
@@ -29,6 +30,8 @@ export default function UserSettingsForm() {
         <NotificationsSection />
 
         <ChangePasswordForm />
+
+        <AiSettingsCard />
 
         <LogoutSection />
       </div>

@@ -49,3 +49,5 @@ cypress/reports
 # Serwist
 public/sw*
 public/swe-worker*
+
+.vscode/

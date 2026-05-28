@@ -49,6 +49,30 @@ npm run start
 | `npm run cypress:run`  | Headless Cypress                            |
 | `npm run lint`         | ESLint                                      |
 
+## Running the tests
+
+First make sure dependencies are installed:
+
+```bash
+npm install
+```
+
+Run the Jest unit tests:
+
+```bash
+npm test
+```
+
+Run the Cypress e2e tests headless:
+
+```bash
+npm run cypress:run
+```
+
+To run Cypress interactively, run `npm run cypress:open`, then click **E2E Testing** and select a feature to run manually.
+
+> Cypress requires the dev server to be running first. Start it in a separate terminal with `npm run dev`.
+
 ## Environment
 
 The frontend reads the backend base URL from `NEXT_PUBLIC_API_URL`. **Never hard-code the backend URL.**

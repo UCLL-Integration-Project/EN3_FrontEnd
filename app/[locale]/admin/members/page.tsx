@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminMemberSummary, Page } from "@types";
 import { listMembersRequest } from "@services/AdminService";
 import AppBar from "@components/AppBar";
 import MemberRow from "@components/admin/members/MemberRow";
-import FilterChips, { StatusFilter } from "@components/admin/members/FilterChips";
+import FilterChips, {
+  StatusFilter,
+} from "@components/admin/members/FilterChips";
 import MembersSearch from "@components/admin/members/MembersSearch";
 
 const PAGE_SIZE = 20;
@@ -18,7 +20,6 @@ const PAGE_SIZE = 20;
    send the user back here with the same filters preserved — see #9528. */
 export default function AdminMembersPage() {
   const t = useTranslations("admin.members");
-  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -31,20 +32,38 @@ export default function AdminMembersPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const total = data?.totalElements ?? 0;
+  const isEmpty = !isLoading && data && data.empty;
+  const ret = sp.toString(); // forwarded to the detail page so Back can restore the list
+
   // Update URL params; resets `page` to 0 when filters change unless the
   // caller explicitly keeps it (used by Prev/Next).
   const setParams = useCallback(
-    (next: { search?: string; status?: StatusFilter; page?: number }, keepPage = false) => {
+    (
+      next: { search?: string; status?: StatusFilter; page?: number },
+      keepPage = false,
+    ) => {
       const params = new URLSearchParams(sp.toString());
-      const apply = (key: string, value: string | undefined | null, omit: (v: string) => boolean) => {
+      const apply = (
+        key: string,
+        value: string | undefined | null,
+        omit: (v: string) => boolean,
+      ) => {
         if (value === undefined) return;
         if (value === null || omit(value)) params.delete(key);
         else params.set(key, value);
       };
       apply("search", next.search, (v) => v === "");
       apply("status", next.status, (v) => v === "ALL");
-      apply("page", next.page !== undefined ? String(next.page) : undefined, (v) => v === "0");
-      if (!keepPage && (next.search !== undefined || next.status !== undefined)) {
+      apply(
+        "page",
+        next.page !== undefined ? String(next.page) : undefined,
+        (v) => v === "0",
+      );
+      if (
+        !keepPage &&
+        (next.search !== undefined || next.status !== undefined)
+      ) {
         params.delete("page");
       }
       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
@@ -72,17 +91,19 @@ export default function AdminMembersPage() {
     };
   }, [search, status, page]);
 
-  const total = data?.totalElements ?? 0;
-  const isEmpty = !isLoading && data && data.empty;
-  const ret = sp.toString(); // forwarded to the detail page so Back can restore the list
-
   return (
     <section className="app-screen p-0">
-      <AppBar title={t("title")} backHref={`/${locale}`} />
+      <AppBar title={t("title")} backHref={`/admin`} />
 
       <div className="px-5 pt-4 space-y-3">
-        <MembersSearch value={search} onChange={(v) => setParams({ search: v })} />
-        <FilterChips value={status} onChange={(v) => setParams({ status: v })} />
+        <MembersSearch
+          value={search}
+          onChange={(v) => setParams({ search: v })}
+        />
+        <FilterChips
+          value={status}
+          onChange={(v) => setParams({ status: v })}
+        />
         {!isLoading && data && (
           <p className="text-xs text-ink-500">
             {t("results.count", { count: total })}
@@ -93,7 +114,9 @@ export default function AdminMembersPage() {
       <div className="px-5 pb-8">
         {error && (
           <p role="alert" className="status-error mt-4">
-            {t.has(`errors.${error}`) ? t(`errors.${error}` as never) : t("errors.UNKNOWN_ERROR")}
+            {t.has(`errors.${error}`)
+              ? t(`errors.${error}` as never)
+              : t("errors.UNKNOWN_ERROR")}
           </p>
         )}
 
@@ -109,7 +132,7 @@ export default function AdminMembersPage() {
             {data.content.map((m) => (
               <li key={m.id}>
                 <Link
-                  href={`/${locale}/admin/members/${m.id}${ret ? `?ret=${encodeURIComponent(ret)}` : ""}`}
+                  href={`/admin/members/${m.id}${ret ? `?ret=${encodeURIComponent(ret)}` : ""}`}
                   className="block no-underline"
                 >
                   <MemberRow member={m} />
@@ -135,7 +158,10 @@ export default function AdminMembersPage() {
             {t("pagination.previous")}
           </button>
           <span className="text-xs text-ink-500">
-            {t("pagination.page", { current: data.number + 1, total: data.totalPages })}
+            {t("pagination.page", {
+              current: data.number + 1,
+              total: data.totalPages,
+            })}
           </span>
           <button
             className="btn-ghost flex items-center gap-1"
