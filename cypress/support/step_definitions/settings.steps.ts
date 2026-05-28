@@ -15,6 +15,8 @@ When("I navigate to the settings page", () => {
       email: "admin@example.com",
       age: 30,
       bio: "",
+      shareActivity: false,
+      shareConnectionCount: false,
     },
   }).as("getProfile");
   cy.visitWithLocale("/settings");
@@ -47,11 +49,11 @@ When("I save my password", () => {
 });
 
 Then("I should see a password success message", () => {
-  cy.contains("Password changed successfully.", { timeout: 8000 }).should("be.visible");
+  cy.contains("Password changed successfully.", { timeout: 8000 }).scrollIntoView().should("be.visible");
 });
 
 Then("I should see a password error message", () => {
-  cy.contains("Current password is incorrect.", { timeout: 8000 }).should("be.visible");
+  cy.contains("Current password is incorrect.", { timeout: 8000 }).scrollIntoView().should("be.visible");
 });
 
 When("I click the logout button", () => {
@@ -65,4 +67,26 @@ Then("I should see a logout confirmation", () => {
 When("I confirm the logout", () => {
   cy.intercept("POST", "**/api/v1/auth/logout", { statusCode: 200 }).as("logout");
   cy.contains("button", "Confirm").click();
+});
+
+When("I toggle the share activity preference", () => {
+  cy.intercept("PUT", "**/api/v1/users/me/privacy", {
+    statusCode: 200,
+    body: {
+      id: 1,
+      username: "admin",
+      firstName: "Admin",
+      lastName: "User",
+      email: "admin@example.com",
+      age: 30,
+      bio: "",
+      shareActivity: true,
+      shareConnectionCount: false,
+    },
+  }).as("updatePrivacy");
+  cy.get("[data-testid='share-activity-toggle']").click();
+});
+
+Then("my sharing preferences should be saved", () => {
+  cy.wait("@updatePrivacy");
 });

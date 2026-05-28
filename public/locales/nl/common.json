@@ -387,6 +387,7 @@
     "activity": "Activiteit",
     "noActivity": "Geen recente activiteit om weer te geven.",
     "editProfile": "Profiel bewerken",
+    "doneEditing": "Klaar",
     "editProfileDetails": "Profielgegevens bewerken",
     "connect": "Connecteren",
     "connected": "Geconnecteerd",
@@ -438,6 +439,17 @@
     "emptySubtitle": "Begin met verbinden om je stats hier te zien.",
     "exploreConnections": "Verken verbindingen",
     "loadError": "Kon stats niet laden."
+  },
+  "privacy": {
+    "title": "Gegevens delen",
+    "shareActivity": {
+      "label": "Activiteit delen",
+      "hint": "Laat bezoekers je recente activiteit zien"
+    },
+    "shareConnectionCount": {
+      "label": "Aantal connecties delen",
+      "hint": "Laat bezoekers zien hoeveel connecties je hebt"
+    }
   },
   "offline": {
     "title": "Je bent offline",

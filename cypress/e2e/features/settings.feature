@@ -25,3 +25,8 @@ Feature: User settings page
     Then I should see a logout confirmation
     When I confirm the logout
     Then I should be redirected to the login page
+
+  Scenario: User can update data sharing preferences
+    When I navigate to the settings page
+    And I toggle the share activity preference
+    Then my sharing preferences should be saved
