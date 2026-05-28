@@ -18,9 +18,7 @@ export default function LanguageChip() {
   const [, startTransition] = useTransition();
   const t = useTranslations("language");
 
-  const currentLocale = params?.locale
-    ? (Array.isArray(params.locale) ? params.locale[0] : params.locale)
-    : "en";
+  const currentLocale = params?.locale ? (Array.isArray(params.locale) ? params.locale[0] : params.locale) : "en";
   const current = languages.find((l) => l.value === currentLocale) ?? languages[0];
 
   const handleLanguageChange = (newLocale: string) => {
@@ -28,7 +26,7 @@ export default function LanguageChip() {
     startTransition(() => {
       const path = pathname.split("/");
       path[1] = newLocale;
-      router.push(path.join("/"));
+      router.replace(path.join("/"));
     });
   };
 
@@ -56,7 +54,9 @@ export default function LanguageChip() {
                     className={`sheet-row flex ${active ? "sheet-row-active" : ""}`}
                   >
                     <span className="flex items-center gap-3">
-                      <span className="text-[22px]" aria-hidden="true">{lang.flag}</span>
+                      <span className="text-[22px]" aria-hidden="true">
+                        {lang.flag}
+                      </span>
                       <span>{lang.label}</span>
                     </span>
                     {active && <Check size={20} className="text-brand-600" aria-hidden="true" />}
