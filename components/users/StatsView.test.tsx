@@ -29,13 +29,13 @@ describe("StatsView", () => {
     });
   });
 
-  test("renders null while loading", () => {
+  test("shows loading skeleton while fetching", () => {
     (UserService.getStatsRequest as jest.Mock).mockImplementation(
       () => new Promise(() => {})
     );
 
-    const { container } = render(<StatsView />);
-    expect(container.firstChild).toBeNull();
+    const { getByTestId } = render(<StatsView />);
+    expect(getByTestId("stats-loading")).toBeInTheDocument();
   });
 
   test("renders stat values when data is returned", async () => {
