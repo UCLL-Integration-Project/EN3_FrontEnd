@@ -326,6 +326,18 @@
     "languageTitle": "Language",
     "languageBody": "Choose the language for the app interface."
   },
+  "notifications": {
+    "title": "Notifications",
+    "body": "Get a heads-up when something on CrossWave needs your attention.",
+    "turnOn": "Turn on notifications",
+    "turnOff": "Turn off notifications",
+    "denied": "Notifications are blocked. Enable them for this app in your browser or device settings, then come back here.",
+    "unsupported": "This browser doesn't support push notifications.",
+    "errorGeneric": "Something went wrong. Please try again.",
+    "errorMissingKey": "Push notifications aren't configured. Set NEXT_PUBLIC_VAPID_PUBLIC_KEY in .env.local and restart the dev server.",
+    "errorNetwork": "Can't reach the backend. Is it running?",
+    "errorServer": "The backend rejected the subscription. The /api/v1/notifications/subscribe endpoint isn't implemented yet (work package #8028)."
+  },
   "UserSettingsForm": {
     "title": "Settings",
     "profileTitle": "Profile",

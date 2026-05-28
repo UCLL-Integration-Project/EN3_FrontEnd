@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-declare const self: WorkerGlobalScope;
+declare const self: ServiceWorkerGlobalScope & WorkerGlobalScope;
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
@@ -33,3 +33,43 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+
+type PushPayload = { title?: string; body?: string; url?: string; tag?: string };
+
+self.addEventListener("push", (event) => {
+  let payload: PushPayload = {};
+  if (event.data) {
+    try {
+      payload = event.data.json() as PushPayload;
+    } catch {
+      payload = { body: event.data.text() };
+    }
+  }
+  const title = payload.title ?? "CrossWave";
+  const options: NotificationOptions = {
+    body: payload.body,
+    tag: payload.tag,
+    icon: "/icons/icon-192x192.png",
+    badge: "/icons/icon-192x192.png",
+    data: { url: payload.url ?? "/" },
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const data = event.notification.data as { url?: string } | undefined;
+  const targetUrl = data?.url ?? "/";
+  event.waitUntil(
+    (async () => {
+      const all = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      const targetPath = new URL(targetUrl, self.location.origin).pathname;
+      for (const client of all) {
+        if (new URL(client.url).pathname === targetPath) {
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(targetUrl);
+    })(),
+  );
+});
