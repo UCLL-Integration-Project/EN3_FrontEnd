@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Run Semgrep
         run: |
-          python -m pip install semgrep
+          python3 -m pip install semgrep
           semgrep scan --config auto
 
   test:
