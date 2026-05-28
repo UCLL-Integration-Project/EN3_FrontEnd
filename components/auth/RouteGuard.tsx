@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useLocale } from "next-intl";
 import { Waves } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import { useDevice } from "@context/DeviceContext";
@@ -40,7 +39,6 @@ export function AuthSplash() {
 export function AuthGuard({ children }: { children: ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
-  const locale = useLocale();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -51,9 +49,9 @@ export function AuthGuard({ children }: { children: ReactNode }) {
       const search = searchParams.toString();
       const dest = search ? `${pathname}?${search}` : pathname;
       const query = new URLSearchParams({ next: dest }).toString();
-      router.replace(`/${locale}/login?${query}`);
+      router.replace(`/login?${query}`);
     }
-  }, [isLoading, user, locale, pathname, searchParams, router]);
+  }, [isLoading, user, pathname, searchParams, router]);
 
   // Still resolving, or signed-out and about to be redirected.
   if (isLoading || !user) return <AuthSplash />;
@@ -68,15 +66,14 @@ export function AuthGuard({ children }: { children: ReactNode }) {
 export function GuestGuard({ children }: { children: ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
-  const locale = useLocale();
 
   useEffect(() => {
     if (!isLoading && user) {
       // Honour a ?next= destination if present, else go home.
       const next = new URLSearchParams(window.location.search).get("next");
-      router.replace(sanitizeReturnPath(next, `/${locale}`));
+      router.replace(sanitizeReturnPath(next, `/`));
     }
-  }, [isLoading, user, locale, router]);
+  }, [isLoading, user, router]);
 
   // Still resolving, or signed-in and about to be redirected.
   if (isLoading || user) return <AuthSplash />;
@@ -94,13 +91,12 @@ export function GuestGuard({ children }: { children: ReactNode }) {
 export function DeviceGuard({ children }: { children: ReactNode }) {
   const { deviceLinked, isLoading } = useDevice();
   const router = useRouter();
-  const locale = useLocale();
 
   useEffect(() => {
     if (!isLoading && !deviceLinked) {
-      router.replace(`/${locale}/device/setup`);
+      router.replace("/device/setup");
     }
-  }, [isLoading, deviceLinked, locale, router]);
+  }, [isLoading, deviceLinked, router]);
 
   // Still resolving, or no device and about to be redirected to setup.
   if (isLoading || !deviceLinked) return <AuthSplash />;
@@ -118,13 +114,12 @@ export function DeviceGuard({ children }: { children: ReactNode }) {
 export function SetupGuard({ children }: { children: ReactNode }) {
   const { deviceLinked, isLoading } = useDevice();
   const router = useRouter();
-  const locale = useLocale();
 
   useEffect(() => {
     if (!isLoading && deviceLinked) {
-      router.replace(`/${locale}/device`);
+      router.replace("/device");
     }
-  }, [isLoading, deviceLinked, locale, router]);
+  }, [isLoading, deviceLinked, router]);
 
   // Still resolving, or already linked and about to be redirected to /device.
   if (isLoading || deviceLinked) return <AuthSplash />;

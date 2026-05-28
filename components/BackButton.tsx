@@ -1,7 +1,6 @@
 "use client";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
 
 type Props = { href?: string; label?: string };
 
@@ -11,8 +10,7 @@ type Props = { href?: string; label?: string };
  * home — confusing for any flow deeper than one level. */
 export default function BackButton({ href, label = "Back" }: Props) {
   const router = useRouter();
-  const locale = useLocale();
-  const fallback = href ?? `/${locale}`;
+  const fallback = href ?? "/";
 
   const onClick = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {

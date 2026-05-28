@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "use-intl";
 import { getStatsRequest } from "@services/UserService";
 import type { UserStats } from "@types";
 import AppBar from "@components/AppBar";
@@ -16,7 +16,6 @@ function formatTimeActive(minutes: number): string {
 
 export default function StatsView() {
   const t = useTranslations("StatsPage");
-  const locale = useLocale();
   const [stats, setStats] = useState<UserStats | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
@@ -53,13 +52,10 @@ export default function StatsView() {
         )}
 
         {stats === null && !error && (
-          <div
-            data-testid="stats-empty"
-            className="card flex flex-col items-center gap-3 py-10 text-center"
-          >
+          <div data-testid="stats-empty" className="card flex flex-col items-center gap-3 py-10 text-center">
             <p className="text-xl font-semibold">{t("emptyTitle")}</p>
             <p className="text-sm">{t("emptySubtitle")}</p>
-            <Link href={`/${locale}/connections`} className="btn no-underline">
+            <Link href={"/connections"} className="btn no-underline">
               {t("exploreConnections")}
             </Link>
           </div>
