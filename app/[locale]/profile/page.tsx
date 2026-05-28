@@ -44,9 +44,11 @@ function OwnProfile() {
           avatarUrl: data.avatarUrl ?? "",
           bannerUrl: data.bannerUrl ?? "",
         });
-        if (data.connectionsCount !== undefined) {
-          updateUser({ connectionsCount: data.connectionsCount });
-        }
+        updateUser({
+          ...(data.connectionsCount != null && { connectionsCount: data.connectionsCount }),
+          avatarUrl: data.avatarUrl ?? undefined,
+          bannerUrl: data.bannerUrl ?? undefined,
+        });
         if (data.username) {
           getActivityRequest(data.username).then((res) => {
             if (!cancelled) setActivities(res);
@@ -72,6 +74,7 @@ function OwnProfile() {
         isOwnProfile
         activityCount={activities.length}
         onEdit={() => setIsEditing(true)}
+        isEditing={isEditing}
       />
 
       <div className="px-5 pb-8">
@@ -87,6 +90,7 @@ function OwnProfile() {
               initialProfile={profile}
               onSuccess={() => setIsEditing(false)}
               onCancel={() => setIsEditing(false)}
+              onSaved={setProfile}
             />
           </div>
         ) : (

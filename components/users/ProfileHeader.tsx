@@ -12,6 +12,7 @@ type Props = {
   /** Count from the activity feed — replaces the hardcoded 0 in the badge. */
   activityCount?: number;
   onEdit?: () => void;
+  isEditing?: boolean;
 };
 
 /* Profile hero — banner, avatar, name, action button, stats row.
@@ -27,6 +28,7 @@ export default function ProfileHeader({
   isOwnProfile,
   activityCount = 0,
   onEdit,
+  isEditing = false,
 }: Props) {
   const t = useTranslations("social");
   const [isConnected, setIsConnected] = useState(false);
@@ -94,13 +96,15 @@ export default function ProfileHeader({
           {/* Action button */}
           <div className="pb-2">
             {isOwnProfile ? (
-              <button
-                type="button"
-                onClick={onEdit}
-                className="chip bg-brand-soft text-brand-700 ring-brand-300"
-              >
-                {t("editProfile")}
-              </button>
+              !isEditing && (
+                <button
+                  type="button"
+                  onClick={onEdit}
+                  className="chip bg-brand-soft text-brand-700 ring-brand-300"
+                >
+                  {t("editProfile")}
+                </button>
+              )
             ) : (
               <button
                 type="button"
@@ -124,20 +128,24 @@ export default function ProfileHeader({
           <p className="text-ink-500">@{user.username}</p>
 
           <div className="mt-4 flex gap-6 border-y border-ink-50 py-3">
-            <div className="flex flex-col">
-              <span className="font-bold text-ink-900">
-                {(user.connectionsCount || 0) + (isConnected ? 1 : 0)}
-              </span>
-              <span className="text-[12px] text-ink-500 uppercase tracking-wider">
-                {t("connections")}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-ink-900">{activityCount}</span>
-              <span className="text-[12px] text-ink-500 uppercase tracking-wider">
-                {t("activity")}
-              </span>
-            </div>
+            {user.connectionsCount != null && (
+              <div className="flex flex-col">
+                <span className="font-bold text-ink-900">
+                  {user.connectionsCount + (isConnected ? 1 : 0)}
+                </span>
+                <span className="text-[12px] text-ink-500 uppercase tracking-wider">
+                  {t("connections")}
+                </span>
+              </div>
+            )}
+            {(isOwnProfile || user.shareActivity !== false) && (
+              <div className="flex flex-col">
+                <span className="font-bold text-ink-900">{activityCount}</span>
+                <span className="text-[12px] text-ink-500 uppercase tracking-wider">
+                  {t("activity")}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

@@ -31,6 +31,8 @@ export type User = {
   avatarUrl?: string;
   bannerUrl?: string;
   connectionsCount?: number;
+  shareActivity?: boolean;
+  shareConnectionCount?: boolean;
 };
 
 export type UserResponse = {
@@ -44,8 +46,10 @@ export type UserResponse = {
   bio?: string;
   avatarUrl?: string;
   bannerUrl?: string;
-  connectionsCount?: number;
+  connectionsCount?: number | null;
   role?: Role;
+  shareActivity?: boolean | null;
+  shareConnectionCount?: boolean | null;
 };
 
 export type AuthenticationRequest = {
@@ -181,4 +185,9 @@ export type ConnectionLevel = "CONTACT" | "FRIEND" | "BEST_FRIEND";
 
 export type ConnectionDTO = UserResponse & {
   level: ConnectionLevel;
+};
+
+export type PrivacyInput = {
+  shareActivity: boolean;
+  shareConnectionCount: boolean;
 };
