@@ -1,3 +1,5 @@
+# CI pipeline — runs on the school's self-hosted GitHub Actions runner.
+# All jobs use [self-hosted]; ubuntu-latest is NOT available.
 name: CI
 
 on:
@@ -78,7 +80,7 @@ jobs:
 
   # docker-build:
   #   name: Build Docker Image (validation)
-  #   runs-on: ubuntu-latest
+  #   runs-on: [self-hosted]
   #   needs: test
 
   #   steps:
