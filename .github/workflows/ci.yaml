@@ -19,8 +19,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Run Semgrep
         run: |
-          python3 -m pip install semgrep
-          semgrep scan --config auto
+          python3 -m venv /tmp/semgrep-venv
+          /tmp/semgrep-venv/bin/pip install --quiet semgrep
+          /tmp/semgrep-venv/bin/semgrep scan --config auto
 
   test:
     name: Run Tests
@@ -30,11 +31,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      # Node.js is pre-installed on the school's self-hosted runner.
+      # Verify the version is compatible (must be >= 20).
+      - name: Verify Node.js version
+        run: |
+          node --version
+          npm --version
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
         with:
-          node-version: 20
-          cache: "npm"
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
 
       - name: Install dependencies
         run: npm ci
