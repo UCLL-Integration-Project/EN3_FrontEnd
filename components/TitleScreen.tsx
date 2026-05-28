@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Waves } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import LanguageChip from "@components/language";
@@ -10,7 +10,6 @@ import { AuthSplash } from "@components/auth/RouteGuard";
 export default function TitleScreen() {
   const { user, isLoading } = useAuth();
   const t = useTranslations("home");
-  const locale = useLocale();
 
   // Wait for the session check before choosing landing vs. home.
   if (isLoading) return <AuthSplash />;
@@ -23,10 +22,7 @@ export default function TitleScreen() {
   return (
     <section className="app-screen bg-wave">
       <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
-        <span
-          className="brand-mark h-24 w-24 animate-wave"
-          aria-hidden="true"
-        >
+        <span className="brand-mark h-24 w-24 animate-wave" aria-hidden="true">
           <Waves size={52} strokeWidth={2.25} />
         </span>
         <h1 className="max-w-[340px]">{t("welcome")}</h1>
@@ -34,13 +30,10 @@ export default function TitleScreen() {
       </div>
 
       <div className="action-dock flex flex-col gap-3">
-        <Link href={`/${locale}/signup`} className="btn-cta no-underline text-center">
+        <Link href="/signup" className="btn-cta no-underline text-center">
           {t("cta.getStarted")}
         </Link>
-        <Link
-          href={`/${locale}/login`}
-          className="btn-ghost w-full justify-center py-4 no-underline text-center"
-        >
+        <Link href="/login" className="btn-ghost w-full justify-center py-4 no-underline text-center">
           {t("cta.haveAccount")}
         </Link>
         <div className="flex justify-center pt-1">

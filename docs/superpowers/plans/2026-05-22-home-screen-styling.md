@@ -24,7 +24,7 @@ The full replacement content is below. Paste it in one shot — the component is
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   BarChart2,
   ChevronRight,
@@ -40,7 +40,6 @@ import useAuth from "@hooks/useAuth";
 export default function HomeScreen() {
   const { user, logout } = useAuth();
   const t = useTranslations("home");
-  const locale = useLocale();
   const router = useRouter();
 
   const hour = new Date().getHours();
@@ -50,13 +49,13 @@ export default function HomeScreen() {
   const displayName = user?.firstName?.trim() || user?.username?.trim() || "";
 
   const navItems = [
-    { icon: User,     label: t("nav.profile"),     href: `/${locale}/profile` },
-    { icon: Users,    label: t("nav.connections"),  href: `/${locale}/connections` },
-    { icon: Cpu,      label: t("nav.device"),       href: `/${locale}/device` },
-    { icon: BarChart2,label: t("nav.stats"),        href: `/${locale}/stats` },
-    { icon: Settings, label: t("nav.settings"),     href: `/${locale}/settings` },
+    { icon: User,     label: t("nav.profile"),     href: "/profile" },
+    { icon: Users,    label: t("nav.connections"),  href: "/connections" },
+    { icon: Cpu,      label: t("nav.device"),       href: "/device" },
+    { icon: BarChart2,label: t("nav.stats"),        href: "/stats" },
+    { icon: Settings, label: t("nav.settings"),     href: "/settings" },
     ...(user?.role === "ADMIN"
-      ? [{ icon: Shield, label: t("nav.admin"), href: `/${locale}/admin/members` }]
+      ? [{ icon: Shield, label: t("nav.admin"), href: "/admin/members" }]
       : []),
   ] as { icon: typeof User; label: string; href: string }[];
 
@@ -113,7 +112,7 @@ export default function HomeScreen() {
           type="button"
           onClick={async () => {
             await logout();
-            router.replace(`/${locale}/login`);
+            router.replace("/login");
           }}
           className="tap flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-[13px] font-semibold text-ink-500 ring-1 ring-ink-200 transition-colors duration-100 active:bg-ink-100"
         >

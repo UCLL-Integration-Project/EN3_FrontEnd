@@ -28,7 +28,7 @@ export default function PublicProfilePage() {
     if (!username) return;
 
     if (currentUser?.username === username) {
-      router.replace(`/${locale}/profile`);
+      router.replace("/profile");
       return;
     }
 
@@ -48,11 +48,9 @@ export default function PublicProfilePage() {
   if (notFound || !targetUser) {
     return (
       <section className="app-screen p-0">
-        <AppBar title={t("notFoundTitle")} backHref={`/${locale}/connections`} />
+        <AppBar title={t("notFoundTitle")} backHref="/connections" />
         <div className="flex flex-1 items-center justify-center p-10 text-center">
-          <p className="text-ink-400">
-            {t("notFoundBody", { username })}
-          </p>
+          <p className="text-ink-400">{t("notFoundBody", { username })}</p>
         </div>
       </section>
     );
@@ -62,19 +60,13 @@ export default function PublicProfilePage() {
     <section className="app-screen p-0">
       <AppBar transparent backHref={`/${locale}/connections`} />
 
-      <ProfileHeader
-        user={targetUser}
-        isOwnProfile={false}
-        activityCount={activities.length}
-      />
+      <ProfileHeader user={targetUser} isOwnProfile={false} activityCount={activities.length} />
 
       <div className="px-5 pb-8">
         <div className="flex flex-col gap-6 animate-rise">
           <div className="card">
             <h5 className="mb-2">{t("about")}</h5>
-            <p className={targetUser.bio ? "text-ink-900" : "text-ink-400 italic"}>
-              {targetUser.bio || t("noBio")}
-            </p>
+            <p className={targetUser.bio ? "text-ink-900" : "text-ink-400 italic"}>{targetUser.bio || t("noBio")}</p>
           </div>
 
           <ActivityList activities={activities} />

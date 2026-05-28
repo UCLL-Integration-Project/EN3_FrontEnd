@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
 
 type Props = {
   insight: string;
@@ -11,29 +10,19 @@ type Props = {
 
 export default function AiInsightPopup({ insight, onDismiss }: Props) {
   const t = useTranslations("ai");
-  const locale = useLocale();
   const router = useRouter();
 
   const handleAskMore = () => {
     onDismiss();
-    router.push(`/${locale}/ai`);
+    router.push("/ai");
   };
 
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="sheet-backdrop z-40"
-        onClick={onDismiss}
-        aria-hidden="true"
-      />
+      <div className="sheet-backdrop z-40" onClick={onDismiss} aria-hidden="true" />
       {/* Bottom sheet */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="ai-insight-eyebrow"
-        className="sheet-bottom z-50"
-      >
+      <div role="dialog" aria-modal="true" aria-labelledby="ai-insight-eyebrow" className="sheet-bottom z-50">
         <div className="sheet-grabber" />
         <div className="relative px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-2">
           {/* Dismiss */}

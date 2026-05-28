@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "use-intl";
 import { Activity, Clock, RefreshCw, Users } from "lucide-react";
 import { getStatsRequest } from "@services/UserService";
 import type { UserStats } from "@types";
@@ -18,7 +18,6 @@ function formatTimeActive(minutes: number): string {
 
 export default function StatsView() {
   const t = useTranslations("StatsPage");
-  const locale = useLocale();
   const [stats, setStats] = useState<UserStats | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
@@ -70,13 +69,10 @@ export default function StatsView() {
 
         {/* Empty state */}
         {stats === null && !error && (
-          <div
-            data-testid="stats-empty"
-            className="card flex flex-col items-center gap-3 py-10 text-center"
-          >
+          <div data-testid="stats-empty" className="card flex flex-col items-center gap-3 py-10 text-center">
             <p className="text-xl font-semibold">{t("emptyTitle")}</p>
             <p className="text-sm text-ink-500">{t("emptySubtitle")}</p>
-            <Link href={`/${locale}/connections`} className="btn no-underline">
+            <Link href={"/connections"} className="btn no-underline">
               {t("exploreConnections")}
             </Link>
           </div>
@@ -110,11 +106,7 @@ export default function StatsView() {
               data-testid="stats-refresh"
               onClick={() => setTick((c) => c + 1)}
             >
-              <RefreshCw
-                size={15}
-                aria-hidden="true"
-                className={isRefreshing ? "animate-spin" : ""}
-              />
+              <RefreshCw size={15} aria-hidden="true" className={isRefreshing ? "animate-spin" : ""} />
               {t("refresh")}
             </button>
           </>
