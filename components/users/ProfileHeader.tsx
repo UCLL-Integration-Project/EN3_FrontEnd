@@ -12,6 +12,7 @@ type Props = {
   /** Count from the activity feed — replaces the hardcoded 0 in the badge. */
   activityCount?: number;
   onEdit?: () => void;
+  isEditing?: boolean;
 };
 
 /* Profile hero — banner, avatar, name, action button, stats row.
@@ -27,6 +28,7 @@ export default function ProfileHeader({
   isOwnProfile,
   activityCount = 0,
   onEdit,
+  isEditing = false,
 }: Props) {
   const t = useTranslations("social");
   const [isConnected, setIsConnected] = useState(false);
@@ -94,13 +96,15 @@ export default function ProfileHeader({
           {/* Action button */}
           <div className="pb-2">
             {isOwnProfile ? (
-              <button
-                type="button"
-                onClick={onEdit}
-                className="chip bg-brand-soft text-brand-700 ring-brand-300"
-              >
-                {t("editProfile")}
-              </button>
+              !isEditing && (
+                <button
+                  type="button"
+                  onClick={onEdit}
+                  className="chip bg-brand-soft text-brand-700 ring-brand-300"
+                >
+                  {t("editProfile")}
+                </button>
+              )
             ) : (
               <button
                 type="button"

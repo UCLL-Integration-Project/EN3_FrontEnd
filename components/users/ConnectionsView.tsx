@@ -123,10 +123,19 @@ export default function ConnectionsView() {
                     href={`/${locale}/profile/${connection.username}`}
                     className="flex flex-1 items-center gap-3 min-w-0 no-underline active:opacity-70"
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100">
-                      <span className="text-[15px] font-semibold text-brand-600">
-                        {connection.firstName?.[0]?.toUpperCase() ?? "?"}
-                      </span>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 overflow-hidden">
+                      {connection.avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={connection.avatarUrl}
+                          alt={connection.firstName ?? connection.username}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-[15px] font-semibold text-brand-600">
+                          {connection.firstName?.[0]?.toUpperCase() ?? "?"}
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[15px] font-medium text-ink-900 truncate">
