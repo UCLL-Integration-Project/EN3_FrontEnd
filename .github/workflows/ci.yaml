@@ -21,15 +21,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Install pip (bootstrap) and Semgrep
-        run: |
-          # The school server ships Python without pip — bootstrap it from the
-          # official installer (no root, no venv, no system packages needed).
-          curl -sS https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
-          python3 /tmp/get-pip.py --user --quiet
-          ~/.local/bin/pip install --user --quiet semgrep
       - name: Run Semgrep
-        run: ~/.local/bin/semgrep scan --config auto
+        run: |
+          # pipx manages its own isolated venv — sidesteps PEP 668 entirely.
+          # 'pipx run' downloads and runs semgrep without a permanent install.
+          pipx run semgrep scan --config auto
 
   test:
     name: Run Tests
