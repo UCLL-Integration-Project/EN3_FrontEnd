@@ -1,13 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useAuth from "@hooks/useAuth";
 import { useTranslations } from "use-intl";
 import { getConnectionsRequest, removeConnectionRequest, setConnectionLevelRequest } from "@services/UserService";
 import { ConnectionDTO, ConnectionLevel } from "@types";
-import { AlertCircle, CheckCircle2, ChevronDown, Users, UserMinus } from "lucide-react";
+import { AlertCircle, CheckCircle2, ChevronDown, Users, UserMinus, SlidersHorizontal, X } from "lucide-react";
 import AppBar from "@components/AppBar";
+import SortBar, { SortState } from "@components/Sort&Filter/SortBar";
+import FilterBar, { LevelFilter } from "@components/Sort&Filter/FilterBar";
+
+const DEFAULT_SORT: SortState = { field: "name", dir: "asc" };
+const DEFAULT_LEVEL: LevelFilter = "ALL";
+const DEFAULT_SEARCH = "";
 
 export default function ConnectionsView() {
   const { updateUser } = useAuth();
@@ -19,6 +25,24 @@ export default function ConnectionsView() {
   const [expandedLevel, setExpandedLevel] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Filter + sort state
+  const [search, setSearch] = useState(DEFAULT_SEARCH);
+  const [levelFilter, setLevelFilter] = useState<LevelFilter>(DEFAULT_LEVEL);
+  const [sort, setSort] = useState<SortState>(DEFAULT_SORT);
+  const [showControls, setShowControls] = useState(false);
+
+  const isDirty =
+    search !== DEFAULT_SEARCH ||
+    levelFilter !== DEFAULT_LEVEL ||
+    sort.field !== DEFAULT_SORT.field ||
+    sort.dir !== DEFAULT_SORT.dir;
+
+  function resetAll() {
+    setSearch(DEFAULT_SEARCH);
+    setLevelFilter(DEFAULT_LEVEL);
+    setSort(DEFAULT_SORT);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -76,6 +100,48 @@ export default function ConnectionsView() {
     }
   };
 
+  // Derived: filtered + sorted list
+  type SortableConnection = ConnectionDTO & { createdAt?: string | number; lastActiveAt?: string | number };
+
+  const displayedConnections = useMemo(() => {
+    let list: SortableConnection[] = [...connections];
+
+    // Filter by search
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter(
+        (c) =>
+          c.username.toLowerCase().includes(q) ||
+          (c.firstName ?? "").toLowerCase().includes(q) ||
+          (c.lastName ?? "").toLowerCase().includes(q),
+      );
+    }
+
+    // Filter by level
+    if (levelFilter !== "ALL") {
+      list = list.filter((c) => (c.level || "CONTACT") === levelFilter);
+    }
+
+    // Sort
+    list.sort((a, b) => {
+      let cmp = 0;
+      if (sort.field === "name") {
+        const aName = `${a.firstName ?? ""} ${a.lastName ?? ""}`.trim().toLowerCase() || a.username;
+        const bName = `${b.firstName ?? ""} ${b.lastName ?? ""}`.trim().toLowerCase() || b.username;
+        cmp = aName.localeCompare(bName);
+      } else if (sort.field === "dateAdded") {
+        cmp = (a.createdAt ?? 0) < (b.createdAt ?? 0) ? -1 : 1;
+      } else if (sort.field === "recentlyActive") {
+        cmp = (a.lastActiveAt ?? 0) < (b.lastActiveAt ?? 0) ? -1 : 1;
+      }
+      return sort.dir === "asc" ? cmp : -cmp;
+    });
+
+    return list;
+  }, [connections, search, levelFilter, sort]);
+
+  const activeFilterCount = [search !== DEFAULT_SEARCH, levelFilter !== DEFAULT_LEVEL].filter(Boolean).length;
+
   return (
     <section className="app-screen p-0">
       <AppBar title={t("title")} showBack={false} />
@@ -88,6 +154,49 @@ export default function ConnectionsView() {
           </div>
         )}
 
+        {/* Controls toggle + reset row */}
+        {fetched && connections.length > 0 && (
+          <div className="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setShowControls((v) => !v)}
+              aria-expanded={showControls}
+              aria-controls="connections-controls"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ink-200 bg-white text-[13px] font-medium text-ink-700 active:bg-ink-100"
+            >
+              <SlidersHorizontal size={14} aria-hidden="true" />
+              {t("filterSort")}
+              {activeFilterCount > 0 && (
+                <span className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] text-white font-bold">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+
+            {isDirty && (
+              <button
+                type="button"
+                onClick={resetAll}
+                className="flex items-center gap-1 text-[12px] text-ink-500 underline underline-offset-2 active:text-ink-800"
+              >
+                <X size={12} aria-hidden="true" />
+                {t("resetAll")}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Expandable controls panel */}
+        {fetched && connections.length > 0 && showControls && (
+          <div id="connections-controls" className="card flex flex-col gap-3 py-3">
+            <FilterBar search={search} onSearchChange={setSearch} level={levelFilter} onLevelChange={setLevelFilter} />
+            <div className="border-t border-ink-100 pt-3">
+              <SortBar sort={sort} onSortChange={setSort} />
+            </div>
+          </div>
+        )}
+
+        {/* Empty (no connections at all) */}
         {fetched && !error && connections.length === 0 && (
           <div className="card flex flex-col items-center gap-3 py-10 text-center">
             <Users size={40} className="text-ink-300" aria-hidden="true" />
@@ -96,10 +205,34 @@ export default function ConnectionsView() {
           </div>
         )}
 
-        {fetched && connections.length > 0 && (
+        {/* Empty (no matches after filter/sort) */}
+        {fetched && connections.length > 0 && displayedConnections.length === 0 && (
+          <div className="card flex flex-col items-center gap-3 py-10 text-center">
+            <Users size={40} className="text-ink-300" aria-hidden="true" />
+            <p className="text-[15px] font-medium text-ink-700">{t("noMatches")}</p>
+            <p className="text-[12px] text-ink-400">{t("noMatchesHint")}</p>
+            <button
+              type="button"
+              onClick={resetAll}
+              className="mt-1 px-4 py-1.5 rounded-lg bg-brand-600 text-white text-[13px] font-medium active:opacity-80"
+            >
+              {t("resetAll")}
+            </button>
+          </div>
+        )}
+
+        {/* Connection list */}
+        {fetched && displayedConnections.length > 0 && (
           <div className="card flex flex-col">
-            <h5 className="mb-3">{t("listTitle")}</h5>
-            {connections.map((connection, i) => (
+            <h5 className="mb-1">
+              {t("listTitle")}
+              {isDirty && (
+                <span className="ml-2 text-[12px] font-normal text-ink-400">
+                  {displayedConnections.length} / {connections.length}
+                </span>
+              )}
+            </h5>
+            {displayedConnections.map((connection, i) => (
               <div key={connection.id}>
                 <div className={`flex items-center gap-3 py-3 ${i > 0 ? "border-t border-ink-100" : ""}`}>
                   <Link
