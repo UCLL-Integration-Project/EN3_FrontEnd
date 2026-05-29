@@ -66,7 +66,7 @@ function Stepper({ active, labels }: { active: number; labels: string[] }) {
 export default function DeviceSetup() {
   const router = useRouter();
   const t = useTranslations("device");
-  const { linkDevice, setDeviceIp } = useDevice();
+  const { linkDevice, setDeviceIp, deviceIp, setDeviceName: saveDeviceName } = useDevice();
 
   const [step, setStep] = useState<Step>("intro");
 
@@ -94,7 +94,7 @@ export default function DeviceSetup() {
     setStep("scanning");
     try {
       const device = await navigator.bluetooth.requestDevice({
-        filters: [{ name: DEVICE_BLE_NAME }],
+        filters: [{ namePrefix: "CrossWave" }],
         optionalServices: [WIFI_SERVICE],
       });
       // Connect GATT right away — this triggers onConnect on the ESP32,
@@ -373,6 +373,11 @@ export default function DeviceSetup() {
             <button
               className="btn-cta"
               onClick={() => {
+                saveDeviceName(deviceName);
+                if (deviceIp && deviceName) {
+                  const ws = new WebSocket(`ws://${deviceIp}:81`);
+                  ws.onopen = () => { ws.send(`NAME:${deviceName}`); ws.close(); };
+                }
                 linkDevice();
                 router.replace("/device");
               }}

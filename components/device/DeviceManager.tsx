@@ -112,7 +112,7 @@ export default function DeviceManager() {
         <Link href="/" aria-label={t("common.back")} className="back-btn flex items-center justify-center">
           <ArrowLeft size={22} strokeWidth={2.25} />
         </Link>
-        <h4 className="flex-1">{t("manage.title")}</h4>
+        <h4 className="flex-1 truncate">{resolvedName}</h4>
         <span
           className={`flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12px] font-semibold ring-1 ${
             isConnected ? "bg-emerald-50 text-emerald-700 ring-emerald-200" : "bg-ink-100 text-ink-500 ring-ink-200"
@@ -150,7 +150,10 @@ export default function DeviceManager() {
         isConnected={isConnected}
         lastReceivedAt={lastReceivedAt}
         isStale={isStale}
-        onNameChange={setDeviceName}
+        onNameChange={(name) => {
+          setDeviceName(name);
+          if (isConnected) sendCommand(`NAME:${name}`);
+        }}
       />
 
       <BatteryCard
