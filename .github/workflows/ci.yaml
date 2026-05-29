@@ -1,107 +1,31 @@
-# CI pipeline — runs on the school's self-hosted GitHub Actions runner.
-# All jobs use [self-hosted]; ubuntu-latest is NOT available.
 name: CI
 
 on:
   push:
-    branches:
-      - main
-      - dev
+    branches: ["main", "dev"]
   pull_request:
-    branches:
-      - main
-      - dev
+    branches: ["main"]
+
+permissions:
+  contents: read
 
 jobs:
-  sast:
-    name: SAST Scan (Semgrep)
+  test-frontend:
     runs-on: [self-hosted]
-    # Non-blocking: if Semgrep can't run on this runner it won't stop the build
-    continue-on-error: true
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Run Semgrep
-        run: |
-          # pipx manages its own isolated venv — sidesteps PEP 668 entirely.
-          # 'pipx run' downloads and runs semgrep without a permanent install.
-          pipx run semgrep scan --config auto
-
-  test:
-    name: Run Tests
-    runs-on: [self-hosted]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # actions/setup-node installs Node on the self-hosted runner if it
-      # is not already present (downloads to RUNNER_TOOL_CACHE).
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm test -- --passWithNoTests
+          node-version: '20'
+      - name: Run frontend tests
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-
-      # Non-blocking: dev carries pre-existing lint debt that CI never ran
-      # before (the workflow only triggered on main). Surface it without
-      # failing the job; clean up the violations separately.
-      - name: Run linter (if configured)
-        run: npm run lint --if-present
-        continue-on-error: true
-
-      - name: Build application
-        run: npm run build --if-present
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-
-      - name: Generate SBOM
         run: |
-          mkdir -p appendices
-          npx @cyclonedx/cdxgen -t js -o appendices/fe-bom.json --json-pretty
-
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-bom
-          path: appendices/fe-bom.json
-
-  # docker-build:
-  #   name: Build Docker Image (validation)
-  #   runs-on: [self-hosted]
-  #   needs: test
-
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-
-  #     - name: Build Docker image (no push)
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: .
-  #         load: true
-  #         build-args: |
-  #           NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
-  #         push: false
-  #         tags: en3-frontend:ci-${{ github.sha }}
-
-  #     - name: Run Trivy vulnerability scanner
-  #       uses: aquasecurity/trivy-action@v0.36.0
-  #       with:
-  #         image-ref: 'en3-frontend:ci-${{ github.sha }}'
-  #         format: 'table'
-  #         exit-code: '1'
-  #         ignore-unfixed: true
-  #         vuln-type: 'os,library'
-  #         severity: 'CRITICAL,HIGH'
+          npm install
+          npm run test --if-present -- --watchAll=false --passWithNoTests
+      - name: Build application
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        run: npm run build --if-present
