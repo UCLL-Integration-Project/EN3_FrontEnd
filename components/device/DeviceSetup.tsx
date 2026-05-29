@@ -17,7 +17,7 @@ import {
 import { useDevice } from "@context/DeviceContext";
 
 // BLE UUIDs — must match the ESP32 firmware (src/ble_comm.cpp)
-const DEVICE_BLE_NAME  = "EN3_IOT";
+const DEVICE_BLE_NAME  = "CrossWave";
 const WIFI_SERVICE     = "c7a2e3b4-d5f6-4789-a012-3456789abcde";
 const WIFI_SSID_CHAR   = "c7a2e3b4-d5f6-4789-a012-3456789abcdf";
 const WIFI_PASS_CHAR   = "c7a2e3b4-d5f6-4789-a012-3456789abce0";
