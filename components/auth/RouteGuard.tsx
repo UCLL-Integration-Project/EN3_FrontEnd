@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Waves } from "lucide-react";
 import useAuth from "@hooks/useAuth";
+import BambooAvatar from "@components/ai/BambooAvatar";
 import { useDevice } from "@context/DeviceContext";
 import { sanitizeReturnPath } from "@components/auth/returnUrl";
 
@@ -25,9 +25,7 @@ import { sanitizeReturnPath } from "@components/auth/returnUrl";
 export function AuthSplash() {
   return (
     <section className="app-screen items-center justify-center">
-      <span className="brand-mark h-14 w-14 animate-pulse" aria-hidden="true">
-        <Waves size={28} strokeWidth={2.25} />
-      </span>
+      <BambooAvatar size={56} className="animate-pulse opacity-70" />
     </section>
   );
 }
