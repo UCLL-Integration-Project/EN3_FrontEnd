@@ -29,11 +29,7 @@ export default function MemberRow({ member }: { member: AdminMemberSummary }) {
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700"
       >
         {member.avatarUrl ? (
-          <img
-            src={member.avatarUrl}
-            alt=""
-            className="h-10 w-10 rounded-full object-cover"
-          />
+          <img src={member.avatarUrl} alt="" className="h-10 w-10 rounded-full object-cover" />
         ) : (
           initials(member.displayName)
         )}
@@ -48,9 +44,7 @@ export default function MemberRow({ member }: { member: AdminMemberSummary }) {
       <p className="shrink-0 text-right text-[11px] uppercase tracking-wide text-ink-400">
         {t("joined")}
         <br />
-        <span className="text-xs font-semibold text-ink-600">
-          {formatJoined(member.joinedAt, locale)}
-        </span>
+        <span className="text-xs font-semibold text-ink-600">{formatJoined(member.joinedAt, locale)}</span>
       </p>
     </article>
   );
