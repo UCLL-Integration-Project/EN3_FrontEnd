@@ -51,7 +51,14 @@ export default function DeviceManager() {
     if (sensorData) setLastReceivedAt(Date.now());
   }, [sensorData]);
 
-  const isStale = lastReceivedAt !== null && Date.now() - lastReceivedAt > 120_000;
+  const [isStale, setIsStale] = useState(false);
+  useEffect(() => {
+    if (lastReceivedAt === null) { setIsStale(false); return; }
+    const check = () => setIsStale(Date.now() - lastReceivedAt > 120_000);
+    check();
+    const id = setInterval(check, 10_000);
+    return () => clearInterval(id);
+  }, [lastReceivedAt]);
 
   const [editingIp, setEditingIp] = useState(false);
   const [draftIp, setDraftIp] = useState(deviceIp);

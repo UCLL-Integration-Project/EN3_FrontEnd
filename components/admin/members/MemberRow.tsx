@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminMemberSummary } from "@types";
-import { useLocale, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import StatusBadge from "./StatusBadge";
 
 function initials(displayName: string): string {
@@ -13,15 +13,9 @@ function initials(displayName: string): string {
     .join("");
 }
 
-function formatJoined(iso: string, locale: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" }).format(d);
-}
-
 export default function MemberRow({ member }: { member: AdminMemberSummary }) {
   const t = useTranslations("admin.members");
-  const locale = useLocale();
+  const format = useFormatter();
   return (
     <article className="card flex items-center gap-3 px-3 py-3">
       <span
@@ -44,7 +38,7 @@ export default function MemberRow({ member }: { member: AdminMemberSummary }) {
       <p className="shrink-0 text-right text-[11px] uppercase tracking-wide text-ink-400">
         {t("joined")}
         <br />
-        <span className="text-xs font-semibold text-ink-600">{formatJoined(member.joinedAt, locale)}</span>
+        <span className="text-xs font-semibold text-ink-600">{format.dateTime(new Date(member.joinedAt), { day: "2-digit", month: "short" })}</span>
       </p>
     </article>
   );

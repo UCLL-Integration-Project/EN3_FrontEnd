@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { RefreshCw, Vibrate } from "lucide-react";
 import { BatteryGlyph } from "./DeviceUI";
@@ -20,6 +20,15 @@ export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = f
   const t = useTranslations("device");
   const [syncing, setSyncing] = useState(false);
   const [identifying, setIdentifying] = useState(false);
+  const [elapsed, setElapsed] = useState<string | null>(null);
+  useEffect(() => {
+    if (lastReadingAt === null) { setElapsed(null); return; }
+    const update = () => setElapsed(formatElapsed(lastReadingAt));
+    update();
+    const id = setInterval(update, 10_000);
+    return () => clearInterval(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastReadingAt]);
 
   function syncNow() {
     if (syncing) return;
@@ -100,7 +109,7 @@ export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = f
         <div className="mt-3 flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 ring-1 ring-amber-200">
           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
           <p className="text-[12px] text-amber-700">
-            {t("manage.staleTooltip", { elapsed: formatElapsed(lastReadingAt) })}
+            {t("manage.staleTooltip", { elapsed: elapsed ?? "—" })}
           </p>
         </div>
       )}

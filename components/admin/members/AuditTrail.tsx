@@ -1,19 +1,13 @@
 "use client";
 
 import { AdminAuditEntry } from "@types";
-import { useLocale, useTranslations } from "next-intl";
-
-function formatWhen(iso: string, locale: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(d);
-}
+import { useFormatter, useTranslations } from "next-intl";
 
 /* The inline audit log on the detail page — the last few moderation
    entries for this member, newest first (#9529). */
 export default function AuditTrail({ entries }: { entries: AdminAuditEntry[] }) {
   const t = useTranslations("admin.members.moderation");
-  const locale = useLocale();
+  const format = useFormatter();
 
   return (
     <section className="card mt-4 px-3 py-3">
@@ -33,7 +27,7 @@ export default function AuditTrail({ entries }: { entries: AdminAuditEntry[] }) 
               </p>
               {e.note && <p className="text-xs italic text-ink-500">“{e.note}”</p>}
               <p className="text-[11px] uppercase tracking-wide text-ink-400">
-                {formatWhen(e.createdAt, locale)}
+                {format.dateTime(new Date(e.createdAt), { dateStyle: "medium", timeStyle: "short" })}
               </p>
             </li>
           ))}

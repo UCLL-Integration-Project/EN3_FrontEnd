@@ -5,10 +5,19 @@ import { safeStorage } from "@context/safeStorage";
 import { getMyProfileRequest, getStatsRequest, getConnectionsRequest } from "@services/UserService";
 import type { UserAIContext } from "@types";
 
+let _cachedContext: UserAIContext | null = null;
+let _cacheTime = 0;
+const CACHE_TTL = 5 * 60 * 1000;
+
 export function useAIContext(): UserAIContext {
   const [context, setContext] = useState<UserAIContext>({});
 
   useEffect(() => {
+    if (_cachedContext && Date.now() - _cacheTime < CACHE_TTL) {
+      setContext(_cachedContext);
+      return;
+    }
+
     let active = true;
 
     const shareProfile = safeStorage.get("cw_ai_share_profile") === "true";
@@ -53,7 +62,11 @@ export function useAIContext(): UserAIContext {
     }
 
     Promise.all(fetches).then(() => {
-      if (active) setContext({ ...built });
+      if (active) {
+        _cachedContext = { ...built };
+        _cacheTime = Date.now();
+        setContext(_cachedContext);
+      }
     });
 
     return () => { active = false; };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Pencil, RefreshCw, WifiOff } from "lucide-react";
 import { PagerIcon } from "./PagerIcon";
@@ -18,6 +18,16 @@ export function DeviceHeroCard({ model, name, isConnected, lastReceivedAt, isSta
   const t = useTranslations("device");
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
+  const [elapsed, setElapsed] = useState<string | null>(null);
+  useEffect(() => {
+    if (lastReceivedAt === null) { setElapsed(null); return; }
+    const update = () => setElapsed(formatElapsed(lastReceivedAt));
+    update();
+    const id = setInterval(update, 10_000);
+    return () => clearInterval(id);
+  // formatElapsed is a stable closure over `t` which never changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastReceivedAt]);
 
   function save() {
     const next = draft.trim() || name;
@@ -84,7 +94,7 @@ export function DeviceHeroCard({ model, name, isConnected, lastReceivedAt, isSta
             </span>
             <span className="ml-auto flex items-center gap-1.5 text-white/70">
               <RefreshCw size={13} />
-              {lastReceivedAt ? formatElapsed(lastReceivedAt) : "—"}
+              {elapsed ?? "—"}
             </span>
           </>
         ) : isStale ? (
@@ -96,7 +106,7 @@ export function DeviceHeroCard({ model, name, isConnected, lastReceivedAt, isSta
             {lastReceivedAt && (
               <span className="ml-auto flex items-center gap-1.5 text-white/50">
                 <RefreshCw size={13} />
-                {formatElapsed(lastReceivedAt)}
+                {elapsed ?? "—"}
               </span>
             )}
           </>
@@ -109,7 +119,7 @@ export function DeviceHeroCard({ model, name, isConnected, lastReceivedAt, isSta
             {lastReceivedAt && (
               <span className="ml-auto flex items-center gap-1.5 text-white/50">
                 <RefreshCw size={13} />
-                {formatElapsed(lastReceivedAt)}
+                {elapsed ?? "—"}
               </span>
             )}
           </>
