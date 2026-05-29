@@ -115,7 +115,7 @@ export default function AiChat() {
                         className="rounded-2xl bg-white px-4 py-3 shadow-card ring-1 ring-ink-100"
                       >
                         <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-brand-500">
-                          <span className="mr-1">🐼</span>
+                          <BambooAvatar size={12} className="mr-1 inline-block align-middle" />
                           {entry.personalized ? t("insight.eyebrow") : t("insight.eyebrow_fact")}
                         </p>
                         <p className="text-[13px] leading-relaxed text-ink-800">{entry.insight}</p>

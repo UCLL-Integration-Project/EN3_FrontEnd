@@ -13,11 +13,12 @@ type Props = {
 
 export default function AiInsightPopup({ insight, isPersonalized, onDismiss }: Props) {
   const t = useTranslations("ai");
+  const locale = useLocale();
   const router = useRouter();
 
   const handleAskMore = () => {
     onDismiss();
-    router.push("/ai");
+    router.push(`/${locale}/ai`);
   };
 
   return (
