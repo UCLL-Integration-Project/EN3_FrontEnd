@@ -12,20 +12,20 @@
 
 ## File Map
 
-| Action | Path | Responsibility |
-|---|---|---|
-| Modify | `types/index.ts` | Add `UserAIContext` type |
-| Modify | `public/locales/en/common.json` | Add `ai.*` i18n keys |
-| Modify | `public/locales/nl/common.json` | Add `ai.*` i18n keys (Dutch) |
-| Create | `services/AiService.ts` | `chatRequest()` + `insightRequest()` |
-| Create | `__tests__/AiService.test.ts` | Unit tests for both service functions |
-| Create | `hooks/useAIContext.ts` | Assemble `UserAIContext` from localStorage flags + fetches |
-| Create | `components/ai/AiChat.tsx` | Full-page Q&A UI |
-| Create | `components/ai/AiInsightPopup.tsx` | Bottom-sheet proactive insight |
-| Create | `components/ai/AiSettingsCard.tsx` | Three opt-in data toggles |
-| Create | `app/[locale]/ai/page.tsx` | Route: AuthGuard + AiChat |
-| Modify | `components/HomeScreen.tsx` | Add FAB + insight popup trigger |
-| Modify | `components/users/UserSettingsForm.tsx` | Render AiSettingsCard below ChangePasswordForm |
+| Action | Path                                    | Responsibility                                             |
+| ------ | --------------------------------------- | ---------------------------------------------------------- |
+| Modify | `types/index.ts`                        | Add `UserAIContext` type                                   |
+| Modify | `public/locales/en/common.json`         | Add `ai.*` i18n keys                                       |
+| Modify | `public/locales/nl/common.json`         | Add `ai.*` i18n keys (Dutch)                               |
+| Create | `services/AiService.ts`                 | `chatRequest()` + `insightRequest()`                       |
+| Create | `__tests__/AiService.test.ts`           | Unit tests for both service functions                      |
+| Create | `hooks/useAIContext.ts`                 | Assemble `UserAIContext` from localStorage flags + fetches |
+| Create | `components/ai/AiChat.tsx`              | Full-page Q&A UI                                           |
+| Create | `components/ai/AiInsightPopup.tsx`      | Bottom-sheet proactive insight                             |
+| Create | `components/ai/AiSettingsCard.tsx`      | Three opt-in data toggles                                  |
+| Create | `app/[locale]/ai/page.tsx`              | Route: AuthGuard + AiChat                                  |
+| Modify | `components/HomeScreen.tsx`             | Add FAB + insight popup trigger                            |
+| Modify | `components/users/UserSettingsForm.tsx` | Render AiSettingsCard below ChangePasswordForm             |
 
 ---
 
@@ -503,7 +503,6 @@ git commit -m "feat(ai): add AiChat full-page Q&A component"
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
 
 type Props = {
   insight: string;
@@ -512,12 +511,11 @@ type Props = {
 
 export default function AiInsightPopup({ insight, onDismiss }: Props) {
   const t = useTranslations("ai");
-  const locale = useLocale();
   const router = useRouter();
 
   const handleAskMore = () => {
     onDismiss();
-    router.push(`/${locale}/ai`);
+    router.push("/ai");
   };
 
   return (
@@ -644,7 +642,7 @@ Replace the full file with:
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import {
   BarChart2,
@@ -666,7 +664,6 @@ const FOUR_HOURS = 4 * 60 * 60 * 1000;
 export default function HomeScreen() {
   const { user, logout } = useAuth();
   const t = useTranslations("home");
-  const locale = useLocale();
   const router = useRouter();
 
   const hour = new Date().getHours();
@@ -694,13 +691,13 @@ export default function HomeScreen() {
   };
 
   const navItems = [
-    { icon: User,      label: t("nav.profile"),     href: `/${locale}/profile`,       admin: false },
-    { icon: Users,     label: t("nav.connections"),  href: `/${locale}/connections`,   admin: false },
-    { icon: Cpu,       label: t("nav.device"),       href: `/${locale}/device`,        admin: false },
-    { icon: BarChart2, label: t("nav.stats"),        href: `/${locale}/stats`,         admin: false },
-    { icon: Settings,  label: t("nav.settings"),     href: `/${locale}/settings`,      admin: false },
+    { icon: User,      label: t("nav.profile"),     href: "/profile",       admin: false },
+    { icon: Users,     label: t("nav.connections"),  href: "/connections",   admin: false },
+    { icon: Cpu,       label: t("nav.device"),       href: "/device",        admin: false },
+    { icon: BarChart2, label: t("nav.stats"),        href: "/stats",         admin: false },
+    { icon: Settings,  label: t("nav.settings"),     href: "/settings",      admin: false },
     ...(user?.role === "ADMIN"
-      ? [{ icon: Shield, label: t("nav.admin"), href: `/${locale}/admin/members`, admin: true }]
+      ? [{ icon: Shield, label: t("nav.admin"), href: "/admin/members", admin: true }]
       : []),
   ] as { icon: typeof User; label: string; href: string; admin: boolean }[];
 
@@ -755,7 +752,7 @@ export default function HomeScreen() {
           type="button"
           onClick={async () => {
             await logout();
-            router.replace(`/${locale}/login`);
+            router.replace("/login");
           }}
           className="tap flex w-full items-center justify-center gap-2 rounded-pill px-4 py-3 text-[13px] font-semibold text-ink-500 ring-1 ring-ink-200 transition-colors duration-100 active:bg-ink-100"
         >
@@ -766,7 +763,7 @@ export default function HomeScreen() {
 
       {/* AI floating action button */}
       <Link
-        href={`/${locale}/ai`}
+        href={"/ai"}
         aria-label={t("nav.ai")}
         className="absolute bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-5 flex h-14 w-14 items-center justify-center rounded-full bg-brand-gradient text-[22px] text-white shadow-pop active:scale-95 transition-transform duration-100"
       >

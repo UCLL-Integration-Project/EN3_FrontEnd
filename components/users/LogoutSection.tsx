@@ -3,12 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useAuth from "@hooks/useAuth";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "use-intl";
 import { LogOut } from "lucide-react";
 
 export default function LogoutSection() {
   const router = useRouter();
-  const locale = useLocale();
   const { logout } = useAuth();
   const t = useTranslations("UserSettingsForm");
 
@@ -17,7 +16,7 @@ export default function LogoutSection() {
   const handleLogout = async () => {
     await logout();
     // replace() so the back button can't return into the app after logout.
-    router.replace(`/${locale}/login`);
+    router.replace("/login");
   };
 
   return (
