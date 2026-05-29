@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Bluetooth, ChevronLeft, ChevronRight, Cpu, Radio, Send, Settings, Shield, Wifi, WifiOff } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import { useDevice } from "@context/DeviceContext";
@@ -34,7 +34,6 @@ export default function HomeScreen() {
   const [insight, setInsight] = useState<string | null>(null);
   const [insightVisible, setInsightVisible] = useState(false);
   const [isPersonalized, setIsPersonalized] = useState(false);
-  const [isInsightLoading, setIsInsightLoading] = useState(false);
   const t = useTranslations("home");
 
   const hour = new Date().getHours();
@@ -47,7 +46,6 @@ export default function HomeScreen() {
     const last = safeStorage.get("cw_last_insight");
     if (last && Date.now() - Number(last) < FOUR_HOURS) return;
 
-    setIsInsightLoading(true);
     insightRequest()
       .then(({ insight: text, isPersonalized: personal }) => {
         if (text) {
@@ -60,8 +58,7 @@ export default function HomeScreen() {
       })
       .catch(() => {
         safeStorage.set("cw_last_insight", String(Date.now()));
-      })
-      .finally(() => setIsInsightLoading(false));
+      });
   }, []);
 
   const handleDismissInsight = () => {

@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useLocale } from "next-intl";
 import useAuth from "@hooks/useAuth";
 import TabBar from "@components/TabBar";
 
@@ -13,23 +12,18 @@ import TabBar from "@components/TabBar";
  * error pages hide it so they feel like pushed views.
  *
  * Signed-out users never see tabs. */
+
+const TABBED = new Set(["/", "/connections", "/stats", "/profile", "/ai"]);
+
 export default function TabBarShell() {
   const pathname = usePathname();
-  const locale = useLocale();
   const { user, isLoading } = useAuth();
 
   if (isLoading || !user) return null;
 
-  const normalized = pathname.replace(/\/$/, "");
-  const root = `/${locale}`;
-  const tabbed = new Set([
-    root,
-    `${root}/connections`,
-    `${root}/stats`,
-    `${root}/profile`,
-    `${root}/ai`,
-  ]);
+  const withoutLocale = "/" + pathname.split("/").slice(2).join("/");
+  const normalized = withoutLocale.replace(/\/$/, "") || "/";
 
-  if (!tabbed.has(normalized)) return null;
+  if (!TABBED.has(normalized)) return null;
   return <TabBar />;
 }

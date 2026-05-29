@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
 import BambooAvatar from "@components/ai/BambooAvatar";
 
 type Props = {
@@ -13,12 +12,11 @@ type Props = {
 
 export default function AiInsightPopup({ insight, isPersonalized, onDismiss }: Props) {
   const t = useTranslations("ai");
-  const locale = useLocale();
   const router = useRouter();
 
   const handleAskMore = () => {
     onDismiss();
-    router.push(`/${locale}/ai`);
+    router.push("/ai");
   };
 
   return (

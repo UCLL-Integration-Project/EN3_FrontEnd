@@ -1,5 +1,3 @@
-"use client";
-
 import DeviceSetup from "@components/device/DeviceSetup";
 import { AuthGuard, SetupGuard } from "@components/auth/RouteGuard";
 
