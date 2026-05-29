@@ -6,7 +6,7 @@ type Props = {
 export default function BambooAvatar({ size = 24, className = "" }: Props) {
   return (
     <img
-      src="/images/CrossWave-lg-black.svg"
+      src="/CrossWave-lg.svg"
       alt=""
       aria-hidden="true"
       width={size}
