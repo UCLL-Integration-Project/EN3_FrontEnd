@@ -14,6 +14,7 @@ export function useAIContext(): UserAIContext {
 
   useEffect(() => {
     if (_cachedContext && Date.now() - _cacheTime < CACHE_TTL) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setContext(_cachedContext);
       return;
     }

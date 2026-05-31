@@ -153,15 +153,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    try {
-      await logoutRequest();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    // Clear local state immediately before API call
+    // This ensures user is logged out even if API call fails
     safeStorage.remove(STORAGE_KEY);
     writeSessionHint(false);
     writeAdminHint(false);
     setUser(null);
+
+    // Then notify backend (fire and forget — state already cleared)
+    try {
+      await logoutRequest();
+    } catch (error) {
+      // Silently fail — state is already cleared locally
+      console.debug("Logout notification failed:", error);
+    }
   };
 
   const updateUser = (userData: Partial<User>) => {

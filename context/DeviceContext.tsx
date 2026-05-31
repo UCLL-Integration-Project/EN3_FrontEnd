@@ -25,6 +25,14 @@ import useAuth from "@hooks/useAuth";
  * /api/devices) when they exist.
  * ---------------------------------------------------------------------- */
 
+export interface DevicePreferences {
+  autoConnect: boolean;
+  backgroundSync: boolean;
+  notifications: boolean;
+  haptics: boolean;
+  doNotDisturb: boolean;
+}
+
 type DeviceContextType = {
   deviceLinked: boolean;
   isLoading: boolean;
@@ -36,14 +44,17 @@ type DeviceContextType = {
   setDeviceName: (name: string) => void;
   hapticsEnabled: boolean;
   setHapticsEnabled: (enabled: boolean) => void;
+  preferences: DevicePreferences;
+  setPreferences: (prefs: DevicePreferences) => void;
 };
 
 const DeviceContext = createContext<DeviceContextType | undefined>(undefined);
 
-const STORAGE_PREFIX  = "crosswave.deviceLinked";
-const IP_PREFIX       = "crosswave.deviceIp";
-const NAME_PREFIX     = "crosswave.deviceName";
-const HAPTICS_PREFIX  = "crosswave.haptics";
+const STORAGE_PREFIX   = "crosswave.deviceLinked";
+const IP_PREFIX        = "crosswave.deviceIp";
+const NAME_PREFIX      = "crosswave.deviceName";
+const HAPTICS_PREFIX   = "crosswave.haptics";
+const PREFS_PREFIX     = "crosswave.preferences";
 
 export const DeviceProvider = ({ children }: { children: ReactNode }) => {
   const { user, isLoading: authLoading } = useAuth();
@@ -52,12 +63,20 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
   const [deviceIp, setDeviceIpState] = useState("");
   const [deviceName, setDeviceNameState] = useState("");
   const [hapticsEnabled, setHapticsEnabledState] = useState(true);
+  const [preferences, setPreferencesState] = useState<DevicePreferences>({
+    autoConnect: true,
+    backgroundSync: true,
+    notifications: true,
+    haptics: true,
+    doNotDisturb: false,
+  });
 
   // Storage keys scoped to the current account — null when signed out.
   const storageKey  = user ? `${STORAGE_PREFIX}:${user.username ?? user.email ?? "unknown"}` : null;
   const ipKey       = user ? `${IP_PREFIX}:${user.username ?? user.email ?? "unknown"}` : null;
   const nameKey     = user ? `${NAME_PREFIX}:${user.username ?? user.email ?? "unknown"}` : null;
   const hapticsKey  = user ? `${HAPTICS_PREFIX}:${user.username ?? user.email ?? "unknown"}` : null;
+  const prefsKey    = user ? `${PREFS_PREFIX}:${user.username ?? user.email ?? "unknown"}` : null;
 
   useEffect(() => {
     // Wait for auth to resolve before deciding — the key depends on the user.
@@ -67,18 +86,43 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
     // Signed out (no key) → no linked device. Resolved via a promise so the
     // shape matches the eventual fetch, setState stays inside a callback, and
     // blocked storage (safeStorage) can't strand the loading state.
-    Promise.resolve(
-      storageKey ? safeStorage.get(storageKey) === "true" : false,
-    ).then((linked) => {
+    Promise.resolve({
+      linked: storageKey ? safeStorage.get(storageKey) === "true" : false,
+      ip: ipKey ? (safeStorage.get(ipKey) ?? "") : "",
+      name: nameKey ? (safeStorage.get(nameKey) ?? "") : "",
+      haptics: (() => {
+        const stored = hapticsKey ? safeStorage.get(hapticsKey) : null;
+        return stored === null ? true : stored === "true";
+      })(),
+      prefs: (() => {
+        try {
+          const stored = prefsKey ? safeStorage.get(prefsKey) : null;
+          return stored ? JSON.parse(stored) : {
+            autoConnect: true,
+            backgroundSync: true,
+            notifications: true,
+            haptics: true,
+            doNotDisturb: false,
+          };
+        } catch {
+          return {
+            autoConnect: true,
+            backgroundSync: true,
+            notifications: true,
+            haptics: true,
+            doNotDisturb: false,
+          };
+        }
+      })(),
+    }).then(({ linked, ip, name, haptics, prefs }) => {
       setDeviceLinked(linked);
+      setDeviceIpState(ip);
+      setDeviceNameState(name);
+      setHapticsEnabledState(haptics);
+      setPreferencesState(prefs);
       setIsLoading(false);
     });
-
-    setDeviceIpState(ipKey ? (safeStorage.get(ipKey) ?? "") : "");
-    setDeviceNameState(nameKey ? (safeStorage.get(nameKey) ?? "") : "");
-    const stored = hapticsKey ? safeStorage.get(hapticsKey) : null;
-    setHapticsEnabledState(stored === null ? true : stored === "true");
-  }, [authLoading, storageKey, ipKey, nameKey, hapticsKey]);
+  }, [authLoading, storageKey, ipKey, nameKey, hapticsKey, prefsKey]);
 
   const linkDevice = () => {
     if (!storageKey) return;
@@ -93,9 +137,17 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
     if (ipKey) safeStorage.remove(ipKey);
     if (nameKey) safeStorage.remove(nameKey);
     if (hapticsKey) safeStorage.remove(hapticsKey);
+    if (prefsKey) safeStorage.remove(prefsKey);
     setDeviceIpState("");
     setDeviceNameState("");
     setHapticsEnabledState(true);
+    setPreferencesState({
+      autoConnect: true,
+      backgroundSync: true,
+      notifications: true,
+      haptics: true,
+      doNotDisturb: false,
+    });
   };
 
   const setDeviceIp = (ip: string) => {
@@ -113,9 +165,14 @@ export const DeviceProvider = ({ children }: { children: ReactNode }) => {
     setHapticsEnabledState(enabled);
   };
 
+  const setPreferences = (prefs: DevicePreferences) => {
+    if (prefsKey) safeStorage.set(prefsKey, JSON.stringify(prefs));
+    setPreferencesState(prefs);
+  };
+
   return (
     <DeviceContext.Provider
-      value={{ deviceLinked, isLoading, linkDevice, unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName, hapticsEnabled, setHapticsEnabled }}
+      value={{ deviceLinked, isLoading, linkDevice, unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName, hapticsEnabled, setHapticsEnabled, preferences, setPreferences }}
     >
       {children}
     </DeviceContext.Provider>

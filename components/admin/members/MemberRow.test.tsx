@@ -7,6 +7,10 @@ import "@testing-library/jest-dom";
 jest.mock("next-intl", () => ({
   useTranslations: (ns?: string) => (key: string) => (ns ? `${ns}.${key}` : key),
   useLocale: () => "en",
+  useFormatter: () => ({
+    dateTime: (date: Date, opts?: Intl.DateTimeFormatOptions) =>
+      date.toLocaleDateString("en-GB", opts),
+  }),
 }));
 
 const member: AdminMemberSummary = {
@@ -14,7 +18,7 @@ const member: AdminMemberSummary = {
   displayName: "Lina Verhoeven",
   handle: "@lina",
   email: "lina.verhoeven@ucll.be",
-  status: "FLAGGED",
+  moderationStatus: "FLAGGED",
   joinedAt: "2026-03-14T10:00:00Z",
 };
 

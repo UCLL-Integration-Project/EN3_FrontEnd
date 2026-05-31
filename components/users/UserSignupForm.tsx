@@ -171,34 +171,36 @@ export default function UserSignupForm() {
         <p>{t("subtitle")}</p>
       </header>
 
-      <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-3.5" noValidate>
-        {renderField("username", { autoComplete: "username" })}
-        <div className="grid grid-cols-2 gap-3">
-          {renderField("firstName", { autoComplete: "given-name", capitalize: "words" })}
-          {renderField("lastName", { autoComplete: "family-name", capitalize: "words" })}
-        </div>
-        {renderField("email", {
-          type: "email",
-          autoComplete: "email",
-          inputMode: "email",
-        })}
-        {renderField("age", { type: "number", inputMode: "numeric" })}
-        {renderField("password", { autoComplete: "new-password" })}
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col" noValidate>
+        <div className="flex flex-col gap-3.5 pb-44">
+          {renderField("username", { autoComplete: "username" })}
+          <div className="grid grid-cols-2 gap-3">
+            {renderField("firstName", { autoComplete: "given-name", capitalize: "words" })}
+            {renderField("lastName", { autoComplete: "family-name", capitalize: "words" })}
+          </div>
+          {renderField("email", {
+            type: "email",
+            autoComplete: "email",
+            inputMode: "email",
+          })}
+          {renderField("age", { type: "number", inputMode: "numeric" })}
+          {renderField("password", { autoComplete: "new-password" })}
 
-        {statusMessages.length > 0 && (
-          <ul className="flex flex-col gap-2">
-            {statusMessages.map(({ message, type }, index) => (
-              <li key={index} className={`status ${type === "error" ? "status-error" : "status-success"}`}>
-                {type === "error" ? (
-                  <AlertCircle size={18} aria-hidden="true" />
-                ) : (
-                  <CheckCircle2 size={18} aria-hidden="true" />
-                )}
-                <span>{message}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+          {statusMessages.length > 0 && (
+            <ul className="flex flex-col gap-2">
+              {statusMessages.map(({ message, type }, index) => (
+                <li key={index} className={`status ${type === "error" ? "status-error" : "status-success"}`}>
+                  {type === "error" ? (
+                    <AlertCircle size={18} aria-hidden="true" />
+                  ) : (
+                    <CheckCircle2 size={18} aria-hidden="true" />
+                  )}
+                  <span>{message}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <div className="action-dock flex flex-col gap-3">
           <button type="submit" className="btn-cta" disabled={submitting}>

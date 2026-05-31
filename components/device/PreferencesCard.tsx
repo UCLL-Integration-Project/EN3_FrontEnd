@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { BellRing, BluetoothConnected, Moon, RefreshCw, Vibrate, Watch } from "lucide-react";
 import { Toggle } from "./DeviceUI";
 import { useDevice } from "@context/DeviceContext";
+import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
 
 type PrefKey =
   | "autoConnect"
@@ -23,25 +23,25 @@ const PREFERENCES: { key: PrefKey; icon: typeof Watch }[] = [
 
 export function PreferencesCard() {
   const t = useTranslations("device");
-  const { hapticsEnabled, setHapticsEnabled } = useDevice();
-  const [prefs, setPrefs] = useState<Record<Exclude<PrefKey, "haptics">, boolean>>({
-    autoConnect: true,
-    backgroundSync: true,
-    notifications: true,
-    doNotDisturb: false,
-  });
+  const { preferences, setPreferences, deviceIp } = useDevice();
+  const { isAuthenticated, sendCommand, deviceInfo } = useDeviceWebSocket(deviceIp);
+
+  // Load preferences from device when available
+  const prefs = deviceInfo?.prefs || preferences;
 
   function togglePref(key: PrefKey) {
-    if (key === "haptics") {
-      setHapticsEnabled(!hapticsEnabled);
-    } else {
-      setPrefs((p) => ({ ...p, [key]: !p[key as Exclude<PrefKey, "haptics">] }));
-    }
+    const newValue = !prefs[key as keyof typeof prefs];
+    const updatedPrefs = { ...prefs, [key]: newValue };
+
+    // Update local state
+    setPreferences(updatedPrefs);
+
+    // Send to device
+    sendCommand(`PREF:${key}:${newValue ? 1 : 0}`);
   }
 
   function prefValue(key: PrefKey): boolean {
-    if (key === "haptics") return hapticsEnabled;
-    return prefs[key as Exclude<PrefKey, "haptics">];
+    return prefs[key as keyof typeof prefs];
   }
 
   return (

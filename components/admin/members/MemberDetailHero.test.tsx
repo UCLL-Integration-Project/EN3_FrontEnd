@@ -15,7 +15,7 @@ const base: AdminMemberDetail = {
   username: "lina",
   email: "lina.verhoeven@ucll.be",
   bio: "Hello",
-  status: "FLAGGED",
+  moderationStatus: "FLAGGED",
   joinedAt: "2026-03-14T10:00:00Z",
   recentAudit: [],
 };

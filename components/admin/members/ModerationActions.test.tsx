@@ -15,7 +15,7 @@ const activeMember: AdminMemberDetail = {
   email: "lina@ucll.be",
   bio: "hello",
   avatarUrl: "/a.png",
-  status: "ACTIVE",
+  moderationStatus: "ACTIVE",
   joinedAt: "2026-03-14T10:00:00Z",
   recentAudit: [],
 };
@@ -29,7 +29,7 @@ describe("ModerationActions", () => {
 
   it("disables Suspend for a suspended member, enables Reactivate", () => {
     render(
-      <ModerationActions member={{ ...activeMember, status: "SUSPENDED" }} onAction={() => {}} />,
+      <ModerationActions member={{ ...activeMember, moderationStatus: "SUSPENDED" }} onAction={() => {}} />,
     );
     expect(screen.getByRole("button", { name: /suspend\.label/ })).toBeDisabled();
     expect(screen.getByRole("button", { name: /reactivate\.label/ })).toBeEnabled();

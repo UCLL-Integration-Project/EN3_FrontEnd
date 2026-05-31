@@ -20,9 +20,33 @@ export interface SensorData {
   ts: number;
 }
 
+export interface DevicePreferences {
+  autoConnect: boolean;
+  backgroundSync: boolean;
+  notifications: boolean;
+  haptics: boolean;
+  doNotDisturb: boolean;
+}
+
+export interface DeviceInfo {
+  model: string;
+  mac: string;
+  name: string;
+  firmware: string;
+  prefs?: DevicePreferences;
+}
+
+const MAX_RECONNECT_ATTEMPTS = 12;
+
 export function useDeviceWebSocket(deviceIp: string) {
   const [isConnected, setIsConnected] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sensorData, setSensorData] = useState<SensorData | null>(null);
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null);
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
+  const [isUnreachable, setIsUnreachable] = useState(false);
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
+  const [lastNameAck, setLastNameAck] = useState<{ status: string; name?: string; reason?: string } | null>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
   const backoffRef = useRef(1000);
@@ -57,12 +81,22 @@ export function useDeviceWebSocket(deviceIp: string) {
       };
       ws.onclose = () => {
         setIsConnected(false);
+        setIsAuthenticated(false);
         if (activeRef.current && ipRef.current) {
-          reconnectRef.current = setTimeout(
-            () => open(ipRef.current),
-            backoffRef.current,
-          );
-          backoffRef.current = Math.min(backoffRef.current * 2, 30_000);
+          setReconnectAttempts((prev) => {
+            const next = prev + 1;
+            // After MAX_RECONNECT_ATTEMPTS flag as unreachable (shows the Retry button)
+            // but keep retrying in the background — the device may just be booting.
+            if (next >= MAX_RECONNECT_ATTEMPTS) {
+              setIsUnreachable(true);
+            }
+            reconnectRef.current = setTimeout(
+              () => open(ipRef.current),
+              backoffRef.current,
+            );
+            backoffRef.current = Math.min(backoffRef.current * 2, 30_000);
+            return next;
+          });
         }
       };
       ws.onerror = () => setIsConnected(false);
@@ -70,6 +104,30 @@ export function useDeviceWebSocket(deviceIp: string) {
         try {
           const d = JSON.parse(e.data as string);
           if (d.type === "data") setSensorData(d);
+          else if (d.type === "device") {
+            setDeviceInfo({ model: d.model, mac: d.mac, name: d.name, firmware: d.firmware, prefs: d.prefs });
+            if (d.token) {
+              setSessionToken(d.token);
+              // Auto-authenticate with token
+              if (wsRef.current?.readyState === WebSocket.OPEN) {
+                wsRef.current.send(`AUTH:${d.token}`);
+              }
+            }
+            // Reset reconnect attempts on successful connection
+            setReconnectAttempts(0);
+            setIsUnreachable(false);
+          } else if (d.type === "authAck") {
+            // Mark as authenticated once device confirms AUTH
+            if (d.status === "ok") {
+              setIsAuthenticated(true);
+            } else {
+              console.warn("[WS] AUTH failed:", d);
+            }
+          } else if (d.type === "nameAck") {
+            setLastNameAck({ status: d.status, name: d.name, reason: d.reason });
+          } else if (d.type === "error") {
+            console.warn("[WS] Device error:", d.reason);
+          }
         } catch {
           /* malformed frame — ignore */
         }
@@ -129,10 +187,12 @@ export function useDeviceWebSocket(deviceIp: string) {
       clearTimeout(reconnectRef.current);
       reconnectRef.current = null;
     }
-    activeRef.current = true;
+    setIsUnreachable(false);
+    setReconnectAttempts(0);
     backoffRef.current = 1000;
+    activeRef.current = true;
     openRef.current(ip);
   }, []);
 
-  return { isConnected, sensorData, sendMessage, sendCommand, forceReconnect };
+  return { isConnected, isAuthenticated, sensorData, deviceInfo, isUnreachable, reconnectAttempts, sessionToken, lastNameAck, sendMessage, sendCommand, forceReconnect };
 }

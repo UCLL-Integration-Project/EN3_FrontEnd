@@ -34,7 +34,7 @@ export default function MemberDetailHero({ member }: { member: AdminMemberDetail
         <h3 className="truncate">{member.displayName}</h3>
         <p className="truncate text-sm text-ink-500">@{member.username}</p>
         <div className="mt-2">
-          <StatusBadge status={member.status} />
+          <StatusBadge status={member.moderationStatus} />
         </div>
       </div>
     </article>

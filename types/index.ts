@@ -72,7 +72,7 @@ export type AdminMemberSummary = {
   handle: string;
   email: string;
   avatarUrl?: string | null;
-  status: ModerationStatus;
+  moderationStatus: ModerationStatus;
   joinedAt: string; // ISO timestamp from the backend's Instant
 };
 
@@ -93,7 +93,7 @@ export type AdminMemberDetail = {
   email: string;
   bio?: string | null;
   avatarUrl?: string | null;
-  status: ModerationStatus;
+  moderationStatus: ModerationStatus;
   joinedAt: string;
   lastSeenAt?: string | null;
   recentAudit: AdminAuditEntry[];

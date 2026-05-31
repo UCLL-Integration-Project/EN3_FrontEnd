@@ -173,9 +173,13 @@ export default function DeviceSetup() {
       // Wait up to 15 s for the device to connect and broadcast its IP.
       setWifiPhase("waiting");
       const ip = await waitForWifiIp(statusChar, 15_000);
-      if (ip) setDeviceIp(ip);
-
-      setStep("done");
+      if (ip) {
+        setDeviceIp(ip);
+        setStep("done");
+      } else {
+        // Timeout — device didn't respond
+        setWifiError(t("setup.wifiTimeout") || "Device didn't respond within 15 seconds. Check it's powered on and nearby.");
+      }
     } catch (err: unknown) {
       setWifiError(err instanceof Error ? err.message : t("setup.wifiError"));
     } finally {
@@ -362,7 +366,7 @@ export default function DeviceSetup() {
                   placeholder={t("defaultName")}
                   autoCapitalize="words"
                   autoCorrect="off"
-                  maxLength={32}
+                  maxLength={17}
                   enterKeyHint="done"
                 />
               </span>
@@ -374,10 +378,6 @@ export default function DeviceSetup() {
               className="btn-cta"
               onClick={() => {
                 saveDeviceName(deviceName);
-                if (deviceIp && deviceName) {
-                  const ws = new WebSocket(`ws://${deviceIp}:81`);
-                  ws.onopen = () => { ws.send(`NAME:${deviceName}`); ws.close(); };
-                }
                 linkDevice();
                 router.replace("/device");
               }}

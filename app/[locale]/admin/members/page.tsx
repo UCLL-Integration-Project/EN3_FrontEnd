@@ -141,6 +141,15 @@ export default function AdminMembersPage() {
             ))}
           </ul>
         )}
+
+        {data && !data.empty && data.totalPages > 1 && (
+          <p className="mt-4 text-xs text-ink-400 text-center">
+            {t("pagination.hint", {
+              current: data.number + 1,
+              total: data.totalPages,
+            })}
+          </p>
+        )}
       </div>
 
       {data && data.totalPages > 1 && (

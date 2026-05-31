@@ -24,10 +24,6 @@ export default function StatusTypeManager() {
 
   const t = useTranslations("admin.statusTypes");
 
-  useEffect(() => {
-    fetchStatusTypes();
-  }, []);
-
   const fetchStatusTypes = async () => {
     try {
       setLoading(true);
@@ -41,6 +37,11 @@ export default function StatusTypeManager() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchStatusTypes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCreate = (created: StatusTypeResponse) => {
     setStatusTypes((prev) => [...prev, created]);

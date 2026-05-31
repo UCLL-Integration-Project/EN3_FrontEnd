@@ -112,7 +112,8 @@
         "ariaLabel": "Paginering van leden",
         "previous": "Vorige",
         "next": "Volgende",
-        "page": "Pagina {current} van {total}"
+        "page": "Pagina {current} van {total}",
+        "hint": "Toont {current} van {total} leden — gebruik paginering om meer leden te zien"
       },
       "errors": {
         "FORBIDDEN": "Je hebt geen toestemming om deze pagina te bekijken.",
@@ -313,6 +314,7 @@
     "title": "Welkom terug",
     "subtitle": "Log in om verder te gaan.",
     "button": "Inloggen",
+    "logging_in": "Inloggen...",
     "label": {
       "email": "Email",
       "password": "Wachtwoord",
@@ -384,6 +386,7 @@
     "listTitle": "Mijn connecties",
     "empty": "Je hebt nog geen connecties.",
     "emptyHint": "Wanneer je met iemand verbindt, verschijnen ze hier.",
+    "findPeople": "Zoek mensen om mee te verbinden",
     "noMatches": "Geen connecties gevonden.",
     "noMatchesHint": "Pas je zoekopdracht of filters aan.",
     "removed": "{name} verwijderd.",
@@ -523,12 +526,14 @@
       "wifiSkip": "Overslaan voor nu",
       "wifiProvisioning": "Verzenden…",
       "wifiWaiting": "Wachten tot apparaat verbinding maakt…",
-      "wifiError": "Verzenden van inloggegevens mislukt — zorg dat het apparaat in de buurt is en probeer het opnieuw"
+      "wifiError": "Verzenden van inloggegevens mislukt — zorg dat het apparaat in de buurt is en probeer het opnieuw",
+      "wifiTimeout": "Apparaat reageerde niet binnen 15 seconden. Controleer of het ingeschakeld en dichtbij is, probeer het opnieuw."
     },
     "manage": {
       "title": "Metgezel",
       "connected": "Verbonden",
-      "noteNameUpdated": "Apparaatnaam bijgewerkt",
+      "noteNameUpdated": "Naam bijgewerkt op apparaat",
+      "noteNameFailed": "Naam niet opgeslagen: {reason}",
       "noteSyncComplete": "Synchronisatie voltooid",
       "noteBuzzed": "Je metgezel trilde",
       "noteFirmwareUpdated": "Bijgewerkt naar firmware {version}",
@@ -545,10 +550,12 @@
       "charging": "Aan het opladen",
       "batteryRemaining": "≈ 2 dagen resterend",
       "batteryUnavailable": "Sensor niet beschikbaar",
-      "syncNow": "Nu synchroniseren",
-      "syncing": "Synchroniseren…",
+      "forceRefresh": "Vernieuwen",
+      "refreshing": "Verversen…",
+      "noteRefreshComplete": "Verse metingen ontvangen",
       "identify": "Identificeren",
       "identifying": "Trillen…",
+      "staleDataWarning": "Gegevens zijn verouderd — geen updates ontvangen in de laatste 2 minuten",
       "liveReadings": "Live metingen",
       "readingHeartRate": "Hartslag",
       "readingSteps": "Vandaag",
@@ -562,9 +569,8 @@
       "firmwareInstall": "Update installeren",
       "deviceInfo": "Apparaatinfo",
       "infoModel": "Model",
-      "infoSerial": "Serienummer",
       "infoMac": "MAC-adres",
-      "infoPaired": "Gekoppeld sinds",
+      "infoFirmware": "Firmwareversie",
       "preferences": "Voorkeuren",
       "prefs": {
         "autoConnect": {
@@ -617,7 +623,7 @@
       "messageSent": "Bericht verzonden naar apparaat",
       "messageCurrent": "Huidig bericht op apparaat",
       "stale": "Verouderd",
-      "staleTooltip": "Geen data in meer dan 2 minuten — meting van {elapsed} geleden",
+      "staleTooltip": "Geen data in meer dan 2 minuten — laatste meting {elapsed}",
       "batteryUsb": "USB-voeding",
       "batteryLow": "Lage batterij",
       "batteryVeryLow": "Zeer lage batterij"

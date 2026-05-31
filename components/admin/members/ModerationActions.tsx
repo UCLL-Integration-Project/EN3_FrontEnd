@@ -23,13 +23,13 @@ export default function ModerationActions({
       action: "SUSPEND",
       label: t("suspend.label"),
       icon: Ban,
-      off: member.status === "SUSPENDED",
+      off: member.moderationStatus === "SUSPENDED",
     },
     {
       action: "REACTIVATE",
       label: t("reactivate.label"),
       icon: RotateCcw,
-      off: member.status === "ACTIVE",
+      off: member.moderationStatus === "ACTIVE",
     },
     {
       action: "CLEAR_BIO",
@@ -47,7 +47,7 @@ export default function ModerationActions({
       action: "FLAG",
       label: t("flag.label"),
       icon: Flag,
-      off: member.status === "FLAGGED",
+      off: member.moderationStatus === "FLAGGED",
     },
   ];
 

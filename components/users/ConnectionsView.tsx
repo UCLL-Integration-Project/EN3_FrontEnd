@@ -198,10 +198,15 @@ export default function ConnectionsView() {
 
         {/* Empty (no connections at all) */}
         {fetched && !error && connections.length === 0 && (
-          <div className="card flex flex-col items-center gap-3 py-10 text-center">
+          <div className="card flex flex-col items-center gap-4 py-10 text-center">
             <Users size={40} className="text-ink-300" aria-hidden="true" />
-            <p>{t("empty")}</p>
-            <p className="text-[12px] text-ink-400">{t("emptyHint")}</p>
+            <div>
+              <p className="font-medium text-ink-900">{t("empty")}</p>
+              <p className="text-[12px] text-ink-400 mt-1">{t("emptyHint")}</p>
+            </div>
+            <Link href="/search" className="btn-cta text-center">
+              {t("findPeople")}
+            </Link>
           </div>
         )}
 

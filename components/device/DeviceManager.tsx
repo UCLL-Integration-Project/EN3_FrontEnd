@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   Activity,
+  AlertCircle,
   ArrowLeft,
   Check,
   CheckCircle2,
@@ -30,22 +31,43 @@ import {
   ReadingsGrid,
 } from "./DeviceCards";
 
-const DEVICE = {
-  model: "CrossWave",
-  serial: "CW-0A91-7F3C",
-  mac: "A4:2F:8C:1D:9E:0B",
-  pairedSince: "12 May 2026",
-  installedFirmware: "2.4.0",
-  latestFirmware: "2.4.0",
-};
-
 export default function DeviceManager() {
   const router = useRouter();
   const t = useTranslations("device");
   const { unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName, hapticsEnabled } = useDevice();
-  const { isConnected, sensorData, sendCommand, forceReconnect } = useDeviceWebSocket(deviceIp);
+  const { isConnected, isAuthenticated, sensorData, deviceInfo, isUnreachable, lastNameAck, sendCommand, forceReconnect } = useDeviceWebSocket(deviceIp);
 
   const resolvedName = deviceName || t("defaultName");
+
+  // Queue a name command to send once the device confirms authentication
+  const pendingNameRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    // Flush any pending rename from before auth completed
+    if (pendingNameRef.current !== null) {
+      sendCommand(`NAME:${pendingNameRef.current}`);
+      pendingNameRef.current = null;
+      return;
+    }
+    // Auto-sync: if the app has a stored name that differs from what the device
+    // reports (e.g. set during setup before auth), push it now.
+    if (deviceName && deviceInfo && deviceName !== deviceInfo.name) {
+      sendCommand(`NAME:${deviceName}`);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
+
+  // Show feedback when device confirms (or rejects) the name change
+  useEffect(() => {
+    if (!lastNameAck) return;
+    if (lastNameAck.status === "ok") {
+      flash(t("manage.noteNameUpdated"));
+    } else {
+      flash(t("manage.noteNameFailed", { reason: lastNameAck.reason ?? "unknown error" }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastNameAck]);
+
   const [lastReceivedAt, setLastReceivedAt] = useState<number | null>(null);
   useEffect(() => {
     if (sensorData) setLastReceivedAt(Date.now());
@@ -73,8 +95,26 @@ export default function DeviceManager() {
     noteTimer.current = setTimeout(() => setNote(null), 3200);
   }
 
+  function validateIPv4(ip: string): boolean {
+    const parts = ip.split('.');
+    if (parts.length !== 4) return false;
+    return parts.every((p) => {
+      const n = parseInt(p, 10);
+      return !isNaN(n) && n >= 0 && n <= 255;
+    });
+  }
+
   function saveIp() {
-    setDeviceIp(draftIp.trim());
+    const trimmed = draftIp.trim();
+    if (!trimmed) {
+      flash("IP address cannot be empty");
+      return;
+    }
+    if (!validateIPv4(trimmed)) {
+      flash("Invalid IP address (e.g., 192.168.1.10)");
+      return;
+    }
+    setDeviceIp(trimmed);
     setEditingIp(false);
   }
 
@@ -85,10 +125,9 @@ export default function DeviceManager() {
   }
 
   const infoRows = [
-    { icon: Cpu, label: t("manage.infoModel"), value: DEVICE.model },
-    { icon: Hash, label: t("manage.infoSerial"), value: DEVICE.serial },
-    { icon: Cpu, label: t("manage.infoMac"), value: DEVICE.mac },
-    { icon: Plug, label: t("manage.infoPaired"), value: DEVICE.pairedSince },
+    { icon: Cpu, label: t("manage.infoModel"), value: deviceInfo?.model || "—" },
+    { icon: Hash, label: t("manage.infoMac"), value: deviceInfo?.mac || "—" },
+    { icon: Plug, label: t("manage.infoFirmware"), value: deviceInfo?.firmware || "—" },
   ];
 
   const readings = [
@@ -151,15 +190,34 @@ export default function DeviceManager() {
         </div>
       )}
 
+      {isUnreachable && (
+        <div className="status status-error mt-3 animate-sheet-in">
+          <AlertCircle size={18} />
+          Device unreachable at {deviceIp} — check connection and IP
+        </div>
+      )}
+
+      {isStale && isConnected && (
+        <div className="status status-warning mt-3 animate-sheet-in">
+          <AlertCircle size={18} />
+          {t("manage.staleDataWarning")}
+        </div>
+      )}
+
       <DeviceHeroCard
-        model={DEVICE.model}
+        model={deviceInfo?.model || "CrossWave"}
         name={resolvedName}
         isConnected={isConnected}
         lastReceivedAt={lastReceivedAt}
         isStale={isStale}
         onNameChange={(name) => {
           setDeviceName(name);
-          if (isConnected) sendCommand(`NAME:${name}`);
+          if (isAuthenticated) {
+            sendCommand(`NAME:${name}`);
+          } else if (isConnected) {
+            // Auth not yet confirmed — queue for when authAck arrives
+            pendingNameRef.current = name;
+          }
         }}
       />
 
@@ -169,8 +227,12 @@ export default function DeviceManager() {
         isStale={isStale}
         lastReadingAt={lastReceivedAt}
         flash={flash}
-        onSyncDone={() => {}}
-        onIdentify={() => hapticsEnabled && sendCommand("BUZZ:")}
+        onRefreshReadings={() => {
+          if (isAuthenticated) sendCommand("REFRESH:");
+        }}
+        onIdentify={() => {
+          if (isAuthenticated && hapticsEnabled) sendCommand("BUZZ:");
+        }}
       />
 
       {/* WebSocket connection */}
@@ -238,7 +300,7 @@ export default function DeviceManager() {
       <ReadingsGrid readings={readings} />
 
       <h5 className="mt-6 px-1">{t("manage.firmware")}</h5>
-      <FirmwareCard installed={DEVICE.installedFirmware} latest={DEVICE.latestFirmware} flash={flash} />
+      <FirmwareCard installed={deviceInfo?.firmware || "—"} latest={deviceInfo?.firmware || "—"} flash={flash} />
 
       <h5 className="mt-6 px-1">{t("manage.deviceInfo")}</h5>
       <DeviceInfoCard rows={infoRows} />

@@ -31,7 +31,7 @@ export default function MemberRow({ member }: { member: AdminMemberSummary }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="truncate font-semibold text-ink-800">{member.displayName}</p>
-          <StatusBadge status={member.status} />
+          <StatusBadge status={member.moderationStatus} />
         </div>
         <p className="truncate text-xs text-ink-500">{member.email}</p>
       </div>

@@ -6,7 +6,7 @@ import { loginRequest, verifyMfaRequest } from "@services/UserService";
 import { AuthenticationRequest, StatusMessage } from "@types";
 import useAuth from "@hooks/useAuth";
 import { useTranslations } from "use-intl";
-import { ArrowLeft, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ShieldCheck, Loader2 } from "lucide-react";
 import BackButton from "@components/BackButton";
 import { sanitizeReturnPath } from "@components/auth/returnUrl";
 
@@ -246,9 +246,10 @@ export default function UserLoginForm() {
           </ul>
         )}
 
-        <div className="action-dock flex flex-col gap-3">
-          <button type="submit" className="btn-cta" disabled={submitting}>
-            {submitting ? "…" : t("button")}
+        <div className="mt-auto action-dock flex flex-col gap-3">
+          <button type="submit" className="btn-cta flex items-center justify-center gap-2" disabled={submitting}>
+            {submitting && <Loader2 size={18} className="animate-spin" aria-hidden="true" />}
+            {submitting ? t("logging_in") : t("button")}
           </button>
           <Link href={"/signup"} className="tap text-center text-[15px] font-semibold text-accent-600">
             {t("signupLink")}

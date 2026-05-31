@@ -12,13 +12,13 @@ interface BatteryProps {
   lastReadingAt: number | null;
   charging?: boolean;
   flash: (msg: string) => void;
-  onSyncDone: () => void;
+  onRefreshReadings?: () => void;
   onIdentify?: () => void;
 }
 
-export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = false, flash, onSyncDone, onIdentify }: BatteryProps) {
+export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = false, flash, onRefreshReadings, onIdentify }: BatteryProps) {
   const t = useTranslations("device");
-  const [syncing, setSyncing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [identifying, setIdentifying] = useState(false);
   const [elapsed, setElapsed] = useState<string | null>(null);
   useEffect(() => {
@@ -30,13 +30,13 @@ export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = f
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastReadingAt]);
 
-  function syncNow() {
-    if (syncing) return;
-    setSyncing(true);
+  function forceRefreshReadings() {
+    if (refreshing) return;
+    setRefreshing(true);
+    onRefreshReadings?.();
     setTimeout(() => {
-      setSyncing(false);
-      onSyncDone();
-      flash(t("manage.noteSyncComplete"));
+      setRefreshing(false);
+      flash(t("manage.noteRefreshComplete"));
     }, 1800);
   }
 
@@ -115,9 +115,9 @@ export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = f
       )}
 
       <div className="mt-4 flex gap-2.5">
-        <button className="chip flex-1 justify-center" onClick={syncNow} disabled={syncing}>
-          <RefreshCw size={15} className={syncing ? "animate-spin" : ""} strokeWidth={2.5} />
-          {syncing ? t("manage.syncing") : t("manage.syncNow")}
+        <button className="chip flex-1 justify-center" onClick={forceRefreshReadings} disabled={refreshing}>
+          <RefreshCw size={15} className={refreshing ? "animate-spin" : ""} strokeWidth={2.5} />
+          {refreshing ? t("manage.refreshing") : t("manage.forceRefresh")}
         </button>
         <button className="chip flex-1 justify-center" onClick={identify} disabled={identifying}>
           <Vibrate size={15} className={identifying ? "animate-pulse" : ""} strokeWidth={2.5} />
