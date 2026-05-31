@@ -10,9 +10,10 @@ type Props = {
   initialProfile: UpdateProfileInput;
   onSuccess?: () => void;
   onCancel?: () => void;
+  onSaved?: (saved: UpdateProfileInput) => void;
 };
 
-export default function ProfileForm({ initialProfile, onSuccess, onCancel }: Props) {
+export default function ProfileForm({ initialProfile, onSuccess, onCancel, onSaved }: Props) {
   const { updateUser } = useAuth();
   const t = useTranslations("UserSettingsForm");
   const ts = useTranslations("social");
@@ -56,6 +57,18 @@ export default function ProfileForm({ initialProfile, onSuccess, onCancel }: Pro
         bannerUrl: updated.bannerUrl
       });
       setStatus([{ message: t("profileSuccess"), type: "success" }]);
+      if (onSaved) {
+        onSaved({
+          firstName: updated.firstName ?? "",
+          lastName: updated.lastName ?? "",
+          email: updated.email ?? "",
+          username: updated.username ?? "",
+          age: updated.age ?? 0,
+          bio: updated.bio ?? "",
+          avatarUrl: updated.avatarUrl ?? "",
+          bannerUrl: updated.bannerUrl ?? "",
+        });
+      }
       if (onSuccess) {
         setTimeout(onSuccess, 800);
       }

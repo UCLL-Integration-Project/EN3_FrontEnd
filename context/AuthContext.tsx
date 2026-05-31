@@ -53,6 +53,8 @@ function toSafeUser(profile: UserResponse): User {
     email: profile.email,
     age: profile.age,
     role: profile.role,
+    shareActivity: profile.shareActivity ?? false,
+    shareConnectionCount: profile.shareConnectionCount ?? false,
   };
 }
 

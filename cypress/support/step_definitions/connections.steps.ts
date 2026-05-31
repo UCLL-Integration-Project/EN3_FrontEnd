@@ -8,11 +8,13 @@ interface Connection {
 }
 
 // Combined step that handles login + connections setup
-Given("I am logged in and have connections with levels:", (dataTable: any) => {
+interface DataTable { hashes: () => Connection[] }
+
+Given("I am logged in and have connections with levels:", (dataTable: DataTable) => {
   const connections: Connection[] = dataTable.hashes();
 
   // Mock auth
-  cy.intercept("GET", "**/api/users/me", {
+  cy.intercept("GET", "**/api/v1/users/me", {
     statusCode: 200,
     body: {
       id: 1,
@@ -58,7 +60,7 @@ Given("I am logged in and have connections with levels:", (dataTable: any) => {
 
 // Login with no connections
 Given("I am logged in with no connections", () => {
-  cy.intercept("GET", "**/api/users/me", {
+  cy.intercept("GET", "**/api/v1/users/me", {
     statusCode: 200,
     body: {
       id: 1,
@@ -102,7 +104,7 @@ When("I select {string}", (levelName: string) => {
 });
 
 When("I click the remove button for {string}", (fullName: string) => {
-  const [firstName, lastName] = fullName.split(" ");
+  const [firstName] = fullName.split(" ");
   cy.contains(firstName)
     .parent()
     .parent()
@@ -122,7 +124,7 @@ Then("I should see {int} connections", (count: number) => {
 });
 
 Then("I should see {string} with level {string}", (fullName: string, levelName: string) => {
-  const [firstName, lastName] = fullName.split(" ");
+  const [firstName] = fullName.split(" ");
   cy.contains(firstName).should("be.visible").parent().parent().within(() => {
     cy.contains(levelName).should("be.visible");
   });

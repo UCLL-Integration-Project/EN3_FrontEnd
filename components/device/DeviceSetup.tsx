@@ -2,22 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
-import {
-  Bluetooth,
-  BluetoothSearching,
-  Check,
-  CheckCircle2,
-  Eye,
-  EyeOff,
-  Loader2,
-  Watch,
-  Wifi,
-} from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Bluetooth, BluetoothSearching, Check, CheckCircle2, Eye, EyeOff, Loader2, Watch, Wifi } from "lucide-react";
 import { useDevice } from "@context/DeviceContext";
+import BackButton from "@components/BackButton";
 
 // BLE UUIDs — must match the ESP32 firmware (src/ble_comm.cpp)
-const DEVICE_BLE_NAME  = "EN3_IOT";
+const DEVICE_BLE_NAME  = "CrossWave";
 const WIFI_SERVICE     = "c7a2e3b4-d5f6-4789-a012-3456789abcde";
 const WIFI_SSID_CHAR   = "c7a2e3b4-d5f6-4789-a012-3456789abcdf";
 const WIFI_PASS_CHAR   = "c7a2e3b4-d5f6-4789-a012-3456789abce0";
@@ -25,8 +16,8 @@ const WIFI_STATUS_CHAR = "c7a2e3b4-d5f6-4789-a012-3456789abce1";
 
 type Step = "intro" | "scanning" | "wifi" | "done";
 
-const PREREQS       = ["prereq1", "prereq2", "prereq3"] as const;
-const WIZARD_STEPS  = ["stepScan", "stepWifi", "stepDone"] as const;
+const PREREQS = ["prereq1", "prereq2", "prereq3"] as const;
+const WIZARD_STEPS = ["stepScan", "stepWifi", "stepDone"] as const;
 
 function Radar() {
   return (
@@ -65,11 +56,7 @@ function Stepper({ active, labels }: { active: number; labels: string[] }) {
             {label}
           </span>
           {i < labels.length - 1 && (
-            <span
-              className={`h-[2px] w-3 rounded-full ${
-                i < active ? "bg-brand-300" : "bg-ink-200"
-              }`}
-            />
+            <span className={`h-[2px] w-3 rounded-full ${i < active ? "bg-brand-300" : "bg-ink-200"}`} />
           )}
         </div>
       ))}
@@ -78,7 +65,6 @@ function Stepper({ active, labels }: { active: number; labels: string[] }) {
 }
 
 export default function DeviceSetup() {
-  const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("device");
   const { linkDevice, setDeviceIp } = useDevice();
@@ -98,11 +84,9 @@ export default function DeviceSetup() {
   const [wifiPhase, setWifiPhase] = useState<"sending" | "waiting">("sending");
   const [wifiError, setWifiError] = useState<string | null>(null);
 
-  const bleAvailable =
-    typeof navigator !== "undefined" && "bluetooth" in navigator;
+  const bleAvailable = typeof navigator !== "undefined" && "bluetooth" in navigator;
 
-  const activeStepIndex =
-    step === "intro" || step === "scanning" ? 0 : step === "wifi" ? 1 : 2;
+  const activeStepIndex = step === "intro" || step === "scanning" ? 0 : step === "wifi" ? 1 : 2;
 
   // Opens the browser's BLE device picker, then immediately connects GATT
   // so the ESP32 reflects the connection before the WiFi form is shown.
@@ -133,10 +117,7 @@ export default function DeviceSetup() {
 
   // Waits up to timeoutMs for the device's WiFi status characteristic to
   // report "CONNECTED:ip:port". Returns the IP string, or null on timeout.
-  async function waitForWifiIp(
-    char: BluetoothRemoteGATTCharacteristic,
-    timeoutMs: number,
-  ): Promise<string | null> {
+  async function waitForWifiIp(char: BluetoothRemoteGATTCharacteristic, timeoutMs: number): Promise<string | null> {
     function parseIp(raw: DataView): string | null {
       const value = new TextDecoder().decode(raw);
       if (!value.startsWith("CONNECTED:")) return null;
@@ -146,7 +127,9 @@ export default function DeviceSetup() {
       const current = await char.readValue();
       const ip = parseIp(current);
       if (ip) return ip;
-    } catch { /* not connected yet — fall through to notifications */ }
+    } catch {
+      /* not connected yet — fall through to notifications */
+    }
 
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
@@ -164,7 +147,9 @@ export default function DeviceSetup() {
       }
 
       char.addEventListener("characteristicvaluechanged", onNotify);
-      char.startNotifications().catch(() => { /* notifications unavailable — let timeout expire */ });
+      char.startNotifications().catch(() => {
+        /* notifications unavailable — let timeout expire */
+      });
     });
   }
 
@@ -176,10 +161,10 @@ export default function DeviceSetup() {
     setProvisioning(true);
     setWifiPhase("sending");
     try {
-      const server     = await bleDevice.gatt!.connect();
-      const service    = await server.getPrimaryService(WIFI_SERVICE);
-      const ssidChar   = await service.getCharacteristic(WIFI_SSID_CHAR);
-      const passChar   = await service.getCharacteristic(WIFI_PASS_CHAR);
+      const server = await bleDevice.gatt!.connect();
+      const service = await server.getPrimaryService(WIFI_SERVICE);
+      const ssidChar = await service.getCharacteristic(WIFI_SSID_CHAR);
+      const passChar = await service.getCharacteristic(WIFI_PASS_CHAR);
       const statusChar = await service.getCharacteristic(WIFI_STATUS_CHAR);
 
       const enc = new TextEncoder();
@@ -193,9 +178,7 @@ export default function DeviceSetup() {
 
       setStep("done");
     } catch (err: unknown) {
-      setWifiError(
-        err instanceof Error ? err.message : t("setup.wifiError"),
-      );
+      setWifiError(err instanceof Error ? err.message : t("setup.wifiError"));
     } finally {
       setProvisioning(false);
       setWifiPhase("sending");
@@ -204,21 +187,19 @@ export default function DeviceSetup() {
 
   return (
     <section className="app-screen">
-      {/* Header — no close button: pairing is required to use the app */}
-      <div className="flex items-center gap-2.5 pt-safe-t">
-        <span className="brand-mark" aria-hidden="true">
-          <Bluetooth size={18} strokeWidth={2.25} />
-        </span>
-        <span className="text-[13px] font-semibold uppercase tracking-wider text-ink-500">
-          {t("setup.eyebrow")}
-        </span>
+      <div className="app-bar px-4">
+        <BackButton href="/" />
+        <div className="flex flex-1 items-center justify-center gap-1.5">
+          <span className="brand-mark" aria-hidden="true">
+            <Bluetooth size={16} strokeWidth={2.25} />
+          </span>
+          <span className="text-[13px] font-semibold uppercase tracking-wider text-ink-500">{t("setup.eyebrow")}</span>
+        </div>
+        <div className="w-12" aria-hidden />
       </div>
 
       <div className="mt-4">
-        <Stepper
-          active={activeStepIndex}
-          labels={WIZARD_STEPS.map((key) => t(`setup.${key}`))}
-        />
+        <Stepper active={activeStepIndex} labels={WIZARD_STEPS.map((key) => t(`setup.${key}`))} />
       </div>
 
       {/* ------------------------------------------------------------------ */}
@@ -235,22 +216,14 @@ export default function DeviceSetup() {
           </div>
 
           <h2 className="mt-6 text-center">{t("setup.introTitle")}</h2>
-          <p className="mt-2 text-center text-ink-600">
-            {t("setup.introBody")}
-          </p>
+          <p className="mt-2 text-center text-ink-600">{t("setup.introBody")}</p>
 
-          {bleError && (
-            <div className="status status-error mt-4 animate-sheet-in">
-              {bleError}
-            </div>
-          )}
+          {bleError && <div className="status status-error mt-4 animate-sheet-in">{bleError}</div>}
 
           {!bleAvailable && (
             <div className="status status-error mt-4">
               <p className="font-semibold">{t("setup.bleUnavailable")}</p>
-              <p className="mt-0.5 text-[12px] opacity-80">
-                {t("setup.bleUnavailableHint")}
-              </p>
+              <p className="mt-0.5 text-[12px] opacity-80">{t("setup.bleUnavailableHint")}</p>
             </div>
           )}
 
@@ -262,20 +235,14 @@ export default function DeviceSetup() {
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
                     <Check size={13} strokeWidth={3} />
                   </span>
-                  <span className="text-[14px] leading-snug text-ink-700">
-                    {t(`setup.${key}`)}
-                  </span>
+                  <span className="text-[14px] leading-snug text-ink-700">{t(`setup.${key}`)}</span>
                 </li>
               ))}
             </ul>
           </div>
 
           <div className="action-dock mt-auto">
-            <button
-              className="btn-cta"
-              onClick={startScan}
-              disabled={!bleAvailable}
-            >
+            <button className="btn-cta" onClick={startScan} disabled={!bleAvailable}>
               {t("setup.startScan")}
             </button>
           </div>
@@ -289,9 +256,7 @@ export default function DeviceSetup() {
         <div className="mt-2 flex flex-1 flex-col">
           <Radar />
           <h3 className="text-center">{t("setup.scanningTitle")}</h3>
-          <p className="mt-1 text-center text-ink-500">
-            {t("setup.scanningBody")}
-          </p>
+          <p className="mt-1 text-center text-ink-500">{t("setup.scanningBody")}</p>
           <div className="mt-6 flex items-center justify-center gap-2 text-[13px] font-medium text-ink-400">
             <Loader2 size={16} className="animate-spin" />
             {t("setup.scanningMore")}
@@ -309,9 +274,7 @@ export default function DeviceSetup() {
               <Watch size={26} strokeWidth={2.25} />
             </span>
             <h3 className="mt-4">{t("setup.wifiTitle")}</h3>
-            <p className="mt-1 text-ink-600">
-              {t("setup.wifiBody", { name: deviceName })}
-            </p>
+            <p className="mt-1 text-ink-600">{t("setup.wifiBody", { name: deviceName })}</p>
           </div>
 
           <div className="card mt-6 flex flex-col gap-4">
@@ -350,34 +313,20 @@ export default function DeviceSetup() {
                   className="field-icon-btn"
                   onClick={() => setShowPass((v) => !v)}
                 >
-                  {showPass ? (
-                    <EyeOff size={18} strokeWidth={2} />
-                  ) : (
-                    <Eye size={18} strokeWidth={2} />
-                  )}
+                  {showPass ? <EyeOff size={18} strokeWidth={2} /> : <Eye size={18} strokeWidth={2} />}
                 </button>
               </span>
             </label>
           </div>
 
-          {wifiError && (
-            <div className="status status-error mt-4 animate-sheet-in">
-              {wifiError}
-            </div>
-          )}
+          {wifiError && <div className="status status-error mt-4 animate-sheet-in">{wifiError}</div>}
 
           <div className="action-dock mt-auto">
-            <button
-              className="btn-cta"
-              onClick={sendWifiCredentials}
-              disabled={!ssid || provisioning}
-            >
+            <button className="btn-cta" onClick={sendWifiCredentials} disabled={!ssid || provisioning}>
               {provisioning ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  {wifiPhase === "waiting"
-                    ? t("setup.wifiWaiting")
-                    : t("setup.wifiProvisioning")}
+                  {wifiPhase === "waiting" ? t("setup.wifiWaiting") : t("setup.wifiProvisioning")}
                 </>
               ) : (
                 <>
@@ -386,11 +335,7 @@ export default function DeviceSetup() {
                 </>
               )}
             </button>
-            <button
-              className="btn-ghost mt-2 w-full"
-              onClick={() => setStep("done")}
-              disabled={provisioning}
-            >
+            <button className="btn-ghost mt-2 w-full" onClick={() => setStep("done")} disabled={provisioning}>
               {t("setup.wifiSkip")}
             </button>
           </div>
@@ -407,9 +352,7 @@ export default function DeviceSetup() {
               <CheckCircle2 size={44} strokeWidth={2} />
             </span>
             <h2 className="mt-5">{t("setup.doneTitle")}</h2>
-            <p className="mt-2 text-ink-600">
-              {t("setup.doneBody", { name: deviceName || DEVICE_BLE_NAME })}
-            </p>
+            <p className="mt-2 text-ink-600">{t("setup.doneBody", { name: deviceName || DEVICE_BLE_NAME })}</p>
           </div>
 
           <div className="card mt-6">
@@ -435,7 +378,7 @@ export default function DeviceSetup() {
               className="btn-cta"
               onClick={() => {
                 linkDevice();
-                router.replace(`/${locale}/device`);
+                router.replace("/device");
               }}
             >
               {t("setup.goToDevice")}

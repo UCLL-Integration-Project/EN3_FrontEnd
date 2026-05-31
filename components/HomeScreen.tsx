@@ -1,102 +1,228 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
-import {
-  BarChart2,
-  ChevronRight,
-  Cpu,
-  LogOut,
-  Settings,
-  Shield,
-  User,
-  Users,
-} from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Bluetooth, ChevronLeft, ChevronRight, Cpu, Radio, Send, Settings, Shield, Wifi, WifiOff } from "lucide-react";
 import useAuth from "@hooks/useAuth";
+import { useDevice } from "@context/DeviceContext";
+import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
+import MultiStatus from "./status/MultiStatus";
+import { insightRequest } from "@services/AiService";
+import { safeStorage } from "@context/safeStorage";
+import AiInsightPopup from "@components/ai/AiInsightPopup";
+import BambooAvatar from "@components/ai/BambooAvatar";
 
+const FOUR_HOURS = 4 * 60 * 60 * 1000;
+
+/* Home dashboard.
+ *
+ * Replaces the prior "menu of routes" with a content-first view that
+ * surfaces the user's device status and broadcast affordances. Top-level
+ * navigation lives in the bottom tab bar; settings/admin live as
+ * secondary entries here.
+ *
+ * When no device is linked, a pairing CTA replaces the device card —
+ * the app no longer hard-walls users without hardware. */
 export default function HomeScreen() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const { deviceLinked, deviceIp, deviceName } = useDevice();
+  const { isConnected, sensorData, sendMessage } = useDeviceWebSocket(deviceLinked ? deviceIp : "");
+
+  const [selectedStatusMessage, setSelectedStatusMessage] = useState("");
+  const [sentConfirm, setSentConfirm] = useState(false);
+  const [insight, setInsight] = useState<string | null>(null);
+  const [insightVisible, setInsightVisible] = useState(false);
+  const [isPersonalized, setIsPersonalized] = useState(false);
   const t = useTranslations("home");
-  const locale = useLocale();
-  const router = useRouter();
 
   const hour = new Date().getHours();
-  const greetingKey =
-    hour < 12 ? "greetingMorning" : hour < 18 ? "greetingAfternoon" : "greetingEvening";
+  const greetingKey = hour < 12 ? "greetingMorning" : hour < 18 ? "greetingAfternoon" : "greetingEvening";
 
   const displayName = user?.firstName?.trim() || user?.username?.trim() || "";
+  const resolvedDeviceName = deviceName || t("dashboard.companionTitle");
 
-  const navItems = [
-    { icon: User,      label: t("nav.profile"),    href: `/${locale}/profile`,        admin: false },
-    { icon: Users,     label: t("nav.connections"), href: `/${locale}/connections`,    admin: false },
-    { icon: Cpu,       label: t("nav.device"),      href: `/${locale}/device`,         admin: false },
-    { icon: BarChart2, label: t("nav.stats"),       href: `/${locale}/stats`,          admin: false },
-    { icon: Settings,  label: t("nav.settings"),    href: `/${locale}/settings`,       admin: false },
-    ...(user?.role === "ADMIN"
-      ? [{ icon: Shield, label: t("nav.admin"), href: `/${locale}/admin/members`, admin: true }]
-      : []),
-  ] as { icon: typeof User; label: string; href: string; admin: boolean }[];
+  useEffect(() => {
+    const last = safeStorage.get("cw_last_insight");
+    if (last && Date.now() - Number(last) < FOUR_HOURS) return;
+
+    insightRequest()
+      .then(({ insight: text, isPersonalized: personal }) => {
+        if (text) {
+          setIsPersonalized(personal);
+          setInsight(text);
+          setInsightVisible(true);
+        } else {
+          safeStorage.set("cw_last_insight", String(Date.now()));
+        }
+      })
+      .catch(() => {
+        safeStorage.set("cw_last_insight", String(Date.now()));
+      });
+  }, []);
+
+  const handleDismissInsight = () => {
+    safeStorage.set("cw_last_insight", String(Date.now()));
+    setInsightVisible(false);
+  };
 
   return (
-    <section className="flex min-h-full flex-col p-0">
-      {/* Brand gradient banner */}
-      <div className="bg-brand-gradient px-5 pb-8 pt-[calc(1.25rem+env(safe-area-inset-top))]">
-        <p
-          className="text-[11px] font-medium uppercase tracking-widest text-white/65"
-          suppressHydrationWarning
-        >
-          {t(`dashboard.${greetingKey}`)}
-        </p>
-        <p className="mt-1 text-[26px] font-extrabold tracking-tight text-white">
-          {displayName}
-        </p>
+    <section className="app-screen p-0">
+      {/* Brand gradient greeting */}
+      <div className="bg-brand-gradient px-5 pb-7 pt-[calc(1.25rem+env(safe-area-inset-top))]">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-widest text-white/65" suppressHydrationWarning>
+              {t(`dashboard.${greetingKey}`)}
+            </p>
+            <p className="mt-1 text-[26px] font-extrabold tracking-tight text-white">{displayName}</p>
+          </div>
+          <Link
+            href={"/settings"}
+            aria-label={t("nav.settings")}
+            className="icon-btn -mr-1 mt-0.5 text-white/80 active:text-white"
+          >
+            <Settings size={22} strokeWidth={2} aria-hidden="true" />
+          </Link>
+        </div>
       </div>
 
-      {/* Nav list */}
-      <div className="flex flex-col gap-2 px-5 pb-4 pt-5">
-        {navItems.map(({ icon: Icon, label, href, admin }, index) => (
+      <div className="flex flex-col gap-5 px-5 pb-6 pt-5">
+        {/* Companion device card — pairing CTA when not linked */}
+        {!deviceLinked ? (
           <Link
-            key={href}
-            href={href}
-            style={{ animationDelay: `${index * 45}ms` }}
-            className="animate-rise flex items-center gap-3 rounded-sheet bg-white px-4 py-3.5 shadow-card ring-1 ring-ink-100 transition-transform duration-100 active:scale-[0.98]"
+            href={"/device/setup"}
+            className="animate-rise group flex items-center gap-4 rounded-sheet bg-secondary-50 px-4 py-4 shadow-card ring-1 ring-secondary-200 transition-transform duration-100 active:scale-[0.98] no-underline"
           >
-            <span
-              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl ${
-                admin
-                  ? "bg-secondary-50 text-secondary-600"
-                  : "bg-brand-50 text-brand-600"
-              }`}
-            >
-              <Icon size={20} strokeWidth={2.25} aria-hidden />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-secondary-500 text-white shadow-pop">
+              <Bluetooth size={22} strokeWidth={2.25} aria-hidden />
             </span>
-            <span
-              className={`flex-1 text-[15px] font-semibold ${
-                admin ? "text-secondary-700" : "text-ink-900"
-              }`}
-            >
-              {label}
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] font-semibold text-secondary-800">{t("dashboard.pairTitle")}</p>
+              <p className="text-[12px] text-secondary-700/80">{t("dashboard.pairSubtitle")}</p>
+            </div>
+            <ChevronRight size={18} className="text-secondary-500" strokeWidth={2.5} aria-hidden />
+          </Link>
+        ) : (
+          <Link
+            href="/device"
+            className="animate-rise flex items-center gap-4 rounded-sheet bg-white px-4 py-4 shadow-card ring-1 ring-ink-100 transition-transform duration-100 active:scale-[0.98] no-underline"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
+              <Cpu size={22} strokeWidth={2.25} aria-hidden />
             </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[15px] font-semibold text-ink-900">{resolvedDeviceName}</p>
+              <p className="flex items-center gap-1.5 text-[12px] text-ink-500">
+                {isConnected ? (
+                  <>
+                    <Wifi size={12} strokeWidth={2.5} className="text-emerald-500" aria-hidden />
+                    <span>{t("dashboard.companionConnected")}</span>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff size={12} strokeWidth={2.5} className="text-ink-400" aria-hidden />
+                    <span>{t("dashboard.companionDisconnected")}</span>
+                  </>
+                )}
+              </p>
+            </div>
             <ChevronRight size={18} className="text-ink-300" strokeWidth={2.5} aria-hidden />
           </Link>
-        ))}
+        )}
+
+        {/* Broadcast + RF — only when device linked */}
+        {/* {deviceLinked && ( */}
+        <>
+          <div>
+            <h5 className="mb-2 px-1">{t("dashboard.messageTitle")}</h5>
+            {!deviceIp ? (
+              <div className="card">
+                <p className="mt-2 text-[12px] text-ink-400">{t("dashboard.messageNoDevice")}</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {/* Replaced textarea with MultiStatus custom component */}
+                <MultiStatus onStatusSelected={setSelectedStatusMessage} />
+
+                <button
+                  type="button"
+                  disabled={!selectedStatusMessage.trim()}
+                  onClick={() => {
+                    sendMessage(selectedStatusMessage.trim());
+                    setSentConfirm(true);
+                    setTimeout(() => setSentConfirm(false), 3500);
+                  }}
+                  className="btn w-full disabled:opacity-40"
+                >
+                  <Send size={14} strokeWidth={2.25} />
+                  {t("dashboard.messageSend")}
+                </button>
+
+                {sentConfirm && (
+                  <p className="text-center text-[12px] text-emerald-600">{t("dashboard.messageSent")}</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h5 className="mb-2 px-1">{t("dashboard.rfTitle")}</h5>
+            <div className="card">
+              {!sensorData || sensorData.rfMessages.length === 0 ? (
+                <div className="flex items-center gap-3 py-1">
+                  <Radio size={18} className="shrink-0 text-ink-300" strokeWidth={2} />
+                  <p className="text-[13px] text-ink-400">{t("dashboard.noRfMessages")}</p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {sensorData.rfMessages.map((msg, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Radio size={14} className="mt-0.5 shrink-0 text-brand-400" strokeWidth={2} />
+                      <span className="text-[13px] text-ink-800">{msg}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </>
+        {/* )} */}
+
+        {/* Admin panel entry — only rendered for admin accounts */}
+        {user?.role === "ADMIN" && (
+          <div className="flex flex-col gap-2">
+            <Link
+              href={"/admin"}
+              className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-card ring-1 ring-ink-100 transition-transform duration-100 active:scale-[0.98] no-underline"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-secondary-50 text-secondary-600">
+                <Shield size={18} strokeWidth={2.25} aria-hidden />
+              </span>
+              <span className="flex-1 text-[14px] font-semibold text-secondary-700">{t("nav.admin")}</span>
+              <ChevronRight size={16} className="text-ink-300" strokeWidth={2.5} aria-hidden />
+            </Link>
+          </div>
+        )}
       </div>
 
-      {/* Sign out */}
-      <div className="mt-auto px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6">
+      {/* Proactive insight popup */}
+      {insightVisible && insight && (
+        <AiInsightPopup insight={insight} isPersonalized={isPersonalized} onDismiss={handleDismissInsight} />
+      )}
+
+      {/* Peek tab — re-opens the insight after dismissal */}
+      {insight && !insightVisible && (
         <button
           type="button"
-          onClick={async () => {
-            await logout();
-            router.replace(`/${locale}/login`);
-          }}
-          className="tap flex w-full items-center justify-center gap-2 rounded-pill px-4 py-3 text-[13px] font-semibold text-ink-500 ring-1 ring-ink-200 transition-colors duration-100 active:bg-ink-100"
+          onClick={() => setInsightVisible(true)}
+          aria-label="View daily insight"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-0.5 rounded-l-xl bg-white py-3 pl-2 pr-1 shadow-md ring-1 ring-ink-100"
         >
-          <LogOut size={15} strokeWidth={2.25} aria-hidden />
-          {t("signOut")}
+          <BambooAvatar size={20} />
+          <ChevronLeft size={14} className="text-brand-500" strokeWidth={2.5} />
         </button>
-      </div>
+      )}
     </section>
   );
 }

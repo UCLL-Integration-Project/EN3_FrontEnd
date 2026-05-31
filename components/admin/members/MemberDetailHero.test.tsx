@@ -17,6 +17,7 @@ const base: AdminMemberDetail = {
   bio: "Hello",
   status: "FLAGGED",
   joinedAt: "2026-03-14T10:00:00Z",
+  recentAudit: [],
 };
 
 describe("MemberDetailHero", () => {

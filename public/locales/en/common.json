@@ -24,7 +24,70 @@
     "subtitle": "This page is for admins only. If you think this is a mistake, sign in with an admin account.",
     "home": "Back to home"
   },
+  "status": {
+    "select": "Select status",
+    "manageSubtitle": "Edit Status",
+    "empty": "No statuses available",
+    "create": "Create new status",
+    "loading": "Loading statuses...",
+    "post": "Post Status",
+    "placeholder": {
+      "message": "What's on your mind?"
+    },
+    "form": {
+      "selectType": "Select status type",
+      "messageError": "Message cannot be empty",
+      "creating": "Creating..."
+    },
+    "deleteModal": {
+      "title": "Delete Status",
+      "confirm": "Are you sure you want to delete",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "USER_NOT_FOUND": "User could not be found.",
+      "USER_HAS_NO_STATUSES": "You haven't set any statuses yet.",
+      "NETWORK_ERROR": "Network connection error. Please try again.",
+      "UNKNOWN_ERROR": "An unexpected error occurred."
+    }
+  },
   "admin": {
+    "title": "Admin",
+    "nav": {
+      "members": "Members"
+    },
+    "statusTypes": {
+      "title": "Status Types",
+      "subtitle": "Manage available status categories",
+      "create": "Create status type",
+      "loading": "Loading status types...",
+      "empty": "No status types yet. Create one to get started.",
+      "edit": "Edit",
+      "delete": "Delete",
+      "form": {
+        "createTitle": "Create Status Type",
+        "editTitle": "Edit Status Type",
+        "placeholder": "Type name (e.g., Working, Away)",
+        "save": "Save Changes",
+        "saving": "Saving...",
+        "typeError": "Type name is required"
+      },
+      "deleteModal": {
+        "title": "Delete Status Type",
+        "confirm": "Are you sure you want to delete",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      },
+      "errors": {
+        "USER_NOT_FOUND": "User could not be found.",
+        "INVALID_STATUS_TYPE": "The selected status type is invalid.",
+        "NETWORK_ERROR": "Network connection error. Please try again.",
+        "TYPE_TAKEN": "This type is taken.",
+        "STATUS_TYPE_IN_USE": "This type is still being used.",
+        "UNKNOWN_ERROR": "An unexpected error occurred."
+      }
+    },
     "members": {
       "title": "Members",
       "joined": "Joined",
@@ -140,12 +203,14 @@
     "signOut": "Sign out",
     "greeting": "Hi, {name}",
     "nav": {
+      "home": "Home",
       "profile": "Profile",
       "connections": "Connections",
       "device": "Device",
       "stats": "Stats",
       "settings": "Settings",
-      "admin": "Admin"
+      "admin": "Admin",
+      "ai": "AI Assistant"
     },
     "cta": {
       "getStarted": "Get started",
@@ -171,14 +236,60 @@
       "noData": "Waiting for device data…",
       "fallbackName": "there",
       "messageTitle": "Broadcast",
-      "messageSubtitle": "Send this text from your device over Wi-Fi.",
       "messagePlaceholder": "Type a message for your class…",
       "messageSend": "Broadcast",
       "messageSent": "Sent to device",
       "messageCurrent": "On device now",
       "messageNoDevice": "Connect your device to broadcast",
       "rfTitle": "From nearby devices",
-      "noRfMessages": "No nearby devices detected"
+      "noRfMessages": "No nearby devices detected",
+      "pairTitle": "Pair your CrossWave",
+      "pairSubtitle": "Connect a companion to broadcast and see live signals."
+    }
+  },
+  "ai": {
+    "title": "CrossWave AI",
+    "placeholder": "Ask me anything about your data…",
+    "send": "Ask",
+    "loading": "Thinking…",
+    "error": {
+      "NETWORK_ERROR": "Couldn't reach the server. Try again.",
+      "UNKNOWN_ERROR": "Something went wrong. Try again.",
+      "AI_UNAVAILABLE": "Bamboo is taking a nap right now. Try again in a moment."
+    },
+    "suggested": {
+      "social": "How am I doing socially?",
+      "activity": "What's my activity pattern?",
+      "network": "How can I grow my network?",
+      "crosswave": "What can CrossWave help me with?"
+    },
+    "history": {
+      "title": "Past insights"
+    },
+    "insight": {
+      "eyebrow": "Daily insight",
+      "eyebrow_fact": "Fun Fact",
+      "askMore": "Ask me more →",
+      "dismiss": "Dismiss"
+    },
+    "bamboo": {
+      "askButton": "Ask Bamboo",
+      "thinking": "Bamboo is thinking…"
+    },
+    "settings": {
+      "title": "AI data access",
+      "profile": {
+        "label": "Profile & bio",
+        "hint": "Your name, bio and age"
+      },
+      "stats": {
+        "label": "Activity stats",
+        "hint": "Connections, active time and data shared"
+      },
+      "connections": {
+        "label": "Connections list",
+        "hint": "Usernames of your connections"
+      }
     }
   },
   "header": {
@@ -226,6 +337,10 @@
     "button_verify": "Verify Code",
     "signupLink": "New here? Create an account"
   },
+  "settings": {
+    "languageTitle": "Language",
+    "languageBody": "Choose the language for the app interface."
+  },
   "UserSettingsForm": {
     "title": "Settings",
     "profileTitle": "Profile",
@@ -268,6 +383,17 @@
     "addButton": "Add",
     "listTitle": "My connections",
     "empty": "You have no connections yet.",
+    "emptyHint": "When you connect with someone, they'll show up here.",
+    "noMatches": "No connections match.",
+    "noMatchesHint": "Try adjusting your search or filters.",
+    "removed": "Removed {name}.",
+    "levelChanged": "{name} is now {level}.",
+    "filterSort": "Filter & Sort",
+    "resetAll": "Reset all",
+    "searchPlaceholder": "Search by name or username",
+    "clearSearch": "Clear search",
+    "filterByLevel": "Filter by level",
+    "sortBy": "Sort by",
     "removeAriaLabel": "Remove connection with {name}",
     "changeLevelAriaLabel": "Change connection level with {name}",
     "error": {
@@ -284,6 +410,7 @@
     "activity": "Activity",
     "noActivity": "No recent activity to show.",
     "editProfile": "Edit Profile",
+    "doneEditing": "Done",
     "editProfileDetails": "Edit Profile Details",
     "connect": "Connect",
     "connected": "Connected",
@@ -293,7 +420,12 @@
     "accountDetails": "Account Details",
     "bioPlaceholder": "Tell us about yourself...",
     "avatarUrl": "Avatar URL",
-    "bannerUrl": "Banner URL"
+    "bannerUrl": "Banner URL",
+    "loadError": "Couldn't load this profile. Pull down to retry.",
+    "connectSuccess": "You're now connected with {name}.",
+    "connectError": "Couldn't send the connection request. Try again.",
+    "notFoundTitle": "Not found",
+    "notFoundBody": "User \"@{username}\" doesn't exist or their profile is private."
   },
   "UserSignupForm": {
     "title": "Create your account",
@@ -321,6 +453,7 @@
     "success": "Signup successful. Redirecting..."
   },
   "StatsPage": {
+    "title": "Stats",
     "connections": "Connections",
     "timeActive": "Time Active",
     "dataShared": "Data Shared",
@@ -329,6 +462,21 @@
     "emptySubtitle": "Start connecting to see your stats here.",
     "exploreConnections": "Explore connections",
     "loadError": "Failed to load stats."
+  },
+  "privacy": {
+    "title": "Data sharing",
+    "shareActivity": {
+      "label": "Share activity",
+      "hint": "Let visitors see your recent activity"
+    },
+    "shareConnectionCount": {
+      "label": "Share connection count",
+      "hint": "Let visitors see how many connections you have"
+    }
+  },
+  "offline": {
+    "title": "You're offline",
+    "body": "Check your connection and try again."
   },
   "device": {
     "defaultName": "My Companion",

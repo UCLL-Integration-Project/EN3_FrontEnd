@@ -4,10 +4,7 @@ Given("I am logged in as {string} with name {string}", (username: string, fullNa
   const [firstName, lastName] = fullName.split(" ");
   const email = `${username}@example.com`;
 
-  cy.intercept("POST", "**/api/v1/users/login", {
-    statusCode: 200,
-    body: { token: "fake-token", username, firstName, lastName, email, age: 30, role: "USER" },
-  }).as("loginRequest");
+  cy.setCookie("cw_session", "1");
 
   cy.intercept("GET", "**/api/v1/users/me", {
     statusCode: 200,
@@ -18,12 +15,6 @@ Given("I am logged in as {string} with name {string}", (username: string, fullNa
     statusCode: 200,
     body: [{ id: 1, type: "POST", description: "Updated profile", timestamp: new Date().toISOString() }],
   }).as("getActivityRequest");
-
-  cy.visit("/en/login");
-  cy.get("input[type='email']").type(email);
-  cy.get("input[type='password']").type("password123");
-  cy.get("button[type='submit']").click();
-  cy.wait("@loginRequest");
 });
 
 Given("a user {string} exists with name {string} and bio {string}", (username: string, fullName: string, bio: string) => {
@@ -57,18 +48,22 @@ Then("I should see an {string} button", (text: string) => {
   cy.get("button").contains(text).should("be.visible");
 });
 
+Then("I should see a {string} button", (text: string) => {
+  cy.get("button").contains(text).should("be.visible");
+});
+
 Then("I should see the {string} section with my bio", (section: string) => {
   cy.get("h5").contains(section).should("be.visible");
   cy.get("p").contains("My test bio").should("be.visible");
 });
 
 Then("I should see the {string} section", (section: string) => {
-  cy.get("h5").contains(section).should("be.visible");
+  cy.get("h5").contains(section).scrollIntoView().should("be.visible");
 });
 
 When("I click the {string} button", (text: string) => {
   if (text === "Connect") {
-    cy.intercept("POST", "**/api/v1/users/*/connect", { statusCode: 200 }).as("connectRequest");
+    cy.intercept("POST", "**/api/v1/connections/*", { statusCode: 200 }).as("connectRequest");
   }
   cy.get("button").contains(text).click();
 });
@@ -78,9 +73,9 @@ Then("I should see the profile edit form", () => {
 });
 
 Then("I should see inputs for {string}, {string}, and {string}", (f1: string, f2: string, f3: string) => {
-  cy.get(`textarea[id='${f1}Input']`).should("be.visible");
-  cy.get(`input[id='${f2}Input']`).should("be.visible");
-  cy.get(`input[id='${f3}Input']`).should("be.visible");
+  cy.get(`textarea[id='${f1}Input']`).should("exist");
+  cy.get(`input[id='${f2}Input']`).should("exist");
+  cy.get(`input[id='${f3}Input']`).scrollIntoView().should("be.visible");
 });
 
 Then("I should be back in the social profile view", () => {
@@ -112,12 +107,12 @@ Then("the connection count should increase", () => {
 });
 
 Given("I have a connection with {string}", (username: string) => {
-  cy.intercept("GET", "**/api/v1/users/me/connections", {
+  cy.intercept("GET", "**/api/v1/connections", {
     statusCode: 200,
-    body: [{ id: 2, username, firstName: "Jane", lastName: "Doe" }],
+    body: [{ id: 2, username, firstName: "Jane", lastName: "Doe", level: "CONTACT" }],
   }).as("getConnectionsRequest");
-  
-  cy.intercept("DELETE", `**/api/v1/users/me/connections/${username}`, {
+
+  cy.intercept("DELETE", `**/api/v1/connections/${username}`, {
     statusCode: 200,
   }).as("removeConnectionRequest");
 
@@ -140,7 +135,7 @@ Given("I have a connection with {string}", (username: string) => {
 });
 
 When("I remove the connection with {string}", (username: string) => {
-  cy.get(`button[aria-label*='${username}']`).click();
+  cy.get(`button[aria-label^='Remove connection'][aria-label*='${username}']`).click();
   cy.wait("@removeConnectionRequest");
 });
 

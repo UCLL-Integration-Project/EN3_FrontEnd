@@ -1,5 +1,5 @@
 import * as UserService from "./UserService";
-import { ConnectionDTO, ConnectionLevel } from "@types";
+import { ConnectionDTO } from "@types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 

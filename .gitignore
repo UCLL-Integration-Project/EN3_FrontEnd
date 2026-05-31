@@ -30,9 +30,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — secrets must never be committed. .env.example is the documented template.
 .env*
-!.env.local
 !.env.example
 
 # vercel
@@ -50,3 +49,5 @@ cypress/reports
 # Serwist
 public/sw*
 public/swe-worker*
+
+.vscode/

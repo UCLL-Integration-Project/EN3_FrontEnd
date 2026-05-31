@@ -5,7 +5,7 @@ import { useState } from "react";
 import { signupRequest } from "@services/UserService";
 import { StatusMessage, User } from "@types";
 import useAuth from "@hooks/useAuth";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "use-intl";
 import {
   AtSign,
   User as UserIcon,
@@ -48,7 +48,6 @@ export default function UserSignupForm() {
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const locale = useLocale();
   const { login } = useAuth();
   const t = useTranslations("UserSignupForm");
 
@@ -66,8 +65,7 @@ export default function UserSignupForm() {
     }
     if (!form.firstName.trim()) newErrors.firstName = t("validate.error");
     if (!form.lastName.trim()) newErrors.lastName = t("validate.error");
-    if (!form.email.trim() || !/^\S+@\S+\.\S+$/.test(form.email))
-      newErrors.email = t("validate.error");
+    if (!form.email.trim() || !/^\S+@\S+\.\S+$/.test(form.email)) newErrors.email = t("validate.error");
 
     const ageNum = parseInt(form.age, 10);
     if (!form.age.trim() || isNaN(ageNum) || ageNum < 0) {
@@ -105,7 +103,7 @@ export default function UserSignupForm() {
       // Return to the page the user originally wanted, else home.
       // replace() so the back button can't return to /signup after joining.
       const next = new URLSearchParams(window.location.search).get("next");
-      const destination = sanitizeReturnPath(next, `/${locale}`);
+      const destination = sanitizeReturnPath(next, "/");
       setTimeout(() => router.replace(destination), 500);
     } catch (error) {
       const code = (error as Error).message;
@@ -124,7 +122,7 @@ export default function UserSignupForm() {
       autoComplete?: string;
       inputMode?: "text" | "email" | "numeric";
       capitalize?: "none" | "words";
-    } = {}
+    } = {},
   ) => {
     const isPassword = key === "password";
     const FieldIcon = ICONS[key];
@@ -137,7 +135,7 @@ export default function UserSignupForm() {
           <FieldIcon size={18} className="text-ink-400" aria-hidden="true" />
           <input
             id={`${key}Input`}
-            type={isPassword ? (showPassword ? "text" : "password") : options.type ?? "text"}
+            type={isPassword ? (showPassword ? "text" : "password") : (options.type ?? "text")}
             autoComplete={options.autoComplete}
             inputMode={options.inputMode}
             autoCapitalize={options.capitalize ?? "none"}
@@ -152,13 +150,9 @@ export default function UserSignupForm() {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="icon-btn h-9 w-9 -mr-2"
+              className="icon-btn -mr-2"
             >
-              {showPassword ? (
-                <EyeOff size={18} aria-hidden="true" />
-              ) : (
-                <Eye size={18} aria-hidden="true" />
-              )}
+              {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
             </button>
           )}
         </div>
@@ -194,10 +188,7 @@ export default function UserSignupForm() {
         {statusMessages.length > 0 && (
           <ul className="flex flex-col gap-2">
             {statusMessages.map(({ message, type }, index) => (
-              <li
-                key={index}
-                className={`status ${type === "error" ? "status-error" : "status-success"}`}
-              >
+              <li key={index} className={`status ${type === "error" ? "status-error" : "status-success"}`}>
                 {type === "error" ? (
                   <AlertCircle size={18} aria-hidden="true" />
                 ) : (
@@ -213,10 +204,7 @@ export default function UserSignupForm() {
           <button type="submit" className="btn-cta" disabled={submitting}>
             {submitting ? "…" : t("button")}
           </button>
-          <Link
-            href={`/${locale}/login`}
-            className="tap text-center text-[15px] font-semibold text-accent-600"
-          >
+          <Link href={"/login"} className="tap text-center text-[15px] font-semibold text-accent-600">
             {t("loginLink")}
           </Link>
         </div>

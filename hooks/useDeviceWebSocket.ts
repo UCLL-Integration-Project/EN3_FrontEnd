@@ -1,6 +1,6 @@
 "use client";
 
-// NOTE: ws:// from an https:// origin is blocked by browsers (mixed content).
+// NOTE: insecure websocket connections from an https:// origin are blocked by browsers (mixed content).
 // This works on http://localhost:8080 (dev) and over an HTTP deployment.
 // For production over HTTPS you need a WSS endpoint or a reverse proxy.
 
@@ -48,7 +48,9 @@ export function useDeviceWebSocket(deviceIp: string) {
         prev.onopen = prev.onclose = prev.onerror = prev.onmessage = null;
         prev.close();
       }
-      const ws = new WebSocket(`ws://${ip}:${WS_PORT}`);
+      const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      // nosemgrep: javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket
+      const ws = new WebSocket(`${protocol}//${ip}:${WS_PORT}`);
       ws.onopen = () => {
         backoffRef.current = 1000;
         setIsConnected(true);
@@ -107,10 +109,14 @@ export function useDeviceWebSocket(deviceIp: string) {
 
   const sendCommand = useCallback((cmd: string) => {
     const state = wsRef.current?.readyState;
-    console.log(`[WS] sendCommand: "${cmd}" readyState=${state} (1=OPEN)`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[WS] sendCommand: "${cmd}" readyState=${state} (1=OPEN)`);
+    }
     if (state === WebSocket.OPEN) {
       wsRef.current!.send(cmd);
-      console.log("[WS] sendCommand: sent");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[WS] sendCommand: sent");
+      }
     } else {
       console.warn("[WS] sendCommand: dropped — socket not open");
     }

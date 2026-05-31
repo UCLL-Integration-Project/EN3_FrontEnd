@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   Activity,
   ArrowLeft,
@@ -40,12 +40,10 @@ const DEVICE = {
 };
 
 export default function DeviceManager() {
-  const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("device");
   const { unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName, hapticsEnabled } = useDevice();
-  const { isConnected, sensorData, sendCommand, forceReconnect } =
-    useDeviceWebSocket(deviceIp);
+  const { isConnected, sensorData, sendCommand, forceReconnect } = useDeviceWebSocket(deviceIp);
 
   const resolvedName = deviceName || t("defaultName");
   const [lastReceivedAt, setLastReceivedAt] = useState<number | null>(null);
@@ -53,7 +51,14 @@ export default function DeviceManager() {
     if (sensorData) setLastReceivedAt(Date.now());
   }, [sensorData]);
 
-  const isStale = lastReceivedAt !== null && Date.now() - lastReceivedAt > 120_000;
+  const [isStale, setIsStale] = useState(false);
+  useEffect(() => {
+    if (lastReceivedAt === null) { setIsStale(false); return; }
+    const check = () => setIsStale(Date.now() - lastReceivedAt > 120_000);
+    check();
+    const id = setInterval(check, 10_000);
+    return () => clearInterval(id);
+  }, [lastReceivedAt]);
 
   const [editingIp, setEditingIp] = useState(false);
   const [draftIp, setDraftIp] = useState(deviceIp);
@@ -76,7 +81,7 @@ export default function DeviceManager() {
   function forgetDevice() {
     setShowForget(false);
     unlinkDevice();
-    router.replace(`/${locale}/device/setup`);
+    router.replace("/device/setup");
   }
 
   const infoRows = [
@@ -111,24 +116,16 @@ export default function DeviceManager() {
     <section className="app-screen">
       {/* App bar */}
       <div className="flex items-center gap-3 pt-safe-t">
-        <Link
-          href={`/${locale}`}
-          aria-label={t("common.back")}
-          className="back-btn flex items-center justify-center"
-        >
+        <Link href="/" aria-label={t("common.back")} className="back-btn flex items-center justify-center">
           <ArrowLeft size={22} strokeWidth={2.25} />
         </Link>
         <h4 className="flex-1">{t("manage.title")}</h4>
         <span
           className={`flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12px] font-semibold ring-1 ${
-            isConnected
-              ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-              : "bg-ink-100 text-ink-500 ring-ink-200"
+            isConnected ? "bg-emerald-50 text-emerald-700 ring-emerald-200" : "bg-ink-100 text-ink-500 ring-ink-200"
           }`}
         >
-          <span
-            className={`h-2 w-2 rounded-full ${isConnected ? "bg-emerald-500" : "bg-ink-400"}`}
-          />
+          <span className={`h-2 w-2 rounded-full ${isConnected ? "bg-emerald-500" : "bg-ink-400"}`} />
           {isConnected ? t("manage.connected") : t("manage.disconnected")}
         </span>
       </div>
@@ -179,9 +176,7 @@ export default function DeviceManager() {
         <div className="flex items-center gap-3">
           <span
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${
-              isConnected
-                ? "bg-emerald-50 text-emerald-600"
-                : "bg-ink-50 text-ink-400"
+              isConnected ? "bg-emerald-50 text-emerald-600" : "bg-ink-50 text-ink-400"
             }`}
           >
             {isConnected ? <Wifi size={20} /> : <WifiOff size={20} />}
@@ -217,9 +212,7 @@ export default function DeviceManager() {
                 }}
                 className="flex items-center gap-2 text-left"
               >
-                <span className="truncate text-[14px] font-semibold text-ink-900">
-                  {deviceIp || t("manage.noIp")}
-                </span>
+                <span className="truncate text-[14px] font-semibold text-ink-900">{deviceIp || t("manage.noIp")}</span>
                 <Pencil size={13} className="shrink-0 text-ink-400" />
               </button>
             )}
@@ -228,9 +221,7 @@ export default function DeviceManager() {
             </p>
           </div>
         </div>
-        {!deviceIp && (
-          <p className="mt-3 text-[12px] text-ink-500">{t("manage.ipHint")}</p>
-        )}
+        {!deviceIp && <p className="mt-3 text-[12px] text-ink-500">{t("manage.ipHint")}</p>}
         {deviceIp && !isConnected && (
           <button className="btn-secondary mt-4 w-full" onClick={forceReconnect}>
             <RefreshCw size={15} strokeWidth={2.5} />
@@ -244,11 +235,7 @@ export default function DeviceManager() {
       <ReadingsGrid readings={readings} />
 
       <h5 className="mt-6 px-1">{t("manage.firmware")}</h5>
-      <FirmwareCard
-        installed={DEVICE.installedFirmware}
-        latest={DEVICE.latestFirmware}
-        flash={flash}
-      />
+      <FirmwareCard installed={DEVICE.installedFirmware} latest={DEVICE.latestFirmware} flash={flash} />
 
       <h5 className="mt-6 px-1">{t("manage.deviceInfo")}</h5>
       <DeviceInfoCard rows={infoRows} />
@@ -267,11 +254,7 @@ export default function DeviceManager() {
       </div>
 
       {showForget && (
-        <ForgetSheet
-          name={resolvedName}
-          onConfirm={forgetDevice}
-          onDismiss={() => setShowForget(false)}
-        />
+        <ForgetSheet name={resolvedName} onConfirm={forgetDevice} onDismiss={() => setShowForget(false)} />
       )}
     </section>
   );

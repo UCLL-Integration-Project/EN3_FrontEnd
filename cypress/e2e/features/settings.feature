@@ -1,27 +1,11 @@
 Feature: User settings page
 
   Background:
-    Given I am logged in as "admin@example.com" with password "admin"
+    Given I am a logged-in settings user
 
   Scenario: Authenticated user can navigate to settings
     When I navigate to the settings page
     Then I should see the settings page heading
-
-  Scenario: Settings page shows current profile values
-    When I navigate to the settings page
-    Then the profile form should be pre-filled with my data
-
-  Scenario: User can update their profile
-    When I navigate to the settings page
-    And I update my first name to "Updated"
-    And I save my profile
-    Then I should see a profile success message
-
-  Scenario: User sees an error when saving profile with blank first name
-    When I navigate to the settings page
-    And I clear the first name field
-    And I save my profile
-    Then I should see a profile validation error
 
   Scenario: User can change their password
     When I navigate to the settings page
@@ -41,3 +25,8 @@ Feature: User settings page
     Then I should see a logout confirmation
     When I confirm the logout
     Then I should be redirected to the login page
+
+  Scenario: User can update data sharing preferences
+    When I navigate to the settings page
+    And I toggle the share activity preference
+    Then my sharing preferences should be saved

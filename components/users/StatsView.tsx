@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "use-intl";
 import { getStatsRequest } from "@services/UserService";
 import type { UserStats } from "@types";
-import BackButton from "@components/BackButton";
+import AppBar from "@components/AppBar";
 
 function formatTimeActive(minutes: number): string {
   if (minutes < 60) return `${minutes}m`;
@@ -34,54 +35,57 @@ export default function StatsView() {
     return () => {
       cancelled = true;
     };
-  }, [tick]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick]);
 
-  if (error) {
-    return (
-      <section className="app-screen flex flex-col items-center justify-center gap-4 px-5">
-        <div className="self-start pb-2"><BackButton /></div>
-        <p className="text-red-500">{error}</p>
-      </section>
-    );
-  }
-
-  if (stats === undefined) {
-    return null;
-  }
-
-  if (stats === null) {
-    return (
-      <section className="app-screen flex flex-col items-center justify-center gap-4 px-5" data-testid="stats-empty">
-        <div className="self-start pb-2"><BackButton /></div>
-        <p className="text-xl font-semibold">{t("emptyTitle")}</p>
-        <p className="text-sm text-center">{t("emptySubtitle")}</p>
-        <a href="/en/connections" className="btn btn-cta">
-          {t("exploreConnections")}
-        </a>
-      </section>
-    );
-  }
+  if (stats === undefined && !error) return null;
 
   return (
-    <section className="app-screen flex flex-col gap-6 px-5 pt-6">
-      <div className="pb-2">
-        <BackButton />
+    <section className="app-screen p-0">
+      <AppBar title={t("title")} showBack={false} />
+
+      <div className="flex flex-col gap-4 px-5 py-5 pb-8">
+        {error && (
+          <div role="alert" className="status status-error">
+            <span>{error}</span>
+          </div>
+        )}
+
+        {stats === null && !error && (
+          <div data-testid="stats-empty" className="card flex flex-col items-center gap-3 py-10 text-center">
+            <p className="text-xl font-semibold">{t("emptyTitle")}</p>
+            <p className="text-sm">{t("emptySubtitle")}</p>
+            <Link href={"/connections"} className="btn no-underline">
+              {t("exploreConnections")}
+            </Link>
+          </div>
+        )}
+
+        {stats && (
+          <>
+            <div className="card flex flex-col items-center gap-1 p-6" data-stat="connections">
+              <span className="text-3xl font-bold">{stats.connections}</span>
+              <span className="text-sm text-ink-500">{t("connections")}</span>
+            </div>
+            <div className="card flex flex-col items-center gap-1 p-6" data-stat="timeActive">
+              <span className="text-3xl font-bold">{formatTimeActive(stats.timeActive)}</span>
+              <span className="text-sm text-ink-500">{t("timeActive")}</span>
+            </div>
+            <div className="card flex flex-col items-center gap-1 p-6" data-stat="dataShared">
+              <span className="text-3xl font-bold">{stats.dataShared}</span>
+              <span className="text-sm text-ink-500">{t("dataShared")}</span>
+            </div>
+            <button
+              type="button"
+              className="btn-ghost"
+              data-testid="stats-refresh"
+              onClick={() => setTick((c) => c + 1)}
+            >
+              {t("refresh")}
+            </button>
+          </>
+        )}
       </div>
-      <div className="flex flex-col items-center gap-1 card p-4" data-stat="connections">
-        <span className="text-3xl font-bold">{stats.connections}</span>
-        <span className="text-sm">{t("connections")}</span>
-      </div>
-      <div className="flex flex-col items-center gap-1 card p-4" data-stat="timeActive">
-        <span className="text-3xl font-bold">{formatTimeActive(stats.timeActive)}</span>
-        <span className="text-sm">{t("timeActive")}</span>
-      </div>
-      <div className="flex flex-col items-center gap-1 card p-4" data-stat="dataShared">
-        <span className="text-3xl font-bold">{stats.dataShared}</span>
-        <span className="text-sm">{t("dataShared")}</span>
-      </div>
-      <button className="btn btn-ghost mt-auto" data-testid="stats-refresh" onClick={() => setTick((c) => c + 1)}>
-        {t("refresh")}
-      </button>
     </section>
   );
 }

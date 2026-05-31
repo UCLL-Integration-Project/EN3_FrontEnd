@@ -73,7 +73,7 @@ export default function ChangePasswordForm() {
             type="button"
             onClick={() => setShowCurrent((v) => !v)}
             aria-label={showCurrent ? "Hide password" : "Show password"}
-            className="icon-btn h-9 w-9 -mr-2"
+            className="icon-btn -mr-2"
           >
             {showCurrent ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
           </button>
@@ -99,7 +99,7 @@ export default function ChangePasswordForm() {
             type="button"
             onClick={() => setShowNew((v) => !v)}
             aria-label={showNew ? "Hide password" : "Show password"}
-            className="icon-btn h-9 w-9 -mr-2"
+            className="icon-btn -mr-2"
           >
             {showNew ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
           </button>
@@ -125,7 +125,7 @@ export default function ChangePasswordForm() {
             type="button"
             onClick={() => setShowConfirm((v) => !v)}
             aria-label={showConfirm ? "Hide password" : "Show password"}
-            className="icon-btn h-9 w-9 -mr-2"
+            className="icon-btn -mr-2"
           >
             {showConfirm ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
           </button>

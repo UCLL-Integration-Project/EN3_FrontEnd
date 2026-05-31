@@ -24,7 +24,70 @@
     "subtitle": "Deze pagina is alleen voor beheerders. Denk je dat dit een vergissing is? Meld je aan met een beheerdersaccount.",
     "home": "Terug naar start"
   },
+  "status": {
+    "select": "Selecteer status",
+    "manageSubtitle": "Status Aanpassen",
+    "empty": "Geen statussen beschikbaar",
+    "create": "Nieuwe status aanmaken",
+    "loading": "Statussen laden...",
+    "post": "Status plaatsen",
+    "placeholder": {
+      "message": "Wat ben je aan het doen?"
+    },
+    "form": {
+      "selectType": "Selecteer statustype",
+      "messageError": "Bericht mag niet leeg zijn",
+      "creating": "Aanmaken..."
+    },
+    "deleteModal": {
+      "title": "Status verwijderen",
+      "confirm": "Weet je zeker dat je dit wilt verwijderen:",
+      "delete": "Verwijderen",
+      "cancel": "Annuleren"
+    },
+    "errors": {
+      "USER_NOT_FOUND": "Gebruiker kon niet worden gevonden.",
+      "USER_HAS_NO_STATUSES": "Je hebt nog geen statussen ingesteld.",
+      "NETWORK_ERROR": "Netwerkfout. Probeer het opnieuw.",
+      "UNKNOWN_ERROR": "Er is een onbekende fout opgetreden."
+    }
+  },
   "admin": {
+    "title": "Beheer",
+    "nav": {
+      "members": "Leden"
+    },
+    "statusTypes": {
+      "title": "Statustypen",
+      "subtitle": "Beheer beschikbare statuscategorieën",
+      "create": "Statustype aanmaken",
+      "loading": "Statustypen laden...",
+      "empty": "Nog geen statustypen. Maak er een aan om te beginnen.",
+      "edit": "Bewerken",
+      "delete": "Verwijderen",
+      "form": {
+        "createTitle": "Statustype aanmaken",
+        "editTitle": "Statustype bewerken",
+        "placeholder": "Typenaam (bijv. Aan het werk, Afwezig)",
+        "save": "Wijzigingen opslaan",
+        "saving": "Opslaan...",
+        "typeError": "Typenaam is verplicht"
+      },
+      "deleteModal": {
+        "title": "Statustype verwijderen",
+        "confirm": "Weet je zeker dat je dit wilt verwijderen:",
+        "delete": "Verwijderen",
+        "cancel": "Annuleren"
+      },
+      "errors": {
+        "USER_NOT_FOUND": "Gebruiker kon niet worden gevonden.",
+        "INVALID_STATUS_TYPE": "Het geselecteerde statustype is ongeldig.",
+        "NETWORK_ERROR": "Netwerkfout. Probeer het opnieuw.",
+        "TYPE_TAKEN": "Dit type is al in gebruik.",
+        "STATUS_TYPE_IN_USE": "Dit type is nog altijd in gebruik.",
+        "UNKNOWN_ERROR": "Er is een onbekende fout opgetreden."
+      }
+    },
     "members": {
       "title": "Leden",
       "joined": "Lid sinds",
@@ -140,12 +203,14 @@
     "signOut": "Uitloggen",
     "greeting": "Hoi, {name}",
     "nav": {
+      "home": "Start",
       "profile": "Profiel",
       "connections": "Connecties",
       "device": "Apparaat",
       "stats": "Statistieken",
       "settings": "Instellingen",
-      "admin": "Beheer"
+      "admin": "Beheer",
+      "ai": "AI-assistent"
     },
     "cta": {
       "getStarted": "Aan de slag",
@@ -171,14 +236,60 @@
       "noData": "Wachten op apparaatdata…",
       "fallbackName": "daar",
       "messageTitle": "Uitzenden",
-      "messageSubtitle": "Stuur deze tekst via je apparaat over Wi-Fi.",
       "messagePlaceholder": "Typ een bericht voor je klas…",
       "messageSend": "Uitzenden",
       "messageSent": "Verzonden naar apparaat",
       "messageCurrent": "Nu op apparaat",
       "messageNoDevice": "Verbind je apparaat om uit te zenden",
       "rfTitle": "Van apparaten in de buurt",
-      "noRfMessages": "Geen apparaten in de buurt gedetecteerd"
+      "noRfMessages": "Geen apparaten in de buurt gedetecteerd",
+      "pairTitle": "Koppel je CrossWave",
+      "pairSubtitle": "Verbind een companion om uit te zenden en live signalen te zien."
+    }
+  },
+  "ai": {
+    "title": "CrossWave AI",
+    "placeholder": "Stel me een vraag over je gegevens…",
+    "send": "Vraag",
+    "loading": "Denken…",
+    "error": {
+      "NETWORK_ERROR": "Kon de server niet bereiken. Probeer opnieuw.",
+      "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw.",
+      "AI_UNAVAILABLE": "Bamboo slapt even. Probeer het zo opnieuw."
+    },
+    "suggested": {
+      "social": "Hoe doe ik het sociaal?",
+      "activity": "Wat is mijn activiteitspatroon?",
+      "network": "Hoe kan ik mijn netwerk uitbreiden?",
+      "crosswave": "Waarmee kan CrossWave me helpen?"
+    },
+    "history": {
+      "title": "Eerdere inzichten"
+    },
+    "insight": {
+      "eyebrow": "Dagelijks inzicht",
+      "eyebrow_fact": "Weetje",
+      "askMore": "Vraag meer →",
+      "dismiss": "Sluiten"
+    },
+    "bamboo": {
+      "askButton": "Vraag Bamboo",
+      "thinking": "Bamboo denkt na…"
+    },
+    "settings": {
+      "title": "AI-gegevenstoegang",
+      "profile": {
+        "label": "Profiel & bio",
+        "hint": "Je naam, bio en leeftijd"
+      },
+      "stats": {
+        "label": "Activiteitsstatistieken",
+        "hint": "Verbindingen, actieve tijd en gedeelde gegevens"
+      },
+      "connections": {
+        "label": "Verbindingenlijst",
+        "hint": "Gebruikersnamen van je verbindingen"
+      }
     }
   },
   "header": {
@@ -226,6 +337,10 @@
     "button_verify": "Code Verifiëren",
     "signupLink": "Nieuw hier? Maak een account"
   },
+  "settings": {
+    "languageTitle": "Taal",
+    "languageBody": "Kies de taal voor de app-interface."
+  },
   "UserSettingsForm": {
     "title": "Instellingen",
     "profileTitle": "Profiel",
@@ -268,8 +383,19 @@
     "addButton": "Toevoegen",
     "listTitle": "Mijn connecties",
     "empty": "Je hebt nog geen connecties.",
-    "removeAriaLabel": "Verwijder connectie met {name}",
-    "changeLevelAriaLabel": "Wijzig verbindingsniveau met {name}",
+    "emptyHint": "Wanneer je met iemand verbindt, verschijnen ze hier.",
+    "noMatches": "Geen connecties gevonden.",
+    "noMatchesHint": "Pas je zoekopdracht of filters aan.",
+    "removed": "{name} verwijderd.",
+    "levelChanged": "{name} is nu {level}.",
+    "filterSort": "Filteren & sorteren",
+    "resetAll": "Alles wissen",
+    "searchPlaceholder": "Zoek op naam of gebruikersnaam",
+    "clearSearch": "Zoekopdracht wissen",
+    "filterByLevel": "Filteren op niveau",
+    "sortBy": "Sorteren op",
+    "removeAriaLabel": "Connectie met {name} verwijderen",
+    "changeLevelAriaLabel": "Verbindingsniveau met {name} wijzigen",
     "error": {
       "USER_NOT_FOUND": "Geen gebruiker gevonden met die gebruikersnaam.",
       "ALREADY_CONNECTED": "Je bent al verbonden met deze gebruiker.",
@@ -284,6 +410,7 @@
     "activity": "Activiteit",
     "noActivity": "Geen recente activiteit om weer te geven.",
     "editProfile": "Profiel bewerken",
+    "doneEditing": "Klaar",
     "editProfileDetails": "Profielgegevens bewerken",
     "connect": "Connecteren",
     "connected": "Geconnecteerd",
@@ -293,7 +420,12 @@
     "accountDetails": "Accountgegevens",
     "bioPlaceholder": "Vertel ons iets over jezelf...",
     "avatarUrl": "Avatar URL",
-    "bannerUrl": "Banner URL"
+    "bannerUrl": "Banner URL",
+    "loadError": "Kon dit profiel niet laden. Trek omlaag om opnieuw te proberen.",
+    "connectSuccess": "Je bent nu verbonden met {name}.",
+    "connectError": "Kon de verbindingsaanvraag niet verzenden. Probeer opnieuw.",
+    "notFoundTitle": "Niet gevonden",
+    "notFoundBody": "Gebruiker \"@{username}\" bestaat niet of het profiel is privé."
   },
   "UserSignupForm": {
     "title": "Maak je account",
@@ -321,6 +453,7 @@
     "success": "Registratie gelukt. Doorsturen..."
   },
   "StatsPage": {
+    "title": "Statistieken",
     "connections": "Verbindingen",
     "timeActive": "Actief",
     "dataShared": "Gedeeld",
@@ -329,6 +462,21 @@
     "emptySubtitle": "Begin met verbinden om je stats hier te zien.",
     "exploreConnections": "Verken verbindingen",
     "loadError": "Kon stats niet laden."
+  },
+  "privacy": {
+    "title": "Gegevens delen",
+    "shareActivity": {
+      "label": "Activiteit delen",
+      "hint": "Laat bezoekers je recente activiteit zien"
+    },
+    "shareConnectionCount": {
+      "label": "Aantal connecties delen",
+      "hint": "Laat bezoekers zien hoeveel connecties je hebt"
+    }
+  },
+  "offline": {
+    "title": "Je bent offline",
+    "body": "Controleer je verbinding en probeer het opnieuw."
   },
   "device": {
     "defaultName": "Mijn metgezel",

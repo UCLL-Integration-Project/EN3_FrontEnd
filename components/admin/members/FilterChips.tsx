@@ -1,9 +1,9 @@
 "use client";
 
-import { Status } from "@types";
+import { ModerationStatus } from "@types";
 import { useTranslations } from "next-intl";
 
-export type StatusFilter = Status | "ALL";
+export type StatusFilter = ModerationStatus | "ALL";
 
 const OPTIONS: { value: StatusFilter; key: "all" | "active" | "flagged" | "suspended" }[] = [
   { value: "ALL", key: "all" },
@@ -33,7 +33,7 @@ export default function FilterChips({
             className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 transition ${
               active
                 ? "bg-ink-900 text-white ring-ink-900"
-                : "bg-white text-ink-600 ring-ink-200 hover:ring-ink-400"
+                : "bg-white text-ink-600 ring-ink-200 hover:ring-ink-400 active:ring-ink-500"
             }`}
           >
             {t(opt.key)}

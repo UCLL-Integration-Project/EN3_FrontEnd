@@ -1,18 +1,18 @@
 "use client";
 
-import { Status } from "@types";
+import { ModerationStatus } from "@types";
 import { useTranslations } from "next-intl";
 
 /* Pill matching the mockup's status colours:
    ACTIVE   = brand green        FLAGGED  = secondary orange
    SUSPENDED = ink-error red */
-const STYLES: Record<Status, string> = {
+const STYLES: Record<ModerationStatus, string> = {
   ACTIVE: "bg-brand-100 text-brand-700 ring-1 ring-brand-200",
   FLAGGED: "bg-secondary-100 text-secondary-700 ring-1 ring-secondary-200",
   SUSPENDED: "bg-rose-100 text-rose-700 ring-1 ring-rose-200",
 };
 
-export default function StatusBadge({ status }: { status: Status }) {
+export default function StatusBadge({ status }: { status: ModerationStatus }) {
   const t = useTranslations("admin.members.filter");
   const label =
     status === "ACTIVE" ? t("active") : status === "FLAGGED" ? t("flagged") : t("suspended");

@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export type AuthContextType = {
   user: User | null;
   isLoading: boolean;
@@ -29,6 +31,8 @@ export type User = {
   avatarUrl?: string;
   bannerUrl?: string;
   connectionsCount?: number;
+  shareActivity?: boolean;
+  shareConnectionCount?: boolean;
 };
 
 export type UserResponse = {
@@ -42,8 +46,10 @@ export type UserResponse = {
   bio?: string;
   avatarUrl?: string;
   bannerUrl?: string;
-  connectionsCount?: number;
+  connectionsCount?: number | null;
   role?: Role;
+  shareActivity?: boolean | null;
+  shareConnectionCount?: boolean | null;
 };
 
 export type AuthenticationRequest = {
@@ -58,7 +64,7 @@ export function toGrantedAuthority(role: Role): string {
   return `ROLE_${role}`;
 }
 
-export type Status = "ACTIVE" | "FLAGGED" | "SUSPENDED";
+export type ModerationStatus = "ACTIVE" | "FLAGGED" | "SUSPENDED";
 
 export type AdminMemberSummary = {
   id: number;
@@ -66,7 +72,7 @@ export type AdminMemberSummary = {
   handle: string;
   email: string;
   avatarUrl?: string | null;
-  status: Status;
+  status: ModerationStatus;
   joinedAt: string; // ISO timestamp from the backend's Instant
 };
 
@@ -87,7 +93,7 @@ export type AdminMemberDetail = {
   email: string;
   bio?: string | null;
   avatarUrl?: string | null;
-  status: Status;
+  status: ModerationStatus;
   joinedAt: string;
   lastSeenAt?: string | null;
   recentAudit: AdminAuditEntry[];
@@ -142,8 +148,46 @@ export type UserStats = {
   dataShared: number;
 };
 
+export type StatusTypeRequest = {
+  statusType: string;
+};
+
+export type StatusTypeResponse = {
+  id: number;
+  statusType: string;
+};
+
+export type StatusRequest = {
+  statusType: StatusTypeResponse;
+  message: string;
+};
+
+export type StatusResponse = {
+  id: number;
+  statusType: StatusTypeResponse;
+  message: string;
+};
+
+export type NavItem = {
+  icon: LucideIcon;
+  label: string;
+  href: string;
+  variant?: "default" | "admin";
+};
+
+export type UserAIContext = {
+  profile?: { name: string; bio: string; age: number };
+  stats?: UserStats;
+  connections?: { username: string }[];
+};
+
 export type ConnectionLevel = "CONTACT" | "FRIEND" | "BEST_FRIEND";
 
 export type ConnectionDTO = UserResponse & {
   level: ConnectionLevel;
+};
+
+export type PrivacyInput = {
+  shareActivity: boolean;
+  shareConnectionCount: boolean;
 };

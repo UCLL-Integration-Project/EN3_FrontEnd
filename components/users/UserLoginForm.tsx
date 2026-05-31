@@ -5,8 +5,8 @@ import { useState } from "react";
 import { loginRequest, verifyMfaRequest } from "@services/UserService";
 import { AuthenticationRequest, StatusMessage } from "@types";
 import useAuth from "@hooks/useAuth";
-import { useLocale, useTranslations } from "use-intl";
-import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ShieldCheck } from "lucide-react";
+import { useTranslations } from "use-intl";
+import { ArrowLeft, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ShieldCheck } from "lucide-react";
 import BackButton from "@components/BackButton";
 import { sanitizeReturnPath } from "@components/auth/returnUrl";
 
@@ -20,7 +20,6 @@ export default function UserLoginForm() {
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const locale = useLocale();
   const { login } = useAuth();
   const t = useTranslations("UserLoginForm");
 
@@ -64,7 +63,7 @@ export default function UserLoginForm() {
         setStatusMessages([{ message: t("success"), type: "success" }]);
         login(response);
         const next = new URLSearchParams(window.location.search).get("next");
-        const destination = sanitizeReturnPath(next, `/${locale}`);
+        const destination = sanitizeReturnPath(next, "/");
         setTimeout(() => router.replace(destination), 500);
       }
     } catch (error) {
@@ -90,7 +89,7 @@ export default function UserLoginForm() {
       const loggedInUser = await verifyMfaRequest(tempUsername, mfaCode);
       setStatusMessages([{ message: t("success"), type: "success" }]);
       login(loggedInUser);
-      setTimeout(() => router.push(`/${locale}`), 500);
+      setTimeout(() => router.push("/"), 500);
     } catch (error) {
       const code = (error as Error).message;
       const knownCodes = ["MFA_CODE_NOT_FOUND", "MFA_CODE_EXPIRED", "INVALID_MFA_CODE", "NETWORK_ERROR"];
@@ -105,9 +104,9 @@ export default function UserLoginForm() {
     return (
       <section className="app-screen">
         <div className="pb-2">
-           <button onClick={() => setIsMfaRequired(false)} className="icon-btn h-10 w-10">
-              <AlertCircle size={24} />
-           </button>
+          <button type="button" onClick={() => setIsMfaRequired(false)} aria-label="Back" className="back-btn">
+            <ArrowLeft size={22} strokeWidth={2.25} />
+          </button>
         </div>
         <header className="flex flex-col gap-1 pt-2 pb-5">
           <h1>Verification</h1>
@@ -116,7 +115,9 @@ export default function UserLoginForm() {
 
         <form onSubmit={handleMfaSubmit} className="flex flex-1 flex-col gap-4">
           <div className="field">
-            <label htmlFor="mfaInput" className="field-label">{t("label.mfa_code")}</label>
+            <label htmlFor="mfaInput" className="field-label">
+              {t("label.mfa_code")}
+            </label>
             <div className="field-control">
               <ShieldCheck size={18} className="text-ink-400" aria-hidden="true" />
               <input
@@ -137,10 +138,7 @@ export default function UserLoginForm() {
           {statusMessages.length > 0 && (
             <ul className="flex flex-col gap-2">
               {statusMessages.map(({ message, type }, index) => (
-                <li
-                  key={index}
-                  className={`status ${type === "error" ? "status-error" : "status-success"}`}
-                >
+                <li key={index} className={`status ${type === "error" ? "status-error" : "status-success"}`}>
                   {type === "error" ? (
                     <AlertCircle size={18} aria-hidden="true" />
                   ) : (
@@ -212,13 +210,9 @@ export default function UserLoginForm() {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="icon-btn h-9 w-9 -mr-2"
+              className="icon-btn -mr-2"
             >
-              {showPassword ? (
-                <EyeOff size={18} aria-hidden="true" />
-              ) : (
-                <Eye size={18} aria-hidden="true" />
-              )}
+              {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
             </button>
           </div>
           <div className="field-error">{errors.password || ""}</div>
@@ -240,10 +234,7 @@ export default function UserLoginForm() {
         {statusMessages.length > 0 && (
           <ul className="flex flex-col gap-2">
             {statusMessages.map(({ message, type }, index) => (
-              <li
-                key={index}
-                className={`status ${type === "error" ? "status-error" : "status-success"}`}
-              >
+              <li key={index} className={`status ${type === "error" ? "status-error" : "status-success"}`}>
                 {type === "error" ? (
                   <AlertCircle size={18} aria-hidden="true" />
                 ) : (
@@ -259,10 +250,7 @@ export default function UserLoginForm() {
           <button type="submit" className="btn-cta" disabled={submitting}>
             {submitting ? "…" : t("button")}
           </button>
-          <Link
-            href={`/${locale}/signup`}
-            className="tap text-center text-[15px] font-semibold text-accent-600"
-          >
+          <Link href={"/signup"} className="tap text-center text-[15px] font-semibold text-accent-600">
             {t("signupLink")}
           </Link>
         </div>
