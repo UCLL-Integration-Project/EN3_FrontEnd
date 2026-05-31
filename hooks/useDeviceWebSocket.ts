@@ -49,7 +49,7 @@ export function useDeviceWebSocket(deviceIp: string) {
   const [lastNameAck, setLastNameAck] = useState<{ status: string; name?: string; reason?: string } | null>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
-  const backoffRef = useRef(1000);
+  const backoffRef = useRef(200);
   const reconnectRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeRef = useRef(false);
   // Always reflects the latest IP so the onclose reconnect closure uses it.
@@ -80,7 +80,7 @@ export function useDeviceWebSocket(deviceIp: string) {
       // nosemgrep: javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket
       const ws = new WebSocket(`${protocol}//${ip}:${WS_PORT}`);
       ws.onopen = () => {
-        backoffRef.current = 1000;
+        backoffRef.current = 200;  // reset to fast retry on next disconnect
         setIsConnected(true);
       };
       ws.onclose = () => {
@@ -91,8 +91,6 @@ export function useDeviceWebSocket(deviceIp: string) {
         if (activeRef.current && ipRef.current) {
           setReconnectAttempts((prev) => {
             const next = prev + 1;
-            // After MAX_RECONNECT_ATTEMPTS flag as unreachable (shows the Retry button)
-            // but keep retrying in the background — the device may just be booting.
             if (next >= MAX_RECONNECT_ATTEMPTS) {
               setIsUnreachable(true);
             }
@@ -100,7 +98,8 @@ export function useDeviceWebSocket(deviceIp: string) {
               () => open(ipRef.current),
               backoffRef.current,
             );
-            backoffRef.current = Math.min(backoffRef.current * 2, 30_000);
+            // Short initial retries (200→400→800ms) then cap at 10s for sustained outages
+            backoffRef.current = Math.min(backoffRef.current * 2, 10_000);
             return next;
           });
         }
@@ -141,8 +140,8 @@ export function useDeviceWebSocket(deviceIp: string) {
           } else if (d.type === "error") {
             console.warn("[WS] Device error:", d.reason);
           }
-        } catch {
-          /* malformed frame — ignore */
+        } catch (err) {
+          console.warn("[WS] malformed frame, ignored:", (e.data as string)?.slice(0, 120), err);
         }
       };
       wsRef.current = ws;
@@ -193,7 +192,7 @@ export function useDeviceWebSocket(deviceIp: string) {
     }
     setIsUnreachable(false);
     setReconnectAttempts(0);
-    backoffRef.current = 1000;
+    backoffRef.current = 200;
     activeRef.current = true;
     openRef.current(ip);
   }, []);
