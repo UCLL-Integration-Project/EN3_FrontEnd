@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import { AdminAction, AdminMemberDetail } from "@types";
 import {
@@ -19,12 +19,6 @@ import ModerationActions from "@components/admin/members/ModerationActions";
 import AuditTrail from "@components/admin/members/AuditTrail";
 import ConfirmSheet from "@components/admin/members/ConfirmSheet";
 
-function formatLong(iso: string | null | undefined, locale: string): string | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return new Intl.DateTimeFormat(locale, { dateStyle: "long", timeStyle: "short" }).format(d);
-}
 
 /* AdminAction -> translation key stem + API call. */
 const ACTION_KEY: Record<AdminAction, string> = {
@@ -45,14 +39,14 @@ const ACTION_FN: Record<AdminAction, (id: number, note?: string) => Promise<Admi
 export default function AdminMemberDetailPage() {
   const t = useTranslations("admin.members.detail");
   const tm = useTranslations("admin.members.moderation");
-  const locale = useLocale();
+  const format = useFormatter();
   const params = useParams();
   const sp = useSearchParams();
 
   const idParam = params?.id;
   const id = typeof idParam === "string" ? Number(idParam) : NaN;
   const ret = sp.get("ret") ?? "";
-  const backHref = `/${locale}/admin/members${ret ? `?${ret}` : ""}`;
+  const backHref = `/admin/members${ret ? `?${ret}` : ""}`;
 
   const [data, setData] = useState<AdminMemberDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -140,10 +134,10 @@ export default function AdminMemberDetailPage() {
               <ReadOnlyField label={t("fields.display")} value={data.displayName} />
               <ReadOnlyField label={t("fields.username")} value={`@${data.username}`} />
               <ReadOnlyField label={t("fields.bio")} value={data.bio} />
-              <ReadOnlyField label={t("fields.joined")} value={formatLong(data.joinedAt, locale)} />
+              <ReadOnlyField label={t("fields.joined")} value={data.joinedAt ? format.dateTime(new Date(data.joinedAt), { dateStyle: "long", timeStyle: "short" }) : null} />
               <ReadOnlyField
                 label={t("fields.lastSeen")}
-                value={formatLong(data.lastSeenAt, locale) ?? t("lastSeenNever")}
+                value={data.lastSeenAt ? format.dateTime(new Date(data.lastSeenAt), { dateStyle: "long", timeStyle: "short" }) : t("lastSeenNever")}
               />
             </dl>
 

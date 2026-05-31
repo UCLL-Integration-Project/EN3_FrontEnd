@@ -254,12 +254,27 @@
     "loading": "Thinking…",
     "error": {
       "NETWORK_ERROR": "Couldn't reach the server. Try again.",
-      "UNKNOWN_ERROR": "Something went wrong. Try again."
+      "UNKNOWN_ERROR": "Something went wrong. Try again.",
+      "AI_UNAVAILABLE": "Bamboo is taking a nap right now. Try again in a moment."
+    },
+    "suggested": {
+      "social": "How am I doing socially?",
+      "activity": "What's my activity pattern?",
+      "network": "How can I grow my network?",
+      "crosswave": "What can CrossWave help me with?"
+    },
+    "history": {
+      "title": "Past insights"
     },
     "insight": {
       "eyebrow": "Daily insight",
+      "eyebrow_fact": "Fun Fact",
       "askMore": "Ask me more →",
       "dismiss": "Dismiss"
+    },
+    "bamboo": {
+      "askButton": "Ask Bamboo",
+      "thinking": "Bamboo is thinking…"
     },
     "settings": {
       "title": "AI data access",

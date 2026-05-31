@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getUserData, getActivityRequest } from "@services/UserService";
 import { User, Activity } from "@types";
 import useAuth from "@hooks/useAuth";
-import { useLocale, useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import AppBar from "@components/AppBar";
 import ProfileHeader from "@components/users/ProfileHeader";
 import ActivityList from "@components/users/ActivityList";
@@ -15,7 +15,6 @@ export default function PublicProfilePage() {
   const params = useParams();
   const username = params.username as string;
   const router = useRouter();
-  const locale = useLocale();
   const t = useTranslations("social");
   const { user: currentUser, isLoading: authLoading } = useAuth();
 
@@ -41,7 +40,7 @@ export default function PublicProfilePage() {
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
-  }, [username, currentUser, locale, router]);
+  }, [username, currentUser, router]);
 
   if (authLoading || loading) return <AuthSplash />;
 
@@ -58,7 +57,7 @@ export default function PublicProfilePage() {
 
   return (
     <section className="app-screen p-0">
-      <AppBar transparent backHref={`/${locale}/connections`} />
+      <AppBar transparent backHref="/connections" />
 
       <ProfileHeader user={targetUser} isOwnProfile={false} activityCount={activities.length} />
 

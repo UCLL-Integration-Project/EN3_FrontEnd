@@ -254,12 +254,27 @@
     "loading": "Denken…",
     "error": {
       "NETWORK_ERROR": "Kon de server niet bereiken. Probeer opnieuw.",
-      "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw."
+      "UNKNOWN_ERROR": "Er ging iets mis. Probeer opnieuw.",
+      "AI_UNAVAILABLE": "Bamboo slapt even. Probeer het zo opnieuw."
+    },
+    "suggested": {
+      "social": "Hoe doe ik het sociaal?",
+      "activity": "Wat is mijn activiteitspatroon?",
+      "network": "Hoe kan ik mijn netwerk uitbreiden?",
+      "crosswave": "Waarmee kan CrossWave me helpen?"
+    },
+    "history": {
+      "title": "Eerdere inzichten"
     },
     "insight": {
       "eyebrow": "Dagelijks inzicht",
+      "eyebrow_fact": "Weetje",
       "askMore": "Vraag meer →",
       "dismiss": "Sluiten"
+    },
+    "bamboo": {
+      "askButton": "Vraag Bamboo",
+      "thinking": "Bamboo denkt na…"
     },
     "settings": {
       "title": "AI-gegevenstoegang",

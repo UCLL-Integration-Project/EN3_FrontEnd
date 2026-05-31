@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Waves } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import LanguageChip from "@components/language";
 import HomeScreen from "@components/HomeScreen";
@@ -22,9 +21,7 @@ export default function TitleScreen() {
   return (
     <section className="app-screen bg-wave">
       <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
-        <span className="brand-mark h-24 w-24 animate-wave" aria-hidden="true">
-          <Waves size={52} strokeWidth={2.25} />
-        </span>
+        <img src="/CrossWave-lg-green.svg" alt="CrossWave" className="h-28 w-auto animate-wave" />
         <h1 className="max-w-[340px]">{t("welcome")}</h1>
         <p className="max-w-[300px]">{t("subtitle")}</p>
       </div>

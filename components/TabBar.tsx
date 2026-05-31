@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { BarChart2, Home, User, Users } from "lucide-react";
+import BambooAvatar from "@components/ai/BambooAvatar";
 import type { LucideIcon } from "lucide-react";
 
 /* Bottom tab bar — the app's primary navigation.
@@ -14,33 +15,36 @@ import type { LucideIcon } from "lucide-react";
 
 type Tab = { href: string; label: string; icon: LucideIcon };
 
-function isActive(pathname: string, locale: string, href: string): boolean {
-  const normalized = pathname.replace(/\/$/, "");
-  const target = href.replace(/\/$/, "");
-  if (target === `/${locale}`) return normalized === `/${locale}`;
+function stripLocale(pathname: string): string {
+  const parts = pathname.split("/").slice(2);
+  return parts.length === 0 ? "/" : `/${parts.join("/")}`;
+}
+
+function isActive(pathname: string, href: string): boolean {
+  const normalized = stripLocale(pathname).replace(/\/$/, "") || "/";
+  const target = href.replace(/\/$/, "") || "/";
+  if (target === "/") return normalized === "/";
   return normalized === target || normalized.startsWith(`${target}/`);
 }
 
 export default function TabBar() {
   const pathname = usePathname();
-  const locale = useLocale();
   const t = useTranslations("home.nav");
 
   const left: Tab[] = [
-    { href: `/${locale}`, label: t("home"), icon: Home },
-    { href: `/${locale}/connections`, label: t("connections"), icon: Users },
+    { href: "/", label: t("home"), icon: Home },
+    { href: "/connections", label: t("connections"), icon: Users },
   ];
 
   const right: Tab[] = [
-    { href: `/${locale}/stats`, label: t("stats"), icon: BarChart2 },
-    { href: `/${locale}/profile`, label: t("profile"), icon: User },
+    { href: "/stats", label: t("stats"), icon: BarChart2 },
+    { href: "/profile", label: t("profile"), icon: User },
   ];
 
-  const aiHref = `/${locale}/ai`;
-  const aiActive = pathname.replace(/\/$/, "") === aiHref;
+  const aiActive = stripLocale(pathname).replace(/\/$/, "") === "/ai";
 
   function TabItem({ href, label, icon: Icon }: Tab) {
-    const active = isActive(pathname, locale, href);
+    const active = isActive(pathname, href);
     return (
       <li className="flex-1">
         <Link
@@ -70,14 +74,14 @@ export default function TabBar() {
         {/* Center AI action button — raised above the bar */}
         <li className="flex flex-1 flex-col items-center justify-end">
           <Link
-            href={aiHref}
+            href="/ai"
             aria-label={t("ai")}
             aria-current={aiActive ? "page" : undefined}
             className={`-mt-5 flex h-14 w-14 items-center justify-center rounded-full text-[22px] text-white shadow-pop transition-transform duration-100 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 mb-1 ${
               aiActive ? "bg-brand-700" : "bg-brand-gradient"
             }`}
           >
-            ✦
+            <BambooAvatar size={28} className="brightness-0 invert" />
           </Link>
         </li>
 
