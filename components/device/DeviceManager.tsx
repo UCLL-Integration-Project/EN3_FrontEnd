@@ -39,18 +39,10 @@ export default function DeviceManager() {
 
   const resolvedName = deviceName || t("defaultName");
 
-  // Queue a name command to send once the device confirms authentication
-  const pendingNameRef = useRef<string | null>(null);
+  // Auto-sync: when auth completes, push the app's stored name to the device
+  // if it differs (covers the initial setup case where no name was sent yet).
   useEffect(() => {
     if (!isAuthenticated) return;
-    // Flush any pending rename from before auth completed
-    if (pendingNameRef.current !== null) {
-      sendCommand(`NAME:${pendingNameRef.current}`);
-      pendingNameRef.current = null;
-      return;
-    }
-    // Auto-sync: if the app has a stored name that differs from what the device
-    // reports (e.g. set during setup before auth), push it now.
     if (deviceName && deviceInfo && deviceName !== deviceInfo.name) {
       sendCommand(`NAME:${deviceName}`);
     }
@@ -212,12 +204,7 @@ export default function DeviceManager() {
         isStale={isStale}
         onNameChange={(name) => {
           setDeviceName(name);
-          if (isAuthenticated) {
-            sendCommand(`NAME:${name}`);
-          } else if (isConnected) {
-            // Auth not yet confirmed — queue for when authAck arrives
-            pendingNameRef.current = name;
-          }
+          sendCommand(`NAME:${name}`);
         }}
       />
 
@@ -226,13 +213,10 @@ export default function DeviceManager() {
         vcc={sensorData?.vcc ?? 0}
         isStale={isStale}
         lastReadingAt={lastReceivedAt}
+        isConnected={isConnected}
         flash={flash}
-        onRefreshReadings={() => {
-          if (isAuthenticated) sendCommand("REFRESH:");
-        }}
-        onIdentify={() => {
-          if (isAuthenticated && hapticsEnabled) sendCommand("BUZZ:");
-        }}
+        onRefreshReadings={() => sendCommand("REFRESH:")}
+        onIdentify={() => sendCommand("BUZZ:")}
       />
 
       {/* WebSocket connection */}

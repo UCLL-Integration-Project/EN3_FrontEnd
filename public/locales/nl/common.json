@@ -239,6 +239,7 @@
       "messageTitle": "Uitzenden",
       "messagePlaceholder": "Typ een bericht voor je klas…",
       "messageSend": "Uitzenden",
+      "messageNotConnected": "Apparaat niet verbonden",
       "messageSent": "Verzonden naar apparaat",
       "messageCurrent": "Nu op apparaat",
       "messageNoDevice": "Verbind je apparaat om uit te zenden",

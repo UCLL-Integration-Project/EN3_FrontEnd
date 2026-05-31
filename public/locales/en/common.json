@@ -239,6 +239,7 @@
       "messageTitle": "Broadcast",
       "messagePlaceholder": "Type a message for your class…",
       "messageSend": "Broadcast",
+      "messageNotConnected": "Device not connected",
       "messageSent": "Sent to device",
       "messageCurrent": "On device now",
       "messageNoDevice": "Connect your device to broadcast",

@@ -57,8 +57,13 @@ export function DeviceHeroCard({ model, name, isConnected, lastReceivedAt, isSta
                 autoFocus
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
+                onBlur={save}
                 onKeyDown={(e) => e.key === "Enter" && save()}
                 maxLength={17}
+                autoCapitalize="none"
+                autoCorrect="off"
+                autoComplete="off"
+                enterKeyHint="done"
                 className="min-w-0 flex-1 rounded-xl bg-white/15 px-3 py-1.5 text-[18px] font-semibold text-white outline-none ring-1 ring-white/40 placeholder:text-white/50"
                 placeholder={t("manage.namePlaceholder")}
               />

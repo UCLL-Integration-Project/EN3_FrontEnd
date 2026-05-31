@@ -11,12 +11,13 @@ interface BatteryProps {
   isStale: boolean;
   lastReadingAt: number | null;
   charging?: boolean;
+  isConnected: boolean;
   flash: (msg: string) => void;
   onRefreshReadings?: () => void;
   onIdentify?: () => void;
 }
 
-export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = false, flash, onRefreshReadings, onIdentify }: BatteryProps) {
+export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = false, isConnected, flash, onRefreshReadings, onIdentify }: BatteryProps) {
   const t = useTranslations("device");
   const [refreshing, setRefreshing] = useState(false);
   const [identifying, setIdentifying] = useState(false);
@@ -115,11 +116,11 @@ export function BatteryCard({ battery, vcc, isStale, lastReadingAt, charging = f
       )}
 
       <div className="mt-4 flex gap-2.5">
-        <button className="chip flex-1 justify-center" onClick={forceRefreshReadings} disabled={refreshing}>
+        <button className="chip flex-1 justify-center" onClick={forceRefreshReadings} disabled={!isConnected || refreshing}>
           <RefreshCw size={15} className={refreshing ? "animate-spin" : ""} strokeWidth={2.5} />
           {refreshing ? t("manage.refreshing") : t("manage.forceRefresh")}
         </button>
-        <button className="chip flex-1 justify-center" onClick={identify} disabled={identifying}>
+        <button className="chip flex-1 justify-center" onClick={identify} disabled={!isConnected || identifying}>
           <Vibrate size={15} className={identifying ? "animate-pulse" : ""} strokeWidth={2.5} />
           {identifying ? t("manage.identifying") : t("manage.identify")}
         </button>

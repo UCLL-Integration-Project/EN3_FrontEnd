@@ -147,8 +147,9 @@ export default function HomeScreen() {
 
                 <button
                   type="button"
-                  disabled={!selectedStatusMessage.trim()}
+                  disabled={!selectedStatusMessage.trim() || !isConnected}
                   onClick={() => {
+                    if (!isConnected) return;
                     sendMessage(selectedStatusMessage.trim());
                     setSentConfirm(true);
                     setTimeout(() => setSentConfirm(false), 3500);
@@ -156,7 +157,7 @@ export default function HomeScreen() {
                   className="btn w-full disabled:opacity-40"
                 >
                   <Send size={14} strokeWidth={2.25} />
-                  {t("dashboard.messageSend")}
+                  {!isConnected ? t("dashboard.messageNotConnected") : t("dashboard.messageSend")}
                 </button>
 
                 {sentConfirm && (

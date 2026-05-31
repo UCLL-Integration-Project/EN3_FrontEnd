@@ -56,6 +56,10 @@ export function useDeviceWebSocket(deviceIp: string) {
   const ipRef = useRef(deviceIp);
   // Holds the latest `open` so forceReconnect can call it outside the effect.
   const openRef = useRef<(ip: string) => void>(() => {});
+  // Commands queued while not yet authenticated — flushed on authAck.
+  const cmdQueueRef = useRef<string[]>([]);
+  // Mirrors isAuthenticated state as a ref so sendCommand can read it synchronously.
+  const isAuthRef = useRef(false);
 
   useEffect(() => {
     ipRef.current = deviceIp;
@@ -82,6 +86,8 @@ export function useDeviceWebSocket(deviceIp: string) {
       ws.onclose = () => {
         setIsConnected(false);
         setIsAuthenticated(false);
+        isAuthRef.current = false;
+        cmdQueueRef.current = [];
         if (activeRef.current && ipRef.current) {
           setReconnectAttempts((prev) => {
             const next = prev + 1;
@@ -117,9 +123,16 @@ export function useDeviceWebSocket(deviceIp: string) {
             setReconnectAttempts(0);
             setIsUnreachable(false);
           } else if (d.type === "authAck") {
-            // Mark as authenticated once device confirms AUTH
             if (d.status === "ok") {
               setIsAuthenticated(true);
+              isAuthRef.current = true;
+              // Flush any commands that were queued before auth completed
+              const queued = cmdQueueRef.current.splice(0);
+              queued.forEach((cmd) => {
+                if (wsRef.current?.readyState === WebSocket.OPEN) {
+                  wsRef.current.send(cmd);
+                }
+              });
             } else {
               console.warn("[WS] AUTH failed:", d);
             }
@@ -166,17 +179,8 @@ export function useDeviceWebSocket(deviceIp: string) {
   }, []);
 
   const sendCommand = useCallback((cmd: string) => {
-    const state = wsRef.current?.readyState;
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`[WS] sendCommand: "${cmd}" readyState=${state} (1=OPEN)`);
-    }
-    if (state === WebSocket.OPEN) {
-      wsRef.current!.send(cmd);
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[WS] sendCommand: sent");
-      }
-    } else {
-      console.warn("[WS] sendCommand: dropped — socket not open");
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(cmd);
     }
   }, []);
 
