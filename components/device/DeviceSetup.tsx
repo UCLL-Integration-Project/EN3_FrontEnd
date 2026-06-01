@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Bluetooth, BluetoothSearching, Check, CheckCircle2, Eye, EyeOff, Loader2, Watch, Wifi } from "lucide-react";
 import { useDevice } from "@context/DeviceContext";
+import BackButton from "@components/BackButton";
 
 // BLE UUIDs — must match the ESP32 firmware (src/ble_comm.cpp)
 const DEVICE_BLE_NAME  = "CrossWave";
@@ -190,12 +191,15 @@ export default function DeviceSetup() {
 
   return (
     <section className="app-screen">
-      {/* Header — no close button: pairing is required to use the app */}
-      <div className="flex items-center gap-2.5 pt-safe-t">
-        <span className="brand-mark" aria-hidden="true">
-          <Bluetooth size={18} strokeWidth={2.25} />
-        </span>
-        <span className="text-[13px] font-semibold uppercase tracking-wider text-ink-500">{t("setup.eyebrow")}</span>
+      <div className="app-bar px-4">
+        <BackButton href="/" />
+        <div className="flex flex-1 items-center justify-center gap-1.5">
+          <span className="brand-mark" aria-hidden="true">
+            <Bluetooth size={16} strokeWidth={2.25} />
+          </span>
+          <span className="text-[13px] font-semibold uppercase tracking-wider text-ink-500">{t("setup.eyebrow")}</span>
+        </div>
+        <div className="w-12" aria-hidden />
       </div>
 
       <div className="mt-4">
