@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { BellRing, BluetoothConnected, Moon, RefreshCw, Vibrate, Watch } from "lucide-react";
 import { Toggle } from "./DeviceUI";
 import { useDevice } from "@context/DeviceContext";
-import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
+import { useDeviceWS } from "@context/DeviceWebSocketContext";
 
 type PrefKey =
   | "autoConnect"
@@ -23,8 +23,8 @@ const PREFERENCES: { key: PrefKey; icon: typeof Watch }[] = [
 
 export function PreferencesCard() {
   const t = useTranslations("device");
-  const { preferences, setPreferences, deviceIp } = useDevice();
-  const { isAuthenticated, sendCommand, deviceInfo } = useDeviceWebSocket(deviceIp);
+  const { preferences, setPreferences } = useDevice();
+  const { sendCommand, deviceInfo } = useDeviceWS();
 
   // Load preferences from device when available
   const prefs = deviceInfo?.prefs || preferences;

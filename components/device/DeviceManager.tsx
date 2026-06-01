@@ -20,7 +20,7 @@ import {
   WifiOff,
 } from "lucide-react";
 import { useDevice } from "@context/DeviceContext";
-import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
+import { useDeviceWS } from "@context/DeviceWebSocketContext";
 import {
   BatteryCard,
   DeviceHeroCard,
@@ -34,20 +34,20 @@ import {
 export default function DeviceManager() {
   const router = useRouter();
   const t = useTranslations("device");
-  const { unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName, hapticsEnabled } = useDevice();
-  const { isConnected, isAuthenticated, sensorData, deviceInfo, isUnreachable, lastNameAck, sendCommand, forceReconnect } = useDeviceWebSocket(deviceIp);
+  const { unlinkDevice, deviceIp, setDeviceIp, deviceName, setDeviceName } = useDevice();
+  const { isConnected, sensorData, deviceInfo, isUnreachable, lastNameAck, sendCommand, forceReconnect } = useDeviceWS();
 
   const resolvedName = deviceName || t("defaultName");
 
-  // Auto-sync: when auth completes, push the app's stored name to the device
-  // if it differs (covers the initial setup case where no name was sent yet).
+  // Auto-sync: once connected, if the app's stored name differs from what the
+  // device reports, push it. Covers the setup case where the name was only saved
+  // locally and never sent to the device. Runs when deviceInfo first arrives.
   useEffect(() => {
-    if (!isAuthenticated) return;
-    if (deviceName && deviceInfo && deviceName !== deviceInfo.name) {
+    if (!isConnected || !deviceInfo) return;
+    if (deviceName && deviceName !== deviceInfo.name) {
       sendCommand(`NAME:${deviceName}`);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  }, [isConnected, deviceInfo, deviceName, sendCommand]);
 
   // Show feedback when device confirms (or rejects) the name change
   useEffect(() => {

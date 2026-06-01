@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Bluetooth, ChevronLeft, ChevronRight, Cpu, Radio, Send, Settings, Shield, Wifi, WifiOff } from "lucide-react";
 import useAuth from "@hooks/useAuth";
 import { useDevice } from "@context/DeviceContext";
-import { useDeviceWebSocket } from "@hooks/useDeviceWebSocket";
+import { useDeviceWS } from "@context/DeviceWebSocketContext";
 import MultiStatus from "./status/MultiStatus";
 import { insightRequest } from "@services/AiService";
 import { safeStorage } from "@context/safeStorage";
@@ -27,7 +27,7 @@ const FOUR_HOURS = 4 * 60 * 60 * 1000;
 export default function HomeScreen() {
   const { user } = useAuth();
   const { deviceLinked, deviceIp, deviceName } = useDevice();
-  const { isConnected, sensorData, sendMessage } = useDeviceWebSocket(deviceLinked ? deviceIp : "");
+  const { isConnected, sensorData, sendMessage } = useDeviceWS();
 
   const [selectedStatusMessage, setSelectedStatusMessage] = useState("");
   const [sentConfirm, setSentConfirm] = useState(false);

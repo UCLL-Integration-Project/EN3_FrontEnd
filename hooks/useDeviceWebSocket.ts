@@ -137,6 +137,8 @@ export function useDeviceWebSocket(deviceIp: string) {
             }
           } else if (d.type === "nameAck") {
             setLastNameAck({ status: d.status, name: d.name, reason: d.reason });
+          } else if (d.type === "buzzAck") {
+            console.log("[WS] Device confirmed BUZZ received");
           } else if (d.type === "error") {
             console.warn("[WS] Device error:", d.reason);
           }
@@ -178,8 +180,13 @@ export function useDeviceWebSocket(deviceIp: string) {
   }, []);
 
   const sendCommand = useCallback((cmd: string) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(cmd);
+    const state = wsRef.current?.readyState;
+    console.log(`[WS] sendCommand "${cmd}" — readyState=${state} (OPEN=1, CONNECTING=0, CLOSING=2, CLOSED=3)`);
+    if (state === WebSocket.OPEN) {
+      wsRef.current!.send(cmd);
+      console.log(`[WS] sent "${cmd}"`);
+    } else {
+      console.warn(`[WS] NOT sent — socket not open`);
     }
   }, []);
 
